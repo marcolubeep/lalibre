@@ -11,6 +11,7 @@
             --text-color: #1a1a1a;
             --accent-color: #707070;
             --light-gray: #f9f9f9;
+            --overlay-bg: rgba(0, 0, 0, 0.4);
         }
 
         * {
@@ -100,18 +101,6 @@
             cursor: pointer;
         }
 
-        .product-image {
-            width: 100%;
-            height: 400px;
-            background-color: #f0f0f0;
-            object-fit: cover;
-            transition: opacity 0.3s ease;
-        }
-
-        .product-image:hover {
-            opacity: 0.85;
-        }
-
         .product-info {
             margin-top: 1rem;
             display: flex;
@@ -135,6 +124,101 @@
             font-weight: 500;
         }
 
+        /* --- EMAIL POPUP STYLES --- */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--overlay-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+            padding: 20px;
+        }
+
+        .popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup-modal {
+            background: #ffffff;
+            padding: 3rem 2.5rem;
+            max-width: 450px;
+            width: 100%;
+            position: relative;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--accent-color);
+        }
+
+        .popup-modal h2 {
+            font-family: serif;
+            font-size: 1.8rem;
+            font-weight: 300;
+            letter-spacing: 0.1rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .popup-modal p {
+            font-size: 0.9rem;
+            color: var(--accent-color);
+            margin-bottom: 2rem;
+        }
+
+        .popup-form input[type="email"] {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ccc;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            outline: none;
+            text-align: center;
+        }
+
+        .popup-form input[type="email"]:focus {
+            border-color: var(--text-color);
+        }
+
+        .popup-form button {
+            width: 100%;
+            padding: 0.9rem;
+            background-color: var(--text-color);
+            color: #fff;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 0.15rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .popup-form button:hover {
+            background-color: #333;
+        }
+
         footer {
             text-align: center;
             padding: 4rem 1rem;
@@ -147,6 +231,21 @@
     </style>
 </head>
 <body>
+
+    <!-- Email Popup Modal -->
+    <div class="popup-overlay" id="emailPopup">
+        <div class="popup-modal">
+            <button class="popup-close" id="closePopup">
+                <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+            </button>
+            <h2>La Libre</h2>
+            <p>Join the slow movement. Subscribe to receive private collection updates and exclusive access.</p>
+            <form class="popup-form" id="subscribeForm">
+                <input type="email" placeholder="YOUR EMAIL" required>
+                <button type="submit">Subscribe</button>
+            </form>
+        </div>
+    </div>
 
     <header>
         <div class="logo">La Libre</div>
@@ -170,7 +269,7 @@
         <div class="grid">
             <!-- Product 1 -->
             <div class="product-card">
-                <div class="product-image-placeholder" style="height: 400px; background: #eae5e2; display: flex; align-items: center; justify-content: center; color: #777;">
+                <div style="height: 400px; background: #eae5e2; display: flex; align-items: center; justify-content: center; color: #777;">
                     [ Insert White Lace Slip Image ]
                 </div>
                 <div class="product-info">
@@ -184,7 +283,7 @@
 
             <!-- Product 2 -->
             <div class="product-card">
-                <div class="product-image-placeholder" style="height: 400px; background: #1a1a1a; display: flex; align-items: center; justify-content: center; color: #fff;">
+                <div style="height: 400px; background: #1a1a1a; display: flex; align-items: center; justify-content: center; color: #fff;">
                     [ Insert Black Silhouette Dress Image ]
                 </div>
                 <div class="product-info">
@@ -198,7 +297,7 @@
 
             <!-- Product 3 -->
             <div class="product-card">
-                <div class="product-image-placeholder" style="height: 400px; background: #f4f1ef; display: flex; align-items: center; justify-content: center; color: #777;">
+                <div style="height: 400px; background: #f4f1ef; display: flex; align-items: center; justify-content: center; color: #777;">
                     [ Insert Lace Corset Top Image ]
                 </div>
                 <div class="product-info">
@@ -219,6 +318,36 @@
     <script>
         // Initialize Lucide icons
         lucide.createIcons();
+
+        const popup = document.getElementById('emailPopup');
+        const closeBtn = document.getElementById('closePopup');
+        const form = document.getElementById('subscribeForm');
+
+        // Show popup after 3 seconds
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                popup.classList.add('active');
+            }, 3000); 
+        });
+
+        // Close popup logic
+        closeBtn.addEventListener('click', () => {
+            popup.classList.remove('active');
+        });
+
+        // Close popup if background overlay is clicked
+        popup.addEventListener('click', (e) => {
+            if(e.target === popup) {
+                popup.classList.remove('active');
+            }
+        });
+
+        // Form handling
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Thank you for subscribing to La Libre.');
+            popup.classList.remove('active');
+        });
     </script>
 </body>
 </html>
