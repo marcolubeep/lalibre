@@ -329,27 +329,32 @@
     </footer>
 
     <script>
-        // Render Icons Securely
         lucide.createIcons();
 
         const popup = document.getElementById('emailPopup');
         const closeBtn = document.getElementById('closePopup');
         const subscribeForm = document.getElementById('subscribeForm');
 
+        // Function to look at local memory and display items count on header badge
+        function updateCartBadge() {
+            const currentCount = localStorage.getItem('cartItemCount') || 0;
+            document.querySelector('.cart-badge').innerText = currentCount;
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
-            // Check memory flags so users who dismissed or completed are ignored
+            // Check cart numbers immediately on load
+            updateCartBadge();
+
             if (!localStorage.getItem('subscribed') && !localStorage.getItem('popupDismissed')) {
                 setTimeout(() => popup.classList.add('active'), 3000);
             }
         });
 
-        // Clicking the close X button saves preference to browser history memory
         closeBtn.addEventListener('click', () => {
             popup.classList.remove('active');
             localStorage.setItem('popupDismissed', 'true');
         });
 
-        // Clicking outside the container space wraps a close action and logs preference
         popup.addEventListener('click', (e) => { 
             if (e.target === popup) {
                 popup.classList.remove('active'); 
@@ -357,7 +362,6 @@
             }
         });
 
-        // Standard subscription handler
         subscribeForm.addEventListener('submit', (e) => {
             e.preventDefault();
             localStorage.setItem('subscribed', 'true');
