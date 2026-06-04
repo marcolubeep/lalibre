@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Libre | Your Basket</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #1a1a1a;
+            --accent-color: #707070;
+            --light-gray: #f9f9f9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; }
+        
+        header {
+            display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+            padding: 1.5rem 4%; border-bottom: 1px solid #eee; position: sticky; top: 0; background: white; z-index: 100;
+        }
+        .nav-left { display: flex; gap: 1.5rem; }
+        .nav-left a { text-decoration: none; color: var(--text-color); font-size: 0.9rem; }
+        .logo { font-family: serif; font-size: 1.6rem; letter-spacing: 0.3rem; text-transform: uppercase; cursor: pointer; text-align: center; }
+        .nav-right { display: flex; justify-content: flex-end; align-items: center; gap: 1.2rem; }
+        .social-icons { display: flex; gap: 1rem; }
+        .lang-select { font-size: 0.85rem; border: none; background: transparent; cursor: pointer; }
+        .cart-icon-wrapper { position: relative; display: flex; align-items: center; }
+        .cart-badge { position: absolute; top: -8px; right: -8px; background: var(--text-color); color: white; font-size: 0.65rem; padding: 2px 5px; border-radius: 50%; }
+
+        .cart-container { max-width: 800px; margin: 4rem auto; padding: 0 2rem; }
+        .cart-title { font-family: serif; font-size: 2rem; font-weight: 300; letter-spacing: 0.1rem; text-transform: uppercase; margin-bottom: 2rem; border-bottom: 1px solid #eee; padding-bottom: 1rem; }
+        
+        .empty-msg { text-align: center; padding: 3rem 0; color: var(--accent-color); }
+        .btn-continue { display: inline-block; margin-top: 1.5rem; padding: 0.8rem 2rem; border: 1px solid var(--text-color); color: var(--text-color); text-decoration: none; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.1rem; }
+        .btn-continue:hover { background: var(--text-color); color: white; }
+
+        .cart-table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; display: none; }
+        .cart-table th { text-align: left; padding: 1rem; border-bottom: 1px solid #eee; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05rem; color: var(--accent-color); }
+        .cart-table td { padding: 1.5rem 1rem; border-bottom: 1px solid #eee; vertical-align: center; }
+        
+        .item-details { display: flex; align-items: center; gap: 1rem; }
+        .item-img { width: 60px; height: 80px; background-size: cover; background-position: center; background-color: #e2dedb; }
+        .item-name { font-size: 1rem; font-weight: 400; }
+        
+        .remove-btn { background: none; border: none; color: var(--accent-color); cursor: pointer; text-decoration: underline; font-size: 0.8rem; margin-top: 0.3rem; display: block; }
+        .remove-btn:hover { color: #d9534f; }
+
+        .summary-box { border-top: 1px solid #1a1a1a; padding-top: 1.5rem; display: none; flex-direction: column; align-items: flex-end; gap: 1rem; }
+        .subtotal-row { display: flex; gap: 2rem; font-size: 1.2rem; font-weight: 400; }
+        .btn-checkout { padding: 1rem 3rem; background: var(--text-color); color: white; border: none; text-transform: uppercase; letter-spacing: 0.15rem; font-size: 0.85rem; cursor: pointer; width: 100%; max-width: 350px; text-align: center; }
+        .btn-checkout:hover { opacity: 0.9; }
+
+        footer { text-align: center; padding: 4rem 1rem; border-top: 1px solid #eee; margin-top: 8rem; font-size: 0.85rem; color: var(--accent-color); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-left">
+            <a href="index.html">Home</a>
+            <a href="#">Dresses</a>
+            <a href="#">Lingeries</a>
+            <a href="#">New Arrivals</a>
+        </div>
+        <div class="logo" onclick="window.location.href='index.html'">La Libre</div>
+        <div class="nav-right">
+            <div class="social-icons">
+                <i data-lucide="instagram"></i>
+                <i data-lucide="facebook"></i>
+                <i data-lucide="pinterest"></i>
+            </div>
+            <select class="lang-select">
+                <option>EN (UK)</option>
+                <option>FR</option>
+            </select>
+            <a href="cart.html" class="cart-icon-wrapper" style="text-decoration: none; color: inherit;">
+                <i data-lucide="shopping-bag"></i>
+                <span class="cart-badge">0</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="cart-container">
+        <h1 class="cart-title">Your Shopping Basket</h1>
+
+        <!-- Empty Basket Screen -->
+        <div id="emptyView" class="empty-msg">
+            <p>Your basket is currently empty.</p>
+            <a href="index.html" class="btn-continue">Continue Shopping</a>
+        </div>
+
+        <!-- Populated Basket View -->
+        <table class="cart-table" id="cartTable">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody id="cartItemsList">
+                <!-- Items will be generated automatically here -->
+            </tbody>
+        </table>
+
+        <div class="summary-box" id="summaryView">
+            <div class="subtotal-row">
+                <span>Subtotal</span>
+                <span id="subtotalPrice">£0.00</span>
+            </div>
+            <button class="btn-checkout" onclick="alert('Proceeding safely to secure payment merchant window...')">Proceed to Checkout</button>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 LA LIBRE. ALL RIGHTS RESERVED.</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // hardcoded metadata to display correct checkout text details dynamically 
+        const productDetails = {
+            title: 'Eliah Maxi Dress',
+            price: 71.00,
+            image: 'eliah-dress.jpg'
+        };
+
+        function renderCart() {
+            const count = parseInt(localStorage.getItem('cartItemCount')) || 0;
+            document.querySelector('.cart-badge').innerText = count;
+
+            const emptyView = document.getElementById('emptyView');
+            const cartTable = document.getElementById('cartTable');
+            const summaryView = document.getElementById('summaryView');
+            const listContainer = document.getElementById('cartItemsList');
+
+            if (count <= 0) {
+                emptyView.style.display = 'block';
+                cartTable.style.display = 'none';
+                summaryView.style.display = 'none';
+            } else {
+                emptyView.style.display = 'none';
+                cartTable.style.display = 'table';
+                summaryView.style.display = 'flex';
+
+                const itemTotal = productDetails.price * count;
+                document.getElementById('subtotalPrice').innerText = `£${itemTotal.toFixed(2)}`;
+
+                // Generate item markup row layout
+                listContainer.innerHTML = `
+                    <tr>
+                        <td>
+                            <div class="item-details">
+                                <div class="item-img" style="background-image: url('${productDetails.image}')"></div>
+                                <div>
+                                    <div class="item-name">${productDetails.title}</div>
+                                    <button class="remove-btn" onclick="clearItem()">Remove</button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${count}</td>
+                        <td>£${itemTotal.toFixed(2)}</td>
+                    </tr>
+                `;
+            }
+        }
+
+        function clearItem() {
+            localStorage.setItem('cartItemCount', 0);
+            renderCart();
+        }
+
+        // Initialize view
+        renderCart();
+    </script>
+</body>
+</html>
