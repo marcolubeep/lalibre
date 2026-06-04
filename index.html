@@ -91,7 +91,6 @@
             pointer-events: none;
         }
 
-        /* overlay scuro regolato per dare contrasto al testo */
         .banner-overlay {
             position: absolute;
             top: 0;
@@ -293,7 +292,7 @@
         </div>
     </main>
 
-    <!-- Popup Newsletter protetto a fondo pagina -->
+    <!-- Popup Newsletter -->
     <div class="popup-overlay" id="emailPopup">
         <div class="popup-modal">
             <button class="popup-close" id="closePopup"><i data-lucide="x" style="width: 18px; height: 18px;"></i></button>
@@ -330,8 +329,10 @@
             const closeBtn = document.getElementById('closePopup');
             const subscribeForm = document.getElementById('subscribeForm');
 
+            // Se l'utente non è iscritto e non ha chiuso il popup in precedenza...
             if (popup && !localStorage.getItem('subscribed') && !localStorage.getItem('popupDismissed')) {
-                setTimeout(() => popup.classList.add('active'), 3000);
+                // MODIFICATO: Ritardo impostato a 18000ms (18 secondi)
+                setTimeout(() => popup.classList.add('active'), 18000);
             }
 
             if(closeBtn && popup) {
