@@ -131,7 +131,7 @@
         <p>&copy; 2026 LA LIBRE. ALL RIGHTS RESERVED.</p>
     </footer>
 
-    <script>
+<script>
         lucide.createIcons();
 
         const catalog = {
@@ -147,7 +147,7 @@
                 title: 'The Grace Lace Maxi', 
                 price: '£110.00', 
                 desc: 'An exquisite slow collection staple produced in high-grade linen-white French pattern trims.',
-                image: 'grace-lace.jpg',
+                image: 'grace-lace.jpg', 
                 color: '#f4f1ef', 
                 txtColor: '#777' 
             },
@@ -155,7 +155,7 @@
                 title: 'Amour Lace Bustier', 
                 price: '£85.00', 
                 desc: 'Intricate underwire lines meet luxury scalloped eyelash edges.',
-                image: 'amour-lace.jpg',
+                image: 'amour-lace.jpg', 
                 color: '#eae5e2', 
                 txtColor: '#666' 
             },
@@ -185,6 +185,28 @@
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('id') || 'eliah-maxi';
 
+        // --- CART INITIALIZATION & SYNC ---
+        function updateCartBadge() {
+            const currentCount = parseInt(localStorage.getItem('cartItemCount')) || 0;
+            document.querySelector('.cart-badge').innerText = currentCount;
+        }
+
+        function addToBasket() {
+            const qtyInput = document.querySelector('.qty-input');
+            const addedQty = parseInt(qtyInput.value) || 1;
+            
+            let currentCount = parseInt(localStorage.getItem('cartItemCount')) || 0;
+            currentCount += addedQty;
+            
+            localStorage.setItem('cartItemCount', currentCount);
+            updateCartBadge();
+            
+            alert(`${addedQty} item(s) added to your basket.`);
+        }
+
+        // Initialize display on page load
+        updateCartBadge();
+
         if(catalog[productId]) {
             const product = catalog[productId];
             document.getElementById('titleField').innerText = product.title;
@@ -195,10 +217,9 @@
             const textDisplay = document.getElementById('mainDisplayTxt');
             const thumbs = document.querySelectorAll('.thumb');
 
-            // Force override if image exists to clear out color banners completely
             if (product.image) {
                 displayBox.style.backgroundImage = `url('${product.image}')`;
-                textDisplay.style.display = 'none'; // Completely removes the bracket text placeholder
+                textDisplay.style.display = 'none';
                 
                 thumbs.forEach(t => {
                     t.style.backgroundImage = `url('${product.image}')`;
@@ -206,7 +227,6 @@
                     t.innerText = '';
                 });
             } else {
-                // Fallback style execution for layout placeholders
                 displayBox.style.backgroundImage = 'none';
                 displayBox.style.backgroundColor = product.color;
                 textDisplay.style.display = 'block';
