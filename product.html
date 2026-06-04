@@ -136,6 +136,7 @@
     <script>
         lucide.createIcons();
 
+        // Catalog configuration featuring your new dress images mapped perfectly
         const catalog = {
             'eliah-maxi': { 
                 title: 'Eliah Maxi Dress', 
@@ -149,6 +150,7 @@
                 title: 'The Grace Lace Maxi', 
                 price: '£110.00', 
                 desc: 'An exquisite slow collection staple produced in high-grade linen-white French pattern trims.',
+                image: 'grace-lace.jpg', // Added Image Asset
                 color: '#f4f1ef', 
                 txtColor: '#777' 
             },
@@ -156,6 +158,7 @@
                 title: 'Amour Lace Bustier', 
                 price: '£85.00', 
                 desc: 'Intricate underwire lines meet luxury scalloped eyelash edges.',
+                image: 'amour-lace.jpg', // Added Image Asset
                 color: '#eae5e2', 
                 txtColor: '#666' 
             },
@@ -185,7 +188,6 @@
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('id') || 'eliah-maxi';
 
-        // --- WORKING LOCAL STORAGE PERSISTENCE CART COUNTER ---
         function updateCartBadge() {
             const currentCount = parseInt(localStorage.getItem('cartItemCount')) || 0;
             document.querySelector('.cart-badge').innerText = currentCount;
@@ -216,7 +218,6 @@
             const textDisplay = document.getElementById('mainDisplayTxt');
             const thumbs = document.querySelectorAll('.thumb');
 
-            // Secure asset overwrite handler
             if (product.image) {
                 displayBox.style.backgroundImage = `url('${product.image}')`;
                 textDisplay.style.display = 'none';
