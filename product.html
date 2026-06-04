@@ -25,8 +25,10 @@
         .logo { font-family: serif; font-size: 1.6rem; letter-spacing: 0.3rem; text-transform: uppercase; cursor: pointer; text-align: center; }
         .nav-right { display: flex; justify-content: flex-end; align-items: center; gap: 1.2rem; }
         .social-icons { display: flex; gap: 1rem; }
+        .social-icons i, .social-icons svg { cursor: pointer; width: 18px; height: 18px; }
         .lang-select { font-size: 0.85rem; border: none; background: transparent; cursor: pointer; }
-        .cart-icon-wrapper { position: relative; }
+        
+        .cart-icon-wrapper { position: relative; display: flex; align-items: center; }
         .cart-badge { position: absolute; top: -8px; right: -8px; background: var(--text-color); color: white; font-size: 0.65rem; padding: 2px 5px; border-radius: 50%; }
 
         .store-container {
@@ -86,25 +88,23 @@
                 <option>FR</option>
             </select>
             <a href="cart.html" class="cart-icon-wrapper" style="text-decoration: none; color: inherit;">
-    <i data-lucide="shopping-bag" style="width: 20px; height: 20px;"></i>
-    <span class="cart-badge">0</span>
-</a>
+                <i data-lucide="shopping-bag"></i>
+                <span class="cart-badge">0</span>
+            </a>
+        </div>
     </header>
 
     <main class="store-container">
-        <!-- Vertical Thumbnails -->
         <div class="thumbs-column" id="thumbsBox">
             <div class="thumb active"></div>
             <div class="thumb"></div>
             <div class="thumb"></div>
         </div>
 
-        <!-- Big Display Image -->
         <div class="main-preview-box" id="mainDisplay">
             <span id="mainDisplayTxt">[ Product Image View ]</span>
         </div>
 
-        <!-- Product Specific Text Fields -->
         <div class="details-column">
             <h1 class="item-title" id="titleField">Product Name</h1>
             <div class="item-price" id="priceField">£0.00</div>
@@ -122,7 +122,7 @@
 
             <div class="actions-row">
                 <input type="number" class="qty-input" value="1" min="1">
-                <button class="btn-basket" onclick="alert('Added to Basket')">Add to Basket</button>
+                <button class="btn-basket" onclick="addToBasket()">Add to Basket</button>
             </div>
 
             <button class="btn-paypal" onclick="alert('Redirecting safely to checkout secure screen')">PayPal</button>
@@ -133,7 +133,7 @@
         <p>&copy; 2026 LA LIBRE. ALL RIGHTS RESERVED.</p>
     </footer>
 
-<script>
+    <script>
         lucide.createIcons();
 
         const catalog = {
@@ -149,7 +149,6 @@
                 title: 'The Grace Lace Maxi', 
                 price: '£110.00', 
                 desc: 'An exquisite slow collection staple produced in high-grade linen-white French pattern trims.',
-                image: 'grace-lace.jpg', 
                 color: '#f4f1ef', 
                 txtColor: '#777' 
             },
@@ -157,7 +156,6 @@
                 title: 'Amour Lace Bustier', 
                 price: '£85.00', 
                 desc: 'Intricate underwire lines meet luxury scalloped eyelash edges.',
-                image: 'amour-lace.jpg', 
                 color: '#eae5e2', 
                 txtColor: '#666' 
             },
@@ -187,7 +185,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('id') || 'eliah-maxi';
 
-        // --- CART INITIALIZATION & SYNC ---
+        // --- WORKING LOCAL STORAGE PERSISTENCE CART COUNTER ---
         function updateCartBadge() {
             const currentCount = parseInt(localStorage.getItem('cartItemCount')) || 0;
             document.querySelector('.cart-badge').innerText = currentCount;
@@ -206,7 +204,6 @@
             alert(`${addedQty} item(s) added to your basket.`);
         }
 
-        // Initialize display on page load
         updateCartBadge();
 
         if(catalog[productId]) {
@@ -219,6 +216,7 @@
             const textDisplay = document.getElementById('mainDisplayTxt');
             const thumbs = document.querySelectorAll('.thumb');
 
+            // Secure asset overwrite handler
             if (product.image) {
                 displayBox.style.backgroundImage = `url('${product.image}')`;
                 textDisplay.style.display = 'none';
