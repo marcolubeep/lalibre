@@ -137,49 +137,50 @@
 
         // Comprehensive 6-Product Mapping Collection
         const catalog = {
-            'eliah-maxi': { 
-                title: 'Eliah Maxi Dress', 
-                price: '£71.00', 
-                desc: 'A premium sheer fine-mesh lace gown engineered to trace natural body curves cleanly.',
-                color: '#e2dedb', 
-                txtColor: '#555' 
-            },
-            'grace-maxi': { 
-                title: 'The Grace Lace Maxi', 
-                price: '£110.00', 
-                desc: 'An exquisite slow collection staple produced in high-grade linen-white French pattern trims.',
-                color: '#f4f1ef', 
-                txtColor: '#777' 
-            },
-            'amour-bustier': { 
-                title: 'Amour Lace Bustier', 
-                price: '£85.00', 
-                desc: 'Intricate underwire lines meet luxury scalloped eyelash edges.',
-                color: '#eae5e2', 
-                txtColor: '#666' 
-            },
-            'soul-slip': { 
-                title: 'Free Soul Slip', 
-                price: '£95.00', 
-                desc: 'A light-weight silk-blend shift slip showcasing signature geometric lace panels.',
-                color: '#2c2a29', 
-                txtColor: '#fff' 
-            },
-            'lace-corset': { 
-                title: 'Slow Lace Corset', 
-                price: '£120.00', 
-                desc: 'Gently structured historical boning accents mapped into ultra-modern romantic lace silhouettes.',
-                color: '#fcfbfa', 
-                txtColor: '#888' 
-            },
-            'noir-skin': { 
-                title: 'Noir Second Skin Gown', 
-                price: '£165.00', 
-                desc: 'Bespoke midnight floral lace maxi gown prioritizing a naked-skin feeling weight class.',
-                color: '#111111', 
-                txtColor: '#fff' 
-            }
-        };
+    'eliah-maxi': { 
+        title: 'Eliah Maxi Dress', 
+        price: '£71.00', 
+        desc: 'A premium sheer fine-mesh lace gown engineered to trace natural body curves cleanly.',
+        image: 'eliah-dress.jpg', // <-- Add this line right here
+        color: '#e2dedb', 
+        txtColor: '#555' 
+    },
+    'grace-maxi': { 
+        title: 'The Grace Lace Maxi', 
+        price: '£110.00', 
+        desc: 'An exquisite slow collection staple produced in high-grade linen-white French pattern trims.',
+        color: '#f4f1ef', 
+        txtColor: '#777' 
+    },
+    'amour-bustier': { 
+        title: 'Amour Lace Bustier', 
+        price: '£85.00', 
+        desc: 'Intricate underwire lines meet luxury scalloped eyelash edges.',
+        color: '#eae5e2', 
+        txtColor: '#666' 
+    },
+    'soul-slip': { 
+        title: 'Free Soul Slip', 
+        price: '£95.00', 
+        desc: 'A light-weight silk-blend shift slip showcasing signature geometric lace panels.',
+        color: '#2c2a29', 
+        txtColor: '#fff' 
+    },
+    'lace-corset': { 
+        title: 'Slow Lace Corset', 
+        price: '£120.00', 
+        desc: 'Gently structured historical boning accents mapped into ultra-modern romantic lace silhouettes.',
+        color: '#fcfbfa', 
+        txtColor: '#888' 
+    },
+    'noir-skin': { 
+        title: 'Noir Second Skin Gown', 
+        price: '£165.00', 
+        desc: 'Bespoke midnight floral lace maxi gown prioritizing a naked-skin feeling weight class.',
+        color: '#111111', 
+        txtColor: '#fff' 
+    }
+};
 
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('id') || 'eliah-maxi';
