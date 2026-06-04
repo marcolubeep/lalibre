@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Libre | Slow Collection</title>
+    <!-- Loaded early in the head to prevent render-blocking crashes -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
@@ -129,18 +130,6 @@
 </head>
 <body>
 
-    <div class="popup-overlay" id="emailPopup">
-        <div class="popup-modal">
-            <button class="popup-close" id="closePopup"><i data-lucide="x" style="width: 18px; height: 18px;"></i></button>
-            <h2>La Libre</h2>
-            <p>Join the slow movement. Subscribe to receive private collection updates.</p>
-            <form class="popup-form" id="subscribeForm">
-                <input type="email" placeholder="YOUR EMAIL" required>
-                <button type="submit">Subscribe</button>
-            </form>
-        </div>
-    </div>
-
     <header>
         <div class="nav-left">
             <a href="index.html">Home</a>
@@ -195,7 +184,7 @@
                 </div>
             </a>
 
-            <!-- Product 2 (Grace Lace Image Added) -->
+            <!-- Product 2 -->
             <a href="product.html?id=grace-maxi" class="product-card">
                 <div class="product-image-box" style="background-image: url('grace-lace.jpg'); background-color: #f4f1ef;"></div>
                 <div class="product-info">
@@ -207,7 +196,7 @@
                 </div>
             </a>
 
-            <!-- Product 3 (Amour Lace Image Added) -->
+            <!-- Product 3 -->
             <a href="product.html?id=amour-bustier" class="product-card">
                 <div class="product-image-box" style="background-image: url('amour-lace.jpg'); background-color: #eae5e2;"></div>
                 <div class="product-info">
@@ -263,46 +252,71 @@
         </div>
     </main>
 
+    <!-- Popup moved to the bottom of body to ensure layout stability -->
+    <div class="popup-overlay" id="emailPopup">
+        <div class="popup-modal">
+            <button class="popup-close" id="closePopup"><i data-lucide="x" style="width: 18px; height: 18px;"></i></button>
+            <h2>La Libre</h2>
+            <p>Join the slow movement. Subscribe to receive private collection updates.</p>
+            <form class="popup-form" id="subscribeForm">
+                <input type="email" placeholder="YOUR EMAIL" required>
+                <button type="submit">Subscribe</button>
+            </form>
+        </div>
+    </div>
+
     <footer>
         <p>&copy; 2026 LA LIBRE. ALL RIGHTS RESERVED.</p>
     </footer>
 
     <script>
-        lucide.createIcons();
-
-        const popup = document.getElementById('emailPopup');
-        const closeBtn = document.getElementById('closePopup');
-        const subscribeForm = document.getElementById('subscribeForm');
-
+        // Wrapped script execution in safety checks to prevent crashes
         function updateCartBadge() {
             const currentCount = localStorage.getItem('cartItemCount') || 0;
-            document.querySelector('.cart-badge').innerText = currentCount;
+            const badge = document.querySelector('.cart-badge');
+            if(badge) badge.innerText = currentCount;
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            // Check if Lucide loaded correctly before running it
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            } else {
+                console.warn("Lucide icons package could not be fetched.");
+            }
+
             updateCartBadge();
-            if (!localStorage.getItem('subscribed') && !localStorage.getItem('popupDismissed')) {
+
+            const popup = document.getElementById('emailPopup');
+            const closeBtn = document.getElementById('closePopup');
+            const subscribeForm = document.getElementById('subscribeForm');
+
+            if (popup && !localStorage.getItem('subscribed') && !localStorage.getItem('popupDismissed')) {
                 setTimeout(() => popup.classList.add('active'), 3000);
             }
-        });
 
-        closeBtn.addEventListener('click', () => {
-            popup.classList.remove('active');
-            localStorage.setItem('popupDismissed', 'true');
-        });
+            if(closeBtn && popup) {
+                closeBtn.addEventListener('click', () => {
+                    popup.classList.remove('active');
+                    localStorage.setItem('popupDismissed', 'true');
+                });
 
-        popup.addEventListener('click', (e) => { 
-            if (e.target === popup) {
-                popup.classList.remove('active'); 
-                localStorage.setItem('popupDismissed', 'true');
+                popup.addEventListener('click', (e) => { 
+                    if (e.target === popup) {
+                        popup.classList.remove('active'); 
+                        localStorage.setItem('popupDismissed', 'true');
+                    }
+                });
             }
-        });
 
-        subscribeForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            localStorage.setItem('subscribed', 'true');
-            popup.classList.remove('active');
-            alert('Thank you for joining our movement.');
+            if(subscribeForm && popup) {
+                subscribeForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    localStorage.setItem('subscribed', 'true');
+                    popup.classList.remove('active');
+                    alert('Thank you for joining our movement.');
+                });
+            }
         });
     </script>
 </body>
