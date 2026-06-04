@@ -6,20 +6,75 @@
     <title>La Libre | Slow Collection</title>
     <!-- Loaded early in the head to prevent render-blocking crashes -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    /* --- DYNAMIC VIDEO/GIF BANNER COMPONENT --- */
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #1a1a1a;
+            --accent-color: #707070;
+            --light-gray: #f9f9f9;
+            --overlay-bg: rgba(0, 0, 0, 0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; }
+        
+        header {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            padding: 1.5rem 4%;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 100;
+        }
+        
+        .nav-left { display: flex; gap: 1.5rem; }
+        .nav-left a { text-decoration: none; color: var(--text-color); font-size: 0.9rem; font-weight: 400; }
+        
+        .logo { 
+            font-family: serif; 
+            font-size: 1.6rem; 
+            letter-spacing: 0.3rem; 
+            text-transform: uppercase; 
+            font-weight: 400; 
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .nav-right { display: flex; justify-content: flex-end; align-items: center; gap: 1.2rem; }
+        .social-icons { display: flex; gap: 1rem; color: var(--text-color); }
+        .social-icons i, .social-icons svg { cursor: pointer; width: 18px; height: 18px; }
+        
+        .lang-select {
+            font-size: 0.85rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .cart-icon-wrapper { position: relative; display: flex; align-items: center; }
+        .cart-badge {
+            position: absolute; top: -8px; right: -8px;
+            background: var(--text-color); color: white;
+            font-size: 0.65rem; padding: 2px 5px; border-radius: 50%;
+        }
+
+        /* --- CINEMATIC VIDEO BANNER STYLES --- */
         .banner {
             width: 100%;
-            height: 45vh; /* Bumped slightly to 45vh for a more cinematic widescreen reveal */
+            height: 45vh;
             min-height: 300px;
             position: relative;
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #000; /* Dark safety fallback while media loads */
+            background-color: #0d0d0d;
         }
 
-        /* The container holding our looping asset */
         .banner-media-container {
             position: absolute;
             top: 0;
@@ -29,35 +84,32 @@
             z-index: 1;
         }
 
-        /* Forces either video or GIF to stretch cleanly without stretching proportions */
-        .banner-media-container video,
-        .banner-media-container .gif-bg {
+        .banner-media-container video {
             width: 100%;
             height: 100%;
             object-fit: cover;
             pointer-events: none;
         }
 
-        /* A subtle dark tint overlay to make your clean white text legible over light frames */
         .banner-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.3));
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.35));
             z-index: 2;
         }
 
         .banner-text { 
             position: relative; 
-            z-index: 10; /* Keeps text stacked perfectly on top of video and overlay layers */
+            z-index: 10; 
             text-align: center; 
             color: white; 
             max-width: 900px; 
             padding: 1rem 2rem; 
         }
-        
+
         .banner-text h1 { 
             font-family: serif; 
             font-size: clamp(1.8rem, 4.5vw, 3.2rem); 
@@ -66,9 +118,9 @@
             text-transform: uppercase; 
             margin-bottom: 0.3rem; 
             color: #ffffff;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3); /* Soft shadow ensures tracking is sharp */
+            text-shadow: 0 2px 12px rgba(0,0,0,0.4);
         }
-        
+
         .banner-text p { 
             font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
             font-size: clamp(0.75rem, 1.8vw, 0.9rem); 
@@ -78,8 +130,38 @@
             text-transform: uppercase; 
             font-style: italic; 
         }
-        
+
         .divider { width: 50px; height: 1px; background: #ffffff60; margin: 1rem auto; }
+
+        /* --- PRODUCT CATALOG GRID --- */
+        .products-container { max-width: 1200px; margin: 4rem auto; padding: 0 2rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 3rem; }
+        
+        .product-card { display: flex; flex-direction: column; text-decoration: none; color: inherit; cursor: pointer; }
+        .product-image-box { height: 420px; display: flex; align-items: center; justify-content: center; transition: opacity 0.3s ease; text-align: center; padding: 1rem; font-weight: 500; background-size: cover; background-position: center; }
+        .product-card:hover .product-image-box { opacity: 0.85; }
+        
+        .product-info { margin-top: 1rem; display: flex; justify-content: space-between; align-items: flex-start; }
+        .product-title { font-size: 1rem; font-weight: 400; letter-spacing: 0.05rem; }
+        .product-tagline { font-size: 0.85rem; color: var(--accent-color); margin-top: 0.2rem; }
+        .product-price { font-weight: 500; }
+
+        @media (max-width: 900px) {
+            header { grid-template-columns: 1fr; gap: 1rem; text-align: center; }
+            .nav-left, .nav-right { justify-content: center; }
+            .logo { order: -1; }
+        }
+
+        .popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--overlay-bg); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s ease; padding: 20px; }
+        .popup-overlay.active { opacity: 1; visibility: visible; }
+        .popup-modal { background: #ffffff; padding: 3rem 2.5rem; max-width: 450px; width: 100%; position: relative; text-align: center; }
+        .popup-close { position: absolute; top: 15px; right: 15px; background: none; border: none; cursor: pointer; color: var(--accent-color); display: flex; align-items: center; justify-content: center; }
+        .popup-modal h2 { font-family: serif; font-size: 1.8rem; font-weight: 300; letter-spacing: 0.1rem; margin-bottom: 0.5rem; text-transform: uppercase; }
+        .popup-form input[type="email"] { width: 100%; padding: 0.8rem 1rem; border: 1px solid #ccc; margin-bottom: 1rem; text-align: center; outline: none; }
+        .popup-form button { width: 100%; padding: 0.9rem; background-color: var(--text-color); color: #fff; border: none; text-transform: uppercase; letter-spacing: 0.15rem; font-size: 0.85rem; cursor: pointer; }
+
+        footer { text-align: center; padding: 4rem 1rem; border-top: 1px solid #eee; margin-top: 4rem; font-size: 0.85rem; color: var(--accent-color); letter-spacing: 0.05rem; }
+    </style>
 </head>
 <body>
 
@@ -110,20 +192,18 @@
         </div>
     </header>
 
+    <!-- NEW HERO BANNER COMPONENT -->
     <section class="banner">
-        <!-- Media Backdrop Layer Container -->
         <div class="banner-media-container">
-            <!-- playsinline, autoplay, loop, and muted are ALL required for video to play on iOS/Android -->
+            <!-- Global CDN sample loaded for quick previewing. Replace with your 'banner-video.mp4' later -->
             <video autoplay loop muted playsinline poster="eliah-dress.jpg">
-                <source src="banner-video.mp4" type="video/mp4">
+                <source src="https://assets.mixkit.co/videos/preview/mixkit-waving-sheets-of-black-silk-41618-large.mp4" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
         </div>
         
-        <!-- Darkening Sheet Overlay Layer -->
         <div class="banner-overlay"></div>
          
-        <!-- Text Foreground Layer -->
         <div class="banner-text">
             <h1>Free Soul, Second Skin</h1>
             <div class="divider"></div>
@@ -213,7 +293,7 @@
         </div>
     </main>
 
-    <!-- Popup moved to the bottom of body to ensure layout stability -->
+    <!-- Modal Popup Box Structurally Safeguarded Down Here -->
     <div class="popup-overlay" id="emailPopup">
         <div class="popup-modal">
             <button class="popup-close" id="closePopup"><i data-lucide="x" style="width: 18px; height: 18px;"></i></button>
@@ -231,7 +311,6 @@
     </footer>
 
     <script>
-        // Wrapped script execution in safety checks to prevent crashes
         function updateCartBadge() {
             const currentCount = localStorage.getItem('cartItemCount') || 0;
             const badge = document.querySelector('.cart-badge');
@@ -239,7 +318,6 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            // Check if Lucide loaded correctly before running it
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
             } else {
