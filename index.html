@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Libre | Slow Collection</title>
-    <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+    <!-- Updated to stable modern Lucide package for cross-browser icon support -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
             --bg-color: #ffffff;
@@ -44,7 +45,7 @@
         
         .nav-right { display: flex; justify-content: flex-end; align-items: center; gap: 1.2rem; }
         .social-icons { display: flex; gap: 1rem; color: var(--text-color); }
-        .social-icons i { cursor: pointer; width: 18px; height: 18px; }
+        .social-icons i, .social-icons svg { cursor: pointer; width: 18px; height: 18px; }
         
         .lang-select {
             font-size: 0.85rem;
@@ -54,18 +55,18 @@
             outline: none;
         }
 
-        .cart-icon-wrapper { position: relative; cursor: pointer; }
+        .cart-icon-wrapper { position: relative; cursor: pointer; display: flex; align-items: center; }
         .cart-badge {
             position: absolute; top: -8px; right: -8px;
             background: var(--text-color); color: white;
             font-size: 0.65rem; padding: 2px 5px; border-radius: 50%;
         }
 
-        /* --- YOUR INTEGRATED ABSTRACT BANNER --- */
-.banner {
+        /* --- NARROWER ABSTRACT BANNER --- */
+        .banner {
             width: 100%;
-            height: 35vh; /* Reduced from 65vh to make it narrower */
-            min-height: 250px; /* Reduced from 400px */
+            height: 35vh;
+            min-height: 250px;
             background: radial-gradient(circle at 20% 30%, #0a0a0a, #000000);
             position: relative;
             overflow: hidden;
@@ -116,29 +117,34 @@
         }
 
         .banner-text {
-            position: relative; z-index: 10; text-align: center; color: white; max-width: 800px; padding: 2rem;
+            position: relative; z-index: 10; text-align: center; color: white; max-width: 900px; padding: 1rem 2rem;
         }
 
-        .banner-text {
-            position: relative; 
-            z-index: 10; 
-            text-align: center; 
-            color: white; 
-            max-width: 800px; 
-            padding: 1rem 2rem; /* Reduced top/bottom padding */
+        /* EXACT MATCH DESIGN FOR LA LIBRE TYPOGRAPHY CORE */
+        .banner-text h1 {
+            font-family: serif;
+            font-size: clamp(1.8rem, 4.5vw, 3.2rem);
+            font-weight: 400;
+            letter-spacing: 0.3rem;
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+            background: linear-gradient(135deg, #ffffff 40%, #cccccc 90%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
         }
 
         .banner-text p {
             font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            font-size: clamp(0.8rem, 2.5vw, 1.05rem);
+            font-size: clamp(0.75rem, 1.8vw, 0.9rem);
             font-weight: 300;
-            letter-spacing: 6px;
+            letter-spacing: 4px;
             color: #b5b5b5;
             text-transform: uppercase;
             font-style: italic;
         }
 
-        .divider { width: 70px; height: 1px; background: #ffffff40; margin: 1.5rem auto; }
+        .divider { width: 50px; height: 1px; background: #ffffff40; margin: 1rem auto; }
 
         @keyframes drift {
             0% { transform: translate(0, 0) rotate(0deg) scale(1); }
@@ -166,11 +172,11 @@
             .logo { order: -1; }
         }
 
-        /* Email Modal */
+        /* Email Modal Styles */
         .popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--overlay-bg); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s ease; padding: 20px; }
         .popup-overlay.active { opacity: 1; visibility: visible; }
         .popup-modal { background: #ffffff; padding: 3rem 2.5rem; max-width: 450px; width: 100%; position: relative; text-align: center; }
-        .popup-close { position: absolute; top: 15px; right: 15px; background: none; border: none; cursor: pointer; color: var(--accent-color); }
+        .popup-close { position: absolute; top: 15px; right: 15px; background: none; border: none; cursor: pointer; color: var(--accent-color); display: flex; align-items: center; justify-content: center; }
         .popup-modal h2 { font-family: serif; font-size: 1.8rem; font-weight: 300; letter-spacing: 0.1rem; margin-bottom: 0.5rem; text-transform: uppercase; }
         .popup-form input[type="email"] { width: 100%; padding: 0.8rem 1rem; border: 1px solid #ccc; margin-bottom: 1rem; text-align: center; outline: none; }
         .popup-form button { width: 100%; padding: 0.9rem; background-color: var(--text-color); color: #fff; border: none; text-transform: uppercase; letter-spacing: 0.15rem; font-size: 0.85rem; cursor: pointer; }
@@ -219,7 +225,7 @@
         </div>
     </header>
 
-    <!-- NEW DYNAMIC ABSTRACT HERO SECTION -->
+    <!-- ABSTRACT HERO BANNER INTERFACE -->
     <section class="banner">
         <div class="shape shape1"></div>
         <div class="shape shape2"></div>
@@ -235,7 +241,7 @@
 
     <main class="products-container">
         <div class="grid">
-            <!-- Product 1 (Updated with your custom background-image setup) -->
+            <!-- Product 1 -->
             <a href="product.html?id=eliah-maxi" class="product-card">
                 <div class="product-image-box" style="background-image: url('eliah-dress.jpg'); background-size: cover; background-position: center; background-color: #e2dedb;">
                 </div>
@@ -325,16 +331,41 @@
     </footer>
 
     <script>
+        // Render Icons Securely
         lucide.createIcons();
+
         const popup = document.getElementById('emailPopup');
         const closeBtn = document.getElementById('closePopup');
+        const subscribeForm = document.getElementById('subscribeForm');
+
         window.addEventListener('DOMContentLoaded', () => {
-            if(!localStorage.getItem('subscribed')) {
+            // Check memory flags so users who dismissed or completed are ignored
+            if (!localStorage.getItem('subscribed') && !localStorage.getItem('popupDismissed')) {
                 setTimeout(() => popup.classList.add('active'), 3000);
             }
         });
-        closeBtn.addEventListener('click', () => popup.classList.remove('active'));
-        popup.addEventListener('click', (e) => { if(e.target === popup) popup.classList.remove('active'); });
+
+        // Clicking the close X button saves preference to browser history memory
+        closeBtn.addEventListener('click', () => {
+            popup.classList.remove('active');
+            localStorage.setItem('popupDismissed', 'true');
+        });
+
+        // Clicking outside the container space wraps a close action and logs preference
+        popup.addEventListener('click', (e) => { 
+            if (e.target === popup) {
+                popup.classList.remove('active'); 
+                localStorage.setItem('popupDismissed', 'true');
+            }
+        });
+
+        // Standard subscription handler
+        subscribeForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            localStorage.setItem('subscribed', 'true');
+            popup.classList.remove('active');
+            alert('Thank you for joining our movement.');
+        });
     </script>
 </body>
 </html>
