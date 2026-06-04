@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Libre | View Item</title>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #1a1a1a;
+            --accent-color: #707070;
+            --light-gray: #f9f9f9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; }
+        
+        header {
+            display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+            padding: 1.5rem 4%; border-bottom: 1px solid #eee; position: sticky; top: 0; background: white; z-index: 100;
+        }
+        .nav-left { display: flex; gap: 1.5rem; }
+        .nav-left a { text-decoration: none; color: var(--text-color); font-size: 0.9rem; }
+        .logo { font-family: serif; font-size: 1.6rem; letter-spacing: 0.3rem; text-transform: uppercase; cursor: pointer; text-align: center; }
+        .nav-right { display: flex; justify-content: flex-end; align-items: center; gap: 1.2rem; }
+        .social-icons { display: flex; gap: 1rem; }
+        .lang-select { font-size: 0.85rem; border: none; background: transparent; cursor: pointer; }
+        .cart-icon-wrapper { position: relative; }
+        .cart-badge { position: absolute; top: -8px; right: -8px; background: var(--text-color); color: white; font-size: 0.65rem; padding: 2px 5px; border-radius: 50%; }
+
+        /* Store design inspired by image_24945e.jpg */
+        .store-container {
+            max-width: 1200px; margin: 2rem auto; padding: 0 2rem;
+            display: grid; grid-template-columns: 80px 1fr 1fr; gap: 2rem;
+        }
+
+        .thumbs-column { display: flex; flex-direction: column; gap: 1rem; }
+        .thumb { width: 100%; height: 110px; cursor: pointer; border: 1px solid transparent; opacity: 0.7; }
+        .thumb.active { border-color: #1a1a1a; opacity: 1; }
+
+        .main-preview-box { width: 100%; height: 580px; display: flex; align-items: center; justify-content: center; font-weight: 500; }
+
+        .details-column { padding-left: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
+        .item-title { font-size: 2rem; font-weight: 300; letter-spacing: 0.05rem; }
+        .item-price { font-size: 1.4rem; font-weight: 400; color: #1a1a1a; }
+        .item-description { font-size: 0.9rem; color: var(--accent-color); line-height: 1.5; }
+        
+        .option-label { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 0.3rem; }
+        .size-dropdown { width: 100%; padding: 0.75rem; border: 1px solid #ccc; font-size: 0.9rem; outline: none; background: #fff; }
+
+        .actions-row { display: flex; gap: 1rem; margin-top: 1rem; }
+        .qty-input { width: 60px; text-align: center; border: 1px solid #ccc; font-size: 1rem; }
+        .btn-basket { flex: 1; padding: 0.9rem; background: transparent; border: 1px solid var(--text-color); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.1rem; cursor: pointer; }
+        .btn-basket:hover { background: var(--text-color); color: white; }
+
+        .btn-paypal { width: 100%; padding: 0.8rem; background: #e2e2e2; border: none; font-style: italic; font-weight: bold; font-size: 1.1rem; color: #444; cursor: pointer; text-align: center; }
+
+        @media (max-width: 768px) {
+            .store-container { grid-template-columns: 1fr; }
+            .thumbs-column { order: 2; flex-direction: row; }
+            .thumb { height: 80px; }
+            .details-column { padding-left: 0; }
+        }
+
+        footer { text-align: center; padding: 4rem 1rem; border-top: 1px solid #eee; margin-top: 4rem; font-size: 0.85rem; color: var(--accent-color); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-left">
+            <a href="index.html">Home</a>
+            <a href="#">Dresses</a>
+            <a href="#">Lingeries</a>
+            <a href="#">New Arrivals</a>
+        </div>
+        <div class="logo" onclick="window.location.href='index.html'">La Libre</div>
+        <div class="nav-right">
+            <div class="social-icons">
+                <i data-lucide="instagram"></i>
+                <i data-lucide="facebook"></i>
+                <i data-lucide="pinterest"></i>
+            </div>
+            <select class="lang-select">
+                <option>EN (UK)</option>
+                <option>FR</option>
+            </select>
+            <div class="cart-icon-wrapper"><i data-lucide="shopping-bag"></i><span class="cart-badge">0</span></div>
+        </div>
+    </header>
+
+    <main class="store-container">
+        <!-- Vertical Thumbnails -->
+        <div class="thumbs-column" id="thumbsBox">
+            <div class="thumb active"></div>
+            <div class="thumb"></div>
+            <div class="thumb"></div>
+        </div>
+
+        <!-- Big Display Image -->
+        <div class="main-preview-box" id="mainDisplay">
+            <span id="mainDisplayTxt">[ Product Image View ]</span>
+        </div>
+
+        <!-- Product Specific Text Fields -->
+        <div class="details-column">
+            <h1 class="item-title" id="titleField">Product Name</h1>
+            <div class="item-price" id="priceField">£0.00</div>
+            <p class="item-description" id="descField">Delicate slow-fashion lace design.</p>
+            
+            <div>
+                <div class="option-label">Size</div>
+                <select class="size-dropdown">
+                    <option>Choose an option</option>
+                    <option>Small</option>
+                    <option>Medium</option>
+                    <option>Large</option>
+                </select>
+            </div>
+
+            <div class="actions-row">
+                <input type="number" class="qty-input" value="1" min="1">
+                <button class="btn-basket" onclick="alert('Added to Basket')">Add to Basket</button>
+            </div>
+
+            <button class="btn-paypal" onclick="alert('Redirecting safely to checkout secure screen')">PayPal</button>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 LA LIBRE. ALL RIGHTS RESERVED.</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // Comprehensive 6-Product Mapping Collection
+        const catalog = {
+            'eliah-maxi': { 
+                title: 'Eliah Maxi Dress', 
+                price: '£71.00', 
+                desc: 'A premium sheer fine-mesh lace gown engineered to trace natural body curves cleanly.',
+                color: '#e2dedb', 
+                txtColor: '#555' 
+            },
+            'grace-maxi': { 
+                title: 'The Grace Lace Maxi', 
+                price: '£110.00', 
+                desc: 'An exquisite slow collection staple produced in high-grade linen-white French pattern trims.',
+                color: '#f4f1ef', 
+                txtColor: '#777' 
+            },
+            'amour-bustier': { 
+                title: 'Amour Lace Bustier', 
+                price: '£85.00', 
+                desc: 'Intricate underwire lines meet luxury scalloped eyelash edges.',
+                color: '#eae5e2', 
+                txtColor: '#666' 
+            },
+            'soul-slip': { 
+                title: 'Free Soul Slip', 
+                price: '£95.00', 
+                desc: 'A light-weight silk-blend shift slip showcasing signature geometric lace panels.',
+                color: '#2c2a29', 
+                txtColor: '#fff' 
+            },
+            'lace-corset': { 
+                title: 'Slow Lace Corset', 
+                price: '£120.00', 
+                desc: 'Gently structured historical boning accents mapped into ultra-modern romantic lace silhouettes.',
+                color: '#fcfbfa', 
+                txtColor: '#888' 
+            },
+            'noir-skin': { 
+                title: 'Noir Second Skin Gown', 
+                price: '£165.00', 
+                desc: 'Bespoke midnight floral lace maxi gown prioritizing a naked-skin feeling weight class.',
+                color: '#111111', 
+                txtColor: '#fff' 
+            }
+        };
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id') || 'eliah-maxi';
+
+        if(catalog[productId]) {
+            const product = catalog[productId];
+            document.getElementById('titleField').innerText = product.title;
+            document.getElementById('priceField').innerText = product.price;
+            document.getElementById('descField').innerText = product.desc;
+            
+            const displayBox = document.getElementById('mainDisplay');
+            displayBox.style.backgroundColor = product.color;
+            
+            const textDisplay = document.getElementById('mainDisplayTxt');
+            textDisplay.innerText = `[ Main Preview: ${product.title} ]`;
+            textDisplay.style.color = product.txtColor;
+
+            // Apply theme matching colors onto multi-angle thumbnail column boxes
+            const thumbs = document.querySelectorAll('.thumb');
+            thumbs.forEach(t => {
+                t.style.backgroundColor = product.color;
+            });
+
+            document.title = `La Libre | ${product.title}`;
+        }
+    </script>
+</body>
+</html>
