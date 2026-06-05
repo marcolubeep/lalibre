@@ -4,9 +4,9 @@
     const currentLang = localStorage.getItem('selectedLang') || 'en';
 
     const bannerTranslations = {
-        en: "Complimentary worldwide shipping on architectural orders",
-        es: "Envío internacional de cortesía en pedidos arquitectónicos",
-        zh: "建筑系列订单享受全球免费配送服务"
+    en: "Demo website developed by Marco, the best is yet to come!",
+    es: "Sitio web de demostración desarrollado por Marco, ¡lo mejor está por venir!",
+    zh: "由 Marco 开发的演示网站，精彩即将到来！"
     };
 
     const text = bannerTranslations[currentLang] || bannerTranslations['en'];
