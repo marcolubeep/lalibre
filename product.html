@@ -126,6 +126,12 @@
             updateProductPage();
         }
     });
+        window.addEventListener('languageChanged', (e) => {
+        // Appena la navbar lancia il segnale, la pagina aggiorna i suoi contenuti
+        if (typeof updateUIText === 'function') updateUIText();
+        if (typeof render === 'function') render(); // Per index.html
+        if (typeof updateProductPage === 'function') updateProductPage(); // Per product.html
+    });
     </script>
 </body>
 </html>
