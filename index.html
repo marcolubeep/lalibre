@@ -35,8 +35,7 @@
     </style>
 </head>
 <body>
-
-    //RENDE TUTTO OPACO QUANDO C'E' IL POPUP
+/* RENDE OPACO IL RESTO COL POPUP */
 <div id="popupOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255, 255, 255, 0.6); z-index:9998; backdrop-filter:blur(4px);"></div>
     
     <div class="sticky-nav">
@@ -186,7 +185,7 @@
     window.addEventListener('languageChanged', updatePopupLanguage);
 </script>
     
-    // NEWSLETTER POPUP
+    /* NEWSLETTER POPUP */
    <div id="newsletterPopup" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:#fff; padding:4rem; border:1px solid #e2dbd2; z-index:9999; box-shadow:0 10px 50px rgba(0,0,0,0.1); max-width:500px; width:90%; text-align:center;">
     
     <button id="closePopup" style="position:absolute; top:20px; right:20px; border:none; background:none; cursor:pointer; font-size:1.5rem;">&times;</button>
