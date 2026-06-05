@@ -281,4 +281,203 @@
                 <option>EN (UK)</option>
                 <option>FR</option>
             </select>
-            <a
+            <a href="cart.html" class="cart-icon-wrapper" style="text-decoration: none; color: inherit;">
+                <i data-lucide="shopping-bag" style="width: 20px; height: 20px;"></i>
+                <span class="cart-badge">0</span>
+            </a>
+        </div>
+    </header>
+
+    <section class="banner">
+        <div class="banner-media-container">
+            <video autoplay loop muted playsinline>
+                <source src="images/banner-video.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        <div class="banner-overlay"></div>
+        <div class="banner-text">
+            <h1>Free Soul, Second Skin</h1>
+            <div class="divider"></div>
+            <p>Slow Collection crafted in delicate lace</p>
+        </div>
+    </section>
+
+    <div class="search-filter-bar">
+        <div class="search-wrapper">
+            <i data-lucide="search"></i>
+            <input type="text" id="searchInput" placeholder="SEARCH COLLECTION...">
+        </div>
+        
+        <div class="sort-wrapper">
+            <label for="sortSelect">SORT BY — </label>
+            <select id="sortSelect" class="sort-select">
+                <option value="default">DEFAULT</option>
+                <option value="name-asc">NAME (A-Z)</option>
+                <option value="price-asc">PRICE (LOW - HIGH)</option>
+                <option value="price-desc">PRICE (HIGH - LOW)</option>
+            </select>
+        </div>
+    </div>
+
+    <main class="products-container">
+        <div class="grid" id="productGrid"></div>
+    </main>
+
+    <div class="popup-overlay" id="emailPopup">
+        <div class="popup-modal">
+            <button class="popup-close" id="closePopup"><i data-lucide="x" style="width: 18px; height: 18px;"></i></button>
+            <h2>La Libre</h2>
+            <p>Join the slow movement. Subscribe to receive private collection updates.</p>
+            <form class="popup-form" id="subscribeForm">
+                <input type="email" placeholder="YOUR EMAIL" required>
+                <button type="submit">Subscribe</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 LA LIBRE. ALL RIGHTS RESERVED.</p>
+    </footer>
+
+    <script src="products.js"></script>
+
+    <script>
+        let currentCategory = "all";
+        let searchQuery = "";
+        let currentSort = "default";
+
+        function parsePrice(priceString) {
+            return parseFloat(priceString.replace(/[^0-9.]/g, '')) || 0;
+        }
+
+        function changeCategory(category) {
+            currentCategory = category;
+            displayCatalog();
+        }
+
+        function displayCatalog() {
+            const grid = document.getElementById('productGrid');
+            if (!grid) return;
+            
+            grid.innerHTML = "";
+
+            if (typeof productsMaster === 'undefined') {
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:red; margin: 2rem 0;'>Errore di caricamento: File 'products.js' non trovato.</p>";
+                return;
+            }
+
+            let filteredProducts = productsMaster.filter(product => {
+                const isActive = product.status === "active";
+                const matchesCategory = currentCategory === "all" || product.categories.includes(currentCategory);
+                return isActive && matchesCategory;
+            });
+
+            if (searchQuery.trim() !== "") {
+                const query = searchQuery.toLowerCase().trim();
+                filteredProducts = filteredProducts.filter(product => 
+                    product.title.toLowerCase().includes(query) || 
+                    product.tagline.toLowerCase().includes(query)
+                );
+            }
+
+            if (currentSort === "name-asc") {
+                filteredProducts.sort((a, b) => a.title.localeCompare(b.title));
+            } else if (currentSort === "price-asc") {
+                filteredProducts.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
+            } else if (currentSort === "price-desc") {
+                filteredProducts.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
+            }
+
+            if (filteredProducts.length === 0) {
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:var(--accent-color); margin: 4rem 0; letter-spacing: 1px; font-size: 0.85rem; text-transform: uppercase;'>No items match your search criteria.</p>";
+                return;
+            }
+
+            filteredProducts.forEach(product => {
+                const bgStyle = product.image ? `background-image: url('${product.image}');` : '';
+                const textColor = product.fallbackColor === "#111111" || product.fallbackColor === "#2c2a29" ? "color: #fff;" : "";
+                const placeholderText = !product.image ? `[ ${product.title} ]` : "";
+
+                const cardHTML = `
+                    <a href="product.html?id=${product.id}" class="product-card">
+                        <div class="product-image-box" style="${bgStyle} background-color: ${product.fallbackColor}; ${textColor}">
+                            ${placeholderText}
+                        </div>
+                        <div class="product-info">
+                            <div>
+                                <h3 class="product-title">${product.title}</h3>
+                                <p class="product-tagline">${product.tagline}</p>
+                            </div>
+                            <span class="product-price">${product.price}</span>
+                        </div>
+                    </a>
+                `;
+                grid.innerHTML += cardHTML;
+            });
+        }
+
+        function updateCartBadge() {
+            const currentCount = localStorage.getItem('cartItemCount') || 0;
+            const badge = document.querySelector('.cart-badge');
+            if(badge) badge.innerText = currentCount;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Chiamata esplicita obbligatoria per far apparire i loghi Lucide
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            updateCartBadge();
+            displayCatalog();
+
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    searchQuery = e.target.value;
+                    displayCatalog();
+                });
+            }
+
+            const sortSelect = document.getElementById('sortSelect');
+            if (sortSelect) {
+                sortSelect.addEventListener('change', (e) => {
+                    currentSort = e.target.value;
+                    displayCatalog();
+                });
+            }
+
+            const popup = document.getElementById('emailPopup');
+            const closeBtn = document.getElementById('closePopup');
+            const subscribeForm = document.getElementById('subscribeForm');
+
+            if (popup && !localStorage.getItem('subscribed') && !localStorage.getItem('popupDismissed')) {
+                setTimeout(() => popup.classList.add('active'), 6000);
+            }
+
+            if(closeBtn && popup) {
+                closeBtn.addEventListener('click', () => {
+                    popup.classList.remove('active');
+                    localStorage.setItem('popupDismissed', 'true');
+                });
+                popup.addEventListener('click', (e) => { 
+                    if (e.target === popup) {
+                        popup.classList.remove('active'); 
+                        localStorage.setItem('popupDismissed', 'true');
+                    }
+                });
+            }
+
+            if(subscribeForm && popup) {
+                subscribeForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    localStorage.setItem('subscribed', 'true');
+                    popup.classList.remove('active');
+                    alert('Thank you for joining our movement.');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
