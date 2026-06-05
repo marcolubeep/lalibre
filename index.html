@@ -43,16 +43,19 @@
             text-align: center;
         }
         
-        .nav-right { display: flex; justify-content: flex-end; align-items: center; gap: 1.2rem; }
-        .social-icons { display: flex; gap: 1rem; color: var(--text-color); }
-        .social-icons i, .social-icons svg { cursor: pointer; width: 18px; height: 18px; }
+        .nav-right { display: flex; justify-content: flex-end; align-items: center; gap: 1.5rem; }
+        .social-icons { display: flex; gap: 1rem; color: var(--text-color); align-items: center; }
+        .social-icons i, .social-icons svg { cursor: pointer; width: 17px; height: 17px; }
         
         .lang-select {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             border: none;
             background: transparent;
             cursor: pointer;
             outline: none;
+            letter-spacing: 1px;
+            font-weight: 400;
+            color: var(--text-color);
         }
 
         .cart-icon-wrapper { position: relative; display: flex; align-items: center; }
@@ -132,9 +135,6 @@
 
         .divider { width: 50px; height: 1px; background: #ffffff60; margin: 1rem auto; }
 
-        /* ==========================================
-           NUOVA BARRA FILTRI HIGH-END E CLASSIER
-           ========================================== */
         .search-filter-bar {
             max-width: 1200px;
             margin: 4rem auto 0 auto;
@@ -146,7 +146,6 @@
             flex-wrap: wrap;
         }
 
-        /* Barra di ricerca ultra-minimal */
         .search-wrapper {
             display: flex;
             align-items: center;
@@ -156,10 +155,7 @@
             transition: border-color 0.4s ease;
         }
         
-        .search-wrapper:focus-within { 
-            border-color: var(--text-color); 
-        }
-        
+        .search-wrapper:focus-within { border-color: var(--text-color); }
         .search-wrapper input {
             border: none;
             outline: none;
@@ -171,33 +167,11 @@
             text-transform: uppercase;
             background: transparent;
         }
-        
-        .search-wrapper input::placeholder {
-            color: #b0b0b0;
-            font-weight: 300;
-        }
-        
-        .search-wrapper i, .search-wrapper svg { 
-            color: var(--accent-color); 
-            width: 14px; 
-            height: 14px; 
-            opacity: 0.7;
-        }
+        .search-wrapper input::placeholder { color: #b0b0b0; font-weight: 300; }
+        .search-wrapper i, .search-wrapper svg { color: var(--accent-color); width: 14px; height: 14px; opacity: 0.7; }
 
-        /* Menu a tendina integrato con lo sfondo */
-        .sort-wrapper { 
-            display: flex; 
-            align-items: center; 
-            gap: 0.3rem; 
-        }
-        
-        .sort-wrapper label { 
-            font-size: 0.8rem; 
-            color: var(--accent-color); 
-            text-transform: uppercase; 
-            letter-spacing: 1.5px; 
-            font-weight: 300;
-        }
+        .sort-wrapper { display: flex; align-items: center; gap: 0.3rem; }
+        .sort-wrapper label { font-size: 0.8rem; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 300; }
         
         .sort-select {
             border: none;
@@ -210,29 +184,17 @@
             color: var(--text-color);
             text-transform: uppercase;
             font-weight: 400;
-            appearance: none; /* Rimuove la freccia standard brutta dei browser */
+            appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
-            /* Inserisce una freccia custom minuscola e raffinata usando un SVG pulito */
             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%231a1a1a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
             background-repeat: no-repeat;
             background-position: right center;
             transition: color 0.2s ease;
         }
-        
-        .sort-select:hover { 
-            color: var(--accent-color); 
-        }
+        .sort-select:hover { color: var(--accent-color); }
+        .sort-select option { background-color: #ffffff; color: var(--text-color); text-transform: uppercase; letter-spacing: 1px; }
 
-        /* Stile pulito per le opzioni interne del drop-down */
-        .sort-select option {
-            background-color: #ffffff;
-            color: var(--text-color);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Resto dello stile invariato */
         .products-container { max-width: 1200px; margin: 2rem auto 4rem auto; padding: 0 2rem; min-height: 400px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 3rem; }
         
@@ -278,6 +240,7 @@
         <div class="logo" onclick="window.location.href='index.html'">La Libre</div>
         
         <div class="nav-right">
+            <!-- SOCIAL ADIACENTI ALLA LINGUA -->
             <div class="social-icons">
                 <a href="https://www.instagram.com/lalibreofficial/" target="_blank" rel="noopener noreferrer" style="color: inherit; display: inline-flex; align-items: center;">
                     <i data-lucide="instagram"></i>
@@ -311,7 +274,6 @@
         </div>
     </section>
 
-    <!-- BARRA DI FILTRO EDITATA IN CHIAVE LUXURY-MINIMAL -->
     <div class="search-filter-bar">
         <div class="search-wrapper">
             <i data-lucide="search"></i>
