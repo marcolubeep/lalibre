@@ -6,43 +6,51 @@
     <title>La Libre Studio &mdash; Product Details</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
     <style>
-        /* [STILI MANTENUTI INALTERATI - AGGIUNGI QUI QUELLI CHE AVEVI GIA] */
         * { box-sizing: border-box; }
         body { margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; background-color: #ffffff; color: #1a1a1a; }
-        .sticky-nav-wrapper { position: fixed; top: 0; width: 100%; z-index: 1000; background-color: #ffffff; box-shadow: 0 1px 10px rgba(0,0,0,0.03); }
-        .product-page-wrapper { max-width: 1200px; margin: 0 auto; padding: 2rem; padding-top: 140px; }
+        
+        /* Sticky Wrapper identico a index */
+        .sticky-nav-wrapper { position: fixed; top: 0; width: 100%; z-index: 1000; background: #ffffff; box-shadow: 0 1px 10px rgba(0,0,0,0.03); }
+        
+        .product-page-wrapper { max-width: 1200px; margin: 0 auto; padding: 2rem; padding-top: 160px; }
         .product-detail-container { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 4rem; align-items: start; }
+        
         .product-gallery { width: 100%; aspect-ratio: 3 / 4; background-color: #f7f5f2; overflow: hidden; }
         .product-gallery img { width: 100%; height: 100%; object-fit: cover; }
         
-        /* Modifica specifica per nascondere se necessario */
-        .size-selector { margin-bottom: 1.5rem; display: none; } /* Nascosto di default */
-        .size-selector.active { display: block; }
+        .main-product-title { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; margin: 0 0 1rem; }
+        .main-product-price { font-size: 1.1rem; color: #707070; margin-bottom: 1.5rem; }
+        .product-description-text { font-size: 0.9rem; line-height: 1.6; color: #4a4a4a; margin-bottom: 2rem; }
 
+        .size-selector { margin-bottom: 1.5rem; }
         .size-label { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.8rem; color: #8a7a6a; }
         .size-options { display: flex; gap: 0.8rem; }
         .size-btn { min-width: 55px; padding: 0.6rem 1rem; border: 1px solid #e2dbd2; background: #fff; cursor: pointer; transition: all 0.2s; }
         .size-btn.selected { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
         .add-to-bag-btn { width: 100%; background-color: #1a1a1a; color: #ffffff; border: none; padding: 1.2rem; text-transform: uppercase; letter-spacing: 3px; cursor: pointer; }
         .add-to-bag-btn.added { background-color: #4a7c59; }
+        
+        @media (max-width: 900px) { .product-detail-container { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
     <div class="sticky-nav-wrapper">
+        <div id="dynamicBannerContainer"></div>
         <div id="dynamicNavContainer"></div>
     </div>
 
     <div class="product-page-wrapper" id="productPageWrapper">
         <main class="product-detail-container" id="productContentContainer">
             <div class="product-gallery" id="productGalleryBox">
-                <img id="productImage" src="" alt="Product Image" style="display:none;">
+                <img id="productImage" src="" alt="Product" style="display:none;">
             </div>
 
             <div class="product-meta-panel">
                 <h1 id="productTitle" class="main-product-title">Loading...</h1>
                 <div id="productPrice" class="main-product-price"></div>
-                
+                <p id="productDescription" class="product-description-text"></p>
+
                 <div class="size-selector" id="sizeSelector">
                     <div class="size-label">SELECT SIZE</div>
                     <div class="size-options" id="sizeOptions">
@@ -52,73 +60,56 @@
                     </div>
                 </div>
 
-                <button class="add-to-bag-btn" id="addToBagBtn">Add To Bag</button>
+                <button class="add-to-bag-btn" id="addToBagBtn">ADD TO BAG</button>
             </div>
         </main>
     </div>
-<script src="banner.js"></script>
-    <script src="nav.js"></script>
+
     <script src="products.js"></script>
- <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const productId = urlParams.get('id');
-        const product = window.productsMaster?.find(p => p.id === productId);
-        
-        if (!product) return;
+    <script src="banner.js"></script>
+    <script src="navbar.js"></script>
 
-        // Selettore taglie sempre attivo
-        const sizeSelector = document.getElementById('sizeSelector');
-        sizeSelector.classList.add('active'); // Classe per renderlo visibile (display: block)
-        
-        let selectedSize = null;
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+            const product = window.productsMaster?.find(p => p.id === productId);
+            const currentLang = localStorage.getItem('selectedLang') || 'en';
+            
+            if (!product) return;
 
-        // Gestione click bottoni taglia
-        document.querySelectorAll('.size-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
-                btn.classList.add('selected');
-                selectedSize = btn.getAttribute('data-size');
+            // Popola descrizione basata sulla lingua
+            const trans = (product.translations && product.translations[currentLang]) ? product.translations[currentLang] : (product.translations?.en || {});
+            
+            document.getElementById('productTitle').textContent = product.title;
+            document.getElementById('productPrice').textContent = product.price;
+            document.getElementById('productDescription').textContent = trans.description || "";
+            document.getElementById('productImage').src = product.image;
+            document.getElementById('productImage').style.display = 'block';
+
+            // Logica Taglie
+            let selectedSize = null;
+            document.querySelectorAll('.size-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    selectedSize = btn.getAttribute('data-size');
+                });
+            });
+
+            // Add to Bag
+            document.getElementById('addToBagBtn').addEventListener('click', () => {
+                if (!selectedSize) { alert('Please select a size'); return; }
+                
+                let cart = JSON.parse(localStorage.getItem('laLibreCart') || '[]');
+                cart.push({ id: `${product.id}_${selectedSize}`, title: product.title, size: selectedSize, price: product.price });
+                localStorage.setItem('laLibreCart', JSON.stringify(cart));
+                
+                const btn = document.getElementById('addToBagBtn');
+                btn.textContent = 'ADDED ✓';
+                setTimeout(() => btn.textContent = 'ADD TO BAG', 2000);
             });
         });
-
-        // Gestione Aggiunta al Carrello
-        document.getElementById('addToBagBtn').addEventListener('click', () => {
-            // Controllo obbligatorietà taglia
-            if (!selectedSize) {
-                alert('Per favore, seleziona una taglia prima di aggiungere al carrello.');
-                return;
-            }
-            
-            let cart = JSON.parse(localStorage.getItem('laLibreCart') || '[]');
-            const cartItem = {
-                id: `${product.id}_${selectedSize}`,
-                title: product.title,
-                size: selectedSize,
-                price: product.price,
-                image: product.image
-            };
-            
-            cart.push(cartItem);
-            localStorage.setItem('laLibreCart', JSON.stringify(cart));
-            
-            // Feedback visivo
-            const btn = document.getElementById('addToBagBtn');
-            btn.textContent = 'Aggiunto ✓';
-            btn.classList.add('added');
-            
-            setTimeout(() => {
-                btn.textContent = 'Add To Bag';
-                btn.classList.remove('added');
-            }, 2000);
-        });
-
-        // Popola i campi prodotto
-        document.getElementById('productTitle').textContent = product.title;
-        document.getElementById('productPrice').textContent = product.price;
-        document.getElementById('productImage').src = product.image;
-        document.getElementById('productImage').style.display = 'block';
-    });
-</script>
+    </script>
 </body>
 </html>
