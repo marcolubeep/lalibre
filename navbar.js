@@ -66,6 +66,10 @@
                     letter-spacing: 2px;
                     font-weight: 400;
                 }
+                .nav-links a.active {
+                font-weight: 500; /* Leggermente più bold */
+                opacity: 1 !important;
+                }
                 .nav-meta { display: flex; align-items: center; gap: 1.5rem; }
                 .lang-selector { display: flex; gap: 0.75rem; }
                 .lang-item { 
