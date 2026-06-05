@@ -1,4 +1,4 @@
-// footer.js - Layout compatto e corretto per La Libre
+// footer.js - Footer Ultra-Compatto e Mobile-Responsive per La Libre
 
 (function() {
     const currentLang = localStorage.getItem('selectedLang') || 'en';
@@ -16,14 +16,14 @@
             .site-footer {
                 width: 100%;
                 background: #ffffff;
-                margin-top: 1rem; /* Avvicina drasticamente il footer al corpo principale */
-                padding: 1rem 2rem 1.5rem 2rem; 
+                margin-top: 2rem; 
+                padding: 1.5rem 1rem 1.5rem 1rem; 
+                box-sizing: border-box;
             }
             
-            /* 1. Sezione Instagram in cima al footer (vicina ai prodotti) */
             .ig-section {
                 max-width: 900px; 
-                margin: 0 auto 2.5rem auto; 
+                margin: 0 auto 2rem auto; 
                 text-align: center;
             }
             .ig-title {
@@ -36,9 +36,7 @@
                 display: inline-block;
                 margin-bottom: 1.2rem;
                 font-weight: 300;
-                transition: color 0.3s;
             }
-            .ig-title:hover { color: #707070; }
             
             .ig-grid {
                 display: grid;
@@ -57,26 +55,32 @@
             .ig-item img {
                 width: 100%;
                 height: 100%;
-                object-fit: cover;
+                object-fit: cover; /* Mantiene le immagini proporzionate senza deformarle */
                 display: block;
-                transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-            }
-            .ig-item:hover img {
-                transform: scale(1.03); 
             }
             
-            /* 2. Copyright posizionato stabilmente SOTTO la sezione IG */
             .footer-bottom {
                 max-width: 900px;
                 margin: 0 auto;
-                border-top: 1px solid #f5f5f5; /* Linea sottile di chiusura sotto IG */
-                padding-top: 1.5rem;
-                text-align: center; /* Centra perfettamente il testo finale */
+                border-top: 1px solid #f5f5f5; 
+                padding-top: 1.2rem;
+                text-align: center; 
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
                 font-size: 0.6rem; 
                 color: #9c9c9c;
                 letter-spacing: 1px;
                 text-transform: uppercase;
+            }
+
+            /* Responsive Mobile Rigido */
+            @media (max-width: 768px) {
+                .ig-grid { 
+                    grid-template-columns: repeat(2, 1fr); /* Diventa 2 foto per riga, un quadrato 2x2 pulito */
+                    gap: 0.5rem; 
+                }
+                .site-footer {
+                    margin-top: 1.5rem;
+                }
             }
         </style>
     `;
@@ -90,7 +94,6 @@
         const igProfileUrl = "https://www.instagram.com/lalibreofficial";
 
         footer.innerHTML = `
-            <!-- PRIMA: Sezione Instagram -->
             <div class="ig-section">
                 <a href="${igProfileUrl}" target="_blank" class="ig-title">
                     @lalibreofficial &mdash; ${t.follow}
@@ -111,7 +114,6 @@
                 </div>
             </div>
 
-            <!-- DOPO: All Rights Reserved in fondo -->
             <div class="footer-bottom">
                 <div>&copy; ${new Date().getFullYear()} La Libre. ${t.rights}.</div>
             </div>
