@@ -174,7 +174,17 @@
  
         <!-- Filter pills -->
         <nav class="filter-bar" id="filterBar"></nav>
- 
+
+        <div class="controls-bar" style="display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem; margin-bottom: 1rem;">
+    <input type="text" id="productSearch" placeholder="Search products..." oninput="renderFilteredProducts()" style="padding: 0.5rem; font-size: 0.7rem; border: 1px solid #e0e0e0;">
+    
+    <select id="sortSelect" onchange="renderFilteredProducts()" style="padding: 0.5rem; font-size: 0.7rem; border: 1px solid #e0e0e0;">
+        <option value="default">Sort by</option>
+        <option value="price-low">Price: Low to High</option>
+        <option value="price-high">Price: High to Low</option>
+    </select>
+</div>
+        
         <main id="productsDisplay" class="catalog"></main>
     </div>
  
