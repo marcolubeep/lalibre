@@ -8,16 +8,8 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #ffffff; color: #1a1a1a; font-family: 'Montserrat', sans-serif; }
-
-        .sticky-nav-wrapper {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1050;
-            background: #ffffff;
-            box-shadow: 0 1px 10px rgba(0,0,0,0.03);
-        }
-
+        .sticky-nav-wrapper { position: fixed; top: 0; width: 100%; z-index: 1050; background: #ffffff; padding: 1rem 0; box-shadow: 0 1px 10px rgba(0,0,0,0.03); }
+        .main-content-wrapper { margin-top: 120px; }
         .catalog-container { max-width: 1280px; margin: 2rem auto; padding: 0 2rem; }
         .products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
         .product-card { text-decoration: none; color: #1a1a1a; cursor: pointer; }
@@ -28,83 +20,53 @@
 </head>
 <body>
 
-    <div class="sticky-nav-wrapper">
-        <div id="dynamicBannerContainer"></div>
-        <div id="dynamicNavContainer"></div>
+    <div class="sticky-nav-wrapper"><div id="dynamicNavContainer"></div></div>
+
+    <div class="main-content-wrapper">
+        <main class="catalog-container">
+            <div id="productsDisplay" class="products-grid"></div>
+        </main>
     </div>
 
-    <div id="navSpacer"></div>
-    <div id="heroContainer"></div>
-
-    <main class="catalog-container">
-        <div id="productsDisplay" class="products-grid"></div>
-    </main>
-
-    <!-- Prima i dati, poi i moduli -->
     <script src="products.js"></script>
-
+    
     <script>
-        // Carica tutti gli script DOPO che il DOM è pronto
-        document.addEventListener('DOMContentLoaded', function () {
-
-            function loadScript(src, callback) {
-                const s = document.createElement('script');
-                s.src = src;
-                if (callback) s.onload = callback;
-                document.body.appendChild(s);
-            }
-
-            // Carica in sequenza: banner → nav → hero → poi renderizza prodotti
-            loadScript('banner.js', function () {
-                loadScript('nav.js', function () {
-                    loadScript('hero.js', function () {
-                        renderProducts();
-                        adjustSpacer();
-                    });
-                });
-            });
-
-            function adjustSpacer() {
-                const nav = document.querySelector('.sticky-nav-wrapper');
-                const spacer = document.getElementById('navSpacer');
-                if (nav && spacer) spacer.style.height = nav.offsetHeight + 'px';
-                // Rimisura dopo un tick per catturare il drawer mobile
-                setTimeout(function () {
-                    if (nav && spacer) spacer.style.height = nav.offsetHeight + 'px';
-                }, 300);
-            }
-
-            function renderProducts() {
-                const display = document.getElementById('productsDisplay');
-                if (!display || !window.productsMaster) return;
-
-                const urlParams = new URLSearchParams(window.location.search);
-                const cat = urlParams.get('cat');
-
-                let filtered = window.productsMaster;
-                if (cat && cat !== '' && cat !== 'null') {
-                    filtered = filtered.filter(p =>
-                        p.categories && p.categories.some(c => c.toLowerCase() === cat.toLowerCase())
-                    );
+        (function() {
+            function init() {
+                // Controllo se i dati sono pronti
+                if (typeof window.productsMaster === 'undefined') {
+                    setTimeout(init, 100);
+                    return;
                 }
 
-                display.innerHTML = filtered.map(prod => `
-                    <a href="product.html?id=${prod.id}" class="product-card">
-                        <div class="product-image-wrapper">
-                            <img src="${prod.image}" alt="${prod.title}">
-                        </div>
-                        <div class="product-info">
-                            <h3>${prod.title}</h3>
-                            <p>${prod.price}</p>
-                        </div>
-                    </a>
-                `).join('');
+                function render() {
+                    const display = document.getElementById('productsDisplay');
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const cat = urlParams.get('cat');
+
+                    // Logica di filtro: se cat esiste e non è vuoto, filtra; altrimenti mostra tutto
+                    let filtered = window.productsMaster;
+                    if (cat && cat !== '' && cat !== 'null') {
+                        filtered = window.productsMaster.filter(p => 
+                            p.categories && p.categories.some(c => c.toLowerCase() === cat.toLowerCase())
+                        );
+                    }
+
+                    display.innerHTML = filtered.map(prod => `
+                        <a href="product.html?id=${prod.id}" class="product-card">
+                            <div class="product-image-wrapper"><img src="${prod.image}" alt="${prod.title}"></div>
+                            <div class="product-info">
+                                <h3>${prod.title}</h3>
+                                <p>${prod.price}</p>
+                            </div>
+                        </a>
+                    `).join('');
+                }
+
+                render();
             }
-
-            window.addEventListener('resize', adjustSpacer);
-            window.addEventListener('languageChanged', renderProducts);
-        });
+            document.addEventListener('DOMContentLoaded', init);
+        })();
     </script>
-
 </body>
 </html>
