@@ -1,135 +1,179 @@
-// navbar.js - Barra di Navigazione Mobile-Responsive per La Libre
+// navbar.js - Navbar minimale, Gestione Lingua e Top Announcement Banner per La Libre
 
 (function() {
+    // 1. Recupero o inizializzazione della lingua (default: inglese)
     const currentLang = localStorage.getItem('selectedLang') || 'en';
 
+    // 2. Traduzioni per la Navbar e il Top Banner
     const navTranslations = {
-        en: { NewArrivals: "New Arrivals", Dresses: "Dresses", Lingerie: "Lingerie", Cart: "Bag" },
-        es: { NewArrivals: "Novedades", Dresses: "Vestidos", Lingerie: "Lencería", Cart: "Bolsa" },
-        zh: { NewArrivals: "新品上市", Dresses: "连衣裙", Lingerie: "高端内衣", Cart: "购物袋" }
+        en: {
+            announcement: "Complimentary worldwide shipping on architectural orders",
+            shop: "Collection",
+            studio: "The Studio",
+            cart: "Cart"
+        },
+        es: {
+            announcement: "Envío internacional de cortesía en pedidos arquitectónicos",
+            shop: "Colección",
+            studio: "El Estudio",
+            cart: "Carrito"
+        },
+        zh: {
+            announcement: "建筑系列订单享受全球免费配送服务",
+            shop: "系列作品",
+            studio: "工作室",
+            cart: "购物车"
+        }
     };
 
     const t = navTranslations[currentLang] || navTranslations['en'];
 
+    // 3. Stili CSS iniettati in modo pulito (Zero spazi vuoti, massima aderenza al video)
     const styles = `
         <style>
-            #dynamicBannerContainer {
-                width: 100%;
-                position: relative;
-                z-index: 1000;
-            }
-            #dynamicBannerContainer div {
-                padding: 6px 1rem !important; 
-                font-size: 0.7rem !important;
-                letter-spacing: 1.5px !important;
-                text-align: center;
+            /* Reset locale per evitare sorprese tra i browser */
+            .nav-wrapper-clear {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             }
 
-            .site-header { 
-                width: 100%; 
-                background: #fff; 
-                border-bottom: 1px solid #f2f2f2; 
-                position: sticky; 
-                top: 0; 
-                z-index: 999; 
+            /* Top Announcement Banner */
+            .top-announcement {
+                background-color: #1a1a1a;
+                color: #ffffff;
+                text-align: center;
+                padding: 0.5rem 1rem;
+                font-size: 0.65rem;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                font-weight: 300;
             }
-            .nav-container { 
-                max-width: 1200px; 
-                margin: 0 auto; 
-                padding: 1.2rem 2rem; 
-                display: grid;
-                grid-template-columns: 1fr auto 1fr; 
-                align-items: center; 
+
+            /* Main Header Nav Bar */
+            .main-navbar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1.2rem 2rem;
+                background-color: #ffffff;
+                border-bottom: 1px solid #f5f5f5;
+            }
+
+            /* Left Side: Links di navigazione */
+            .nav-links {
+                display: flex;
+                gap: 1.5rem;
+            }
+            .nav-links a {
+                text-decoration: none;
+                color: #1a1a1a;
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                font-weight: 300;
+                transition: opacity 0.2s ease;
+            }
+            .nav-links a:hover {
+                opacity: 0.6;
+            }
+
+            /* Center: Brand Identity */
+            .nav-brand {
+                text-align: center;
+            }
+            .nav-brand a {
+                text-decoration: none;
+                color: #1a1a1a;
+                font-size: 1.1rem;
+                font-weight: 400;
+                letter-spacing: 4px;
+                text-transform: uppercase;
+            }
+
+            /* Right Side: Lingua e Carrello */
+            .nav-meta {
+                display: flex;
+                align-items: center;
+                gap: 1.5rem;
             }
             
-            .nav-menu-wrapper { display: flex; justify-content: flex-start; }
-            .nav-menu { display: flex; gap: 1.8rem; list-style: none; padding: 0; margin: 0; }
-            .nav-link { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; text-decoration: none; color: #1a1a1a; font-weight: 300; transition: color 0.3s ease; }
-            .nav-link:hover { color: #707070; }
-            
-            .nav-logo-wrapper { display: flex; justify-content: center; }
-            .brand-logo { font-family: serif; font-size: 1.8rem; font-weight: 300; letter-spacing: 0.3rem; text-decoration: none; color: #1a1a1a; text-transform: uppercase; display: inline-block; padding-left: 0.3rem; }
-            
-            .nav-actions-wrapper { display: flex; justify-content: flex-end; align-items: center; gap: 1.8rem; }
-            .lang-selector { display: flex; gap: 0.4rem; }
-            .lang-btn { background: none; border: none; font-size: 0.75rem; letter-spacing: 1px; color: #b0b0b0; cursor: pointer; padding: 2px 4px; font-weight: 300; transition: color 0.2s; }
-            .lang-btn.active { color: #1a1a1a; font-weight: 500; border-bottom: 1px solid #1a1a1a; }
-            .cart-link { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; text-decoration: none; color: #1a1a1a; display: flex; align-items: center; gap: 6px; font-weight: 400; }
-            .cart-badge { background: #1a1a1a; color: #fff; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; min-width: 18px; text-align: center; font-weight: 300; }
-            
-            /* Svolta Mobile: Previene sovrapposizioni su schermi piccoli */
-            @media (max-width: 850px) { 
-                .nav-container { 
-                    display: flex;
-                    flex-direction: column; 
-                    gap: 0.8rem; 
-                    padding: 1rem; 
+            /* Selettore della Lingua Minimalista */
+            .lang-selector {
+                border: none;
+                background: transparent;
+                color: #1a1a1a;
+                font-size: 0.7rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                cursor: pointer;
+                padding: 0;
+                font-weight: 300;
+                outline: none;
+            }
+
+            .cart-link {
+                text-decoration: none;
+                color: #1a1a1a;
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                font-weight: 300;
+            }
+
+            /* Ottimizzazione Mobile */
+            @media (max-width: 768px) {
+                .main-navbar {
+                    padding: 1rem;
+                    flex-direction: column;
+                    gap: 0.8rem;
                 }
-                .nav-menu-wrapper, .nav-logo-wrapper, .nav-actions-wrapper {
+                .nav-links {
+                    order: 2;
+                    gap: 1.2rem;
+                }
+                .nav-brand {
+                    order: 1;
+                }
+                .nav-meta {
+                    order: 3;
                     width: 100%;
                     justify-content: center;
-                    text-align: center;
-                }
-                .nav-menu { 
-                    gap: 1.2rem; 
-                    justify-content: center;
-                    flex-wrap: wrap; /* Se lo schermo è minuscolo, le categorie vanno a capo senza rompere il layout */
-                }
-                .nav-actions-wrapper { 
-                    justify-content: center; 
-                    gap: 2rem;
+                    gap: 1.5rem;
                     border-top: 1px solid #f9f9f9;
                     padding-top: 0.6rem;
+                }
+                .top-announcement {
+                    font-size: 0.6rem;
+                    line-height: 1.3;
                 }
             }
         </style>
     `;
 
-    window.setLanguage = function(langCode) {
-        localStorage.setItem('selectedLang', langCode);
-        window.location.reload();
-    };
-
+    // 4. Generazione dinamica della struttura all'interno del container dedicato
     function renderNavbar() {
-        const header = document.createElement('header');
-        header.className = 'site-header';
-        const cartCount = localStorage.getItem('cartItemCount') || '0';
+        const container = document.getElementById('dynamicBannerContainer');
+        if (!container) return;
 
-        header.innerHTML = `
-            <div class="nav-container">
-                <div class="nav-menu-wrapper">
-                    <ul class="nav-menu">
-                        <li><a href="index.html" onclick="if(window.changeCategory){event.preventDefault(); changeCategory('new-arrivals');}" class="nav-link">${t.NewArrivals}</a></li>
-                        <li><a href="index.html" onclick="if(window.changeCategory){event.preventDefault(); changeCategory('dresses');}" class="nav-link">${t.Dresses}</a></li>
-                        <li><a href="index.html" onclick="if(window.changeCategory){event.preventDefault(); changeCategory('lingeries');}" class="nav-link">${t.Lingerie}</a></li>
-                    </ul>
-                </div>
-                
-                <div class="nav-logo-wrapper">
-                    <a href="index.html" class="brand-logo">La Libre</a>
-                </div>
+        // Puliamo eventuali residui per evitare duplicazioni
+        container.innerHTML = '';
+        container.className = 'nav-wrapper-clear';
 
-                <div class="nav-actions-wrapper">
-                    <div class="lang-selector">
-                        <button onclick="setLanguage('en')" class="lang-btn ${currentLang === 'en' ? 'active' : ''}">EN</button>
-                        <button onclick="setLanguage('es')" class="lang-btn ${currentLang === 'es' ? 'active' : ''}">ES</button>
-                        <button onclick="setLanguage('zh')" class="lang-btn ${currentLang === 'zh' ? 'active' : ''}">ZH</button>
-                    </div>
-                    <a href="#" class="cart-link" onclick="event.preventDefault();">
-                        <span>${t.Cart}</span>
-                        <span class="cart-badge">${cartCount}</span>
-                    </a>
-                </div>
+        container.innerHTML = `
+            <div class="top-announcement">
+                ${t.announcement}
             </div>
-        `;
 
-        document.head.insertAdjacentHTML('beforeend', styles);
-        document.body.insertBefore(header, document.body.firstChild);
-    }
+            <header class="main-navbar">
+                <nav class="nav-links">
+                    <a href="index.html">${t.shop}</a>
+                    <a href="#studio">${t.studio}</a>
+                </nav>
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', renderNavbar);
-    } else {
-        renderNavbar();
-    }
-})();
+                <div class="nav-brand">
+                    <a href="index.html">La Libre</a>
+                </div>
+
+                <div class="nav-meta">
