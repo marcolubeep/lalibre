@@ -489,23 +489,17 @@
         // ATTENDE CHE products.js SIA CARICATO
         (function() {
             let isInitialized = false;
-            let retryCount = 0;
             
             function init() {
                 if (isInitialized) return;
-                
                 if (!window.productsMaster || !window.productsMaster.length) {
-                    retryCount++;
-                    if (retryCount < 50) {
-                        setTimeout(init, 100);
-                    }
+                    setTimeout(init, 100);
                     return;
                 }
                 isInitialized = true;
                 
                 console.log('✅ Prodotti caricati:', window.productsMaster.length);
                 
-                // Inizializza la lingua della search bar
                 updateSearchBarLanguage();
                 
                 const modal = document.getElementById('productModal');
@@ -565,11 +559,10 @@
                     
                     let filtered = [...window.productsMaster];
                     
-                    // SE NON C'E' CATEGORIA, MOSTRA TUTTI I PRODOTTI
-                    if (!cat || cat === 'all' || cat === 'null') {
-                        // mostra tutti
-                    } else {
-                        // FILTRO PER CATEGORIA
+                    console.log('📌 Categoria dalla URL:', cat);
+                    
+                    // APPLICA FILTRO SOLO SE C'È UNA CATEGORIA VALIDA
+                    if (cat && cat !== 'null' && cat !== '') {
                         filtered = filtered.filter(product => {
                             if (!product.categories || !product.categories.length) {
                                 return false;
@@ -579,18 +572,25 @@
                             
                             return product.categories.some(c => {
                                 const normalizedProductCat = c.toLowerCase();
-                                return normalizedProductCat === normalizedCat || 
-                                       normalizedProductCat === normalizedCat.replace('-', ' ') ||
-                                       normalizedProductCat.replace(' ', '-') === normalizedCat ||
-                                       (normalizedCat === 'lingeries' && normalizedProductCat === 'lingerie') ||
-                                       (normalizedCat === 'lingerie' && normalizedProductCat === 'lingeries');
+                                // Gestisce "lingerie" e "lingeries"
+                                if (normalizedCat === 'lingeries' && normalizedProductCat === 'lingerie') return true;
+                                if (normalizedCat === 'lingerie' && normalizedProductCat === 'lingeries') return true;
+                                // Gestisce "new arrivals" e "new-arrivals"
+                                if (normalizedCat === 'new-arrivals' && normalizedProductCat === 'new arrivals') return true;
+                                if (normalizedCat === 'new arrivals' && normalizedProductCat === 'new-arrivals') return true;
+                                // Match diretto
+                                return normalizedProductCat === normalizedCat;
                             });
                         });
+                        console.log('📌 Prodotti dopo filtro categoria:', filtered.length);
+                    } else {
+                        console.log('📌 Nessun filtro categoria, mostro tutti i', filtered.length, 'prodotti');
                     }
                     
-                    // FILTRO PER TESTO
+                    // FILTRO PER TESTO (search)
                     if (searchTerm) {
                         filtered = filtered.filter(p => p.title.toLowerCase().includes(searchTerm));
+                        console.log('📌 Prodotti dopo filtro testo:', filtered.length);
                     }
                     
                     // ORDINAMENTO PREZZO
@@ -609,6 +609,8 @@
                     if (!display) return;
                     
                     const filtered = getFilteredAndSortedProducts();
+                    console.log('🎨 Renderizzo', filtered.length, 'prodotti');
+                    
                     if (countSpan) countSpan.textContent = `${filtered.length} items`;
                     
                     if (filtered.length === 0) {
@@ -670,6 +672,7 @@
                     };
                 }
                 
+                // RENDER INIZIALE
                 renderProducts();
             }
             
