@@ -58,57 +58,66 @@
     </div>
 
     <script src="products.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const productId = urlParams.get('id');
-            const product = window.productsMaster?.find(p => p.id === productId);
-            
-            if (!product) return;
+ <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+        const product = window.productsMaster?.find(p => p.id === productId);
+        
+        if (!product) return;
 
-            // 1. Logica Taglie: mostra se il prodotto è abbigliamento o lingerie
-            const needsSize = ['dresses', 'lingerie'].includes(product.category) || 
-                              (product.categories && product.categories.some(c => ['dresses', 'lingerie'].includes(c)));
+        // Selettore taglie sempre attivo
+        const sizeSelector = document.getElementById('sizeSelector');
+        sizeSelector.classList.add('active'); // Classe per renderlo visibile (display: block)
+        
+        let selectedSize = null;
 
-            const sizeSelector = document.getElementById('sizeSelector');
-            let selectedSize = null;
-
-            if (needsSize) {
-                sizeSelector.classList.add('active');
-                document.querySelectorAll('.size-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
-                        btn.classList.add('selected');
-                        selectedSize = btn.getAttribute('data-size');
-                    });
-                });
-            }
-
-            // 2. Logica Aggiunta al Carrello
-            document.getElementById('addToBagBtn').addEventListener('click', () => {
-                if (needsSize && !selectedSize) {
-                    alert('Please select a size');
-                    return;
-                }
-                
-                let cart = JSON.parse(localStorage.getItem('laLibreCart') || '[]');
-                const cartItem = {
-                    id: selectedSize ? `${product.id}_${selectedSize}` : product.id,
-                    title: product.title,
-                    size: selectedSize,
-                    price: product.price
-                };
-                cart.push(cartItem);
-                localStorage.setItem('laLibreCart', JSON.stringify(cart));
-                alert('Added to bag!');
+        // Gestione click bottoni taglia
+        document.querySelectorAll('.size-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedSize = btn.getAttribute('data-size');
             });
-
-            // Popola campi base
-            document.getElementById('productTitle').textContent = product.title;
-            document.getElementById('productPrice').textContent = product.price;
-            document.getElementById('productImage').src = product.image;
-            document.getElementById('productImage').style.display = 'block';
         });
-    </script>
+
+        // Gestione Aggiunta al Carrello
+        document.getElementById('addToBagBtn').addEventListener('click', () => {
+            // Controllo obbligatorietà taglia
+            if (!selectedSize) {
+                alert('Per favore, seleziona una taglia prima di aggiungere al carrello.');
+                return;
+            }
+            
+            let cart = JSON.parse(localStorage.getItem('laLibreCart') || '[]');
+            const cartItem = {
+                id: `${product.id}_${selectedSize}`,
+                title: product.title,
+                size: selectedSize,
+                price: product.price,
+                image: product.image
+            };
+            
+            cart.push(cartItem);
+            localStorage.setItem('laLibreCart', JSON.stringify(cart));
+            
+            // Feedback visivo
+            const btn = document.getElementById('addToBagBtn');
+            btn.textContent = 'Aggiunto ✓';
+            btn.classList.add('added');
+            
+            setTimeout(() => {
+                btn.textContent = 'Add To Bag';
+                btn.classList.remove('added');
+            }, 2000);
+        });
+
+        // Popola i campi prodotto
+        document.getElementById('productTitle').textContent = product.title;
+        document.getElementById('productPrice').textContent = product.price;
+        document.getElementById('productImage').src = product.image;
+        document.getElementById('productImage').style.display = 'block';
+    });
+</script>
 </body>
 </html>
