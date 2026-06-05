@@ -134,14 +134,29 @@
         function renderNavbar() {
             const currentLang = getCurrentLang();
             const cartCount = getCartCount();
-
+            
+            // Logica per determinare la pagina attiva
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            const currentCategory = new URLSearchParams(window.location.search).get('cat');
+            
+            // Helper per la classe active
+            const isActive = (cat) => (currentPage === 'index.html' && currentCategory === cat) ? 'active' : '';
+            const isCartActive = (currentPage === 'cart.html') ? 'active' : '';
+            
             container.innerHTML = styles + `
+                <style>
+                    /* Classe active per il look classy */
+                    .nav-links a.active, .nav-cart-link.active {
+                        font-weight: 500;
+                        opacity: 1 !important;
+                    }
+                </style>
                 <header style="position: relative; background: #fff;">
                     <div class="main-navbar">
                         <nav class="nav-links">
-                            <a href="index.html?cat=new-arrivals" data-nav-link>${t('new')}</a>
-                            <a href="index.html?cat=dresses" data-nav-link>${t('dresses')}</a>
-                            <a href="index.html?cat=lingerie" data-nav-link>${t('lingerie')}</a>
+                            <a href="index.html?cat=new-arrivals" class="${isActive('new-arrivals')}" data-nav-link>${t('new')}</a>
+                            <a href="index.html?cat=dresses" class="${isActive('dresses')}" data-nav-link>${t('dresses')}</a>
+                            <a href="index.html?cat=lingerie" class="${isActive('lingerie')}" data-nav-link>${t('lingerie')}</a>
                         </nav>
 
                         <div class="nav-brand"><a href="index.html">LA LIBRE</a></div>
@@ -154,7 +169,7 @@
                                     </span>
                                 `).join('')}
                             </div>
-                            <a href="cart.html" class="nav-cart-link">${t('bag')} (${cartCount})</a>
+                            <a href="cart.html" class="nav-cart-link ${isCartActive}">${t('bag')} (${cartCount})</a>
                         </div>
 
                         <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
@@ -163,10 +178,10 @@
                     </div>
 
                     <nav class="nav-mobile-drawer" id="navMobileDrawer">
-                        <a href="index.html?cat=new-arrivals" data-nav-link>${t('new')}</a>
-                        <a href="index.html?cat=dresses" data-nav-link>${t('dresses')}</a>
-                        <a href="index.html?cat=lingerie" data-nav-link>${t('lingerie')}</a>
-                        <a href="cart.html" class="mobile-cart">${t('bag')} (${cartCount})</a>
+                        <a href="index.html?cat=new-arrivals" class="${isActive('new-arrivals')}" data-nav-link>${t('new')}</a>
+                        <a href="index.html?cat=dresses" class="${isActive('dresses')}" data-nav-link>${t('dresses')}</a>
+                        <a href="index.html?cat=lingerie" class="${isActive('lingerie')}" data-nav-link>${t('lingerie')}</a>
+                        <a href="cart.html" class="mobile-cart ${isCartActive}">${t('bag')} (${cartCount})</a>
                         <div class="mobile-lang" id="mobileLangSelector">
                             ${Object.keys(flags).map(l => `
                                 <span class="lang-item ${currentLang === l ? 'active' : ''}" data-lang="${l}" style="font-size:0.7rem; text-transform:uppercase; cursor:pointer;">
