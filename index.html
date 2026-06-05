@@ -128,5 +128,32 @@
         if (typeof updateProductPage === 'function') updateProductPage(); // Per product.html
     });
     </script>
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const popup = document.getElementById('newsletterPopup');
+        const closeBtn = document.getElementById('closePopup');
+
+        // Controllo se l'utente lo ha già chiuso in precedenza
+        if (!localStorage.getItem('newsletterClosed')) {
+            setTimeout(() => {
+                popup.style.display = 'block';
+            }, 6000); // 6 secondi
+        }
+
+        // Se clicca sulla X
+        closeBtn.addEventListener('click', () => {
+            popup.style.display = 'none';
+            // Salva nel browser che l'utente ha chiuso il pop-up
+            localStorage.setItem('newsletterClosed', 'true');
+        });
+    });
+</script>
+    <div id="newsletterPopup" style="display:none; position:fixed; bottom:20px; right:20px; background:#fff; padding:2rem; border:1px solid #eee; z-index:9999; box-shadow:0 10px 30px rgba(0,0,0,0.1); max-width:300px;">
+    <button id="closePopup" style="position:absolute; top:5px; right:10px; border:none; background:none; cursor:pointer; font-size:1.2rem;">&times;</button>
+    <h4 style="font-family:'Cormorant Garamond', serif; font-size:1.4rem; margin-top:0;">Join our world</h4>
+    <p style="font-size:0.75rem; letter-spacing:1px; margin-bottom:1rem;">Sign up for updates.</p>
+    <input type="email" placeholder="Email" style="width:100%; border:none; border-bottom:1px solid #1a1a1a; padding:5px 0; margin-bottom:10px; outline:none;">
+    <button style="width:100%; background:#1a1a1a; color:#fff; border:none; padding:10px; cursor:pointer; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase;">Subscribe</button>
+</div>
 </body>
 </html>
