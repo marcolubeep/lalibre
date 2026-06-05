@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Libre Studio &mdash; Product Details</title>
     
-    <!-- Importazione Font per coerenza di brand -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
@@ -20,7 +19,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* 📌 NAVBAR ANCORATA IN CIMA (Identica alla Homepage) */
+        /* 📌 NAVBAR ANCORATA IN CIMA */
         .sticky-nav-wrapper {
             position: fixed;
             top: 0;
@@ -38,9 +37,9 @@
             display: block;
         }
 
-        /* Compensazione per evitare che il prodotto finisca dietro la Navbar fissa */
+        /* Struttura della pagina */
         .product-page-wrapper {
-            margin-top: 110px; /* Spazio protettivo per il distanziamento */
+            margin-top: 120px; 
             max-width: 1200px;
             margin-left: auto;
             margin-right: auto;
@@ -48,7 +47,6 @@
             box-sizing: border-box;
         }
 
-        /* Struttura Dettaglio Prodotto Layout Spaccato */
         .product-detail-container {
             display: grid;
             grid-template-columns: 1.1fr 0.9fr;
@@ -61,6 +59,7 @@
             aspect-ratio: 3 / 4;
             background-color: #f7f5f2;
             overflow: hidden;
+            position: relative;
         }
 
         .product-gallery img {
@@ -70,7 +69,6 @@
             display: block;
         }
 
-        /* Info Editoriali */
         .product-meta-panel {
             padding-top: 1rem;
         }
@@ -112,7 +110,6 @@
             margin-bottom: 2.5rem;
         }
 
-        /* Bottone Add To Bag minimale */
         .add-to-bag-btn {
             width: 100%;
             background-color: #1a1a1a;
@@ -132,7 +129,17 @@
             background-color: #333333;
         }
 
-        /* Responsive */
+        /* Schermata di errore se il prodotto non esiste */
+        .error-message {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: #707070;
+        }
+
         @media (max-width: 900px) {
             .product-page-wrapper { margin-top: 90px; padding: 1rem; }
             .product-detail-container { grid-template-columns: 1fr; gap: 2rem; }
@@ -140,36 +147,32 @@
         }
         
         @media (max-width: 600px) {
-            .product-page-wrapper { margin-top: 120px; }
+            .product-page-wrapper { margin-top: 140px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- 📌 Navbar Sticky Identica all'Index (Senza banner.js) -->
     <div class="sticky-nav-wrapper">
         <div id="dynamicNavContainer"></div>
     </div>
 
-    <!-- Contenuto della Pagina Prodotto -->
     <div class="product-page-wrapper">
-        <main class="product-detail-container">
+        <main class="product-detail-container" id="productContentContainer">
             
-            <!-- Galleria Immagine -->
-            <div class="product-gallery">
+            <div class="product-gallery" id="productGalleryBox">
                 <img id="productImage" src="" alt="Product Image" style="display:none;">
             </div>
 
-            <!-- Info Dettaglio -->
             <div class="product-meta-panel">
                 <div class="product-breadcrumb">
                     <a href="index.html">Home</a> &mdash; <span id="productCategory">Collection</span>
                 </div>
                 
-                <h1 id="productTitle" class="main-product-title">&mdash;</h1>
-                <div id="productPrice" class="main-product-price">&mdash;</div>
+                <h1 id="productTitle" class="main-product-title">Loading...</h1>
+                <div id="productPrice" class="main-product-price"></div>
                 
-                <p id="productDescription" class="product-description-text">&mdash;</p>
+                <p id="productDescription" class="product-description-text"></p>
                 
                 <button class="add-to-bag-btn" id="addToBagBtn">Add To Bag</button>
             </div>
@@ -177,52 +180,73 @@
         </main>
     </div>
 
-    <!-- Script Caricati (banner.js rimosso anche qui per pulizia totale) -->
-    <script src="products.js?v=3.3"></script>
-    <script src="navbar.js?v=3.3"></script>
+    <script src="products.js?v=3.4"></script>
+    <script src="navbar.js?v=3.4"></script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const currentLang = localStorage.getItem('selectedLang') || 'en';
             
-            // Estrazione ID del prodotto dall'URL
+            // 1. Lettura dei parametri URL
             const urlParams = new URLSearchParams(window.location.search);
-            const productId = parseInt(urlParams.get('id'));
+            const productIdStr = urlParams.get('id');
+            const productId = parseInt(productIdStr, 10);
 
-            // Bottoni traduzioni veloci per l'azione d'acquisto
-            const bagButtonTranslations = {
-                en: "Add To Bag",
-                es: "Añadir al Bolso",
-                zh: "加入购物袋"
-            };
-            
+            // Traduzione del bottone d'acquisto
+            const bagButtonTranslations = { en: "Add To Bag", es: "Añadir al Bolso", zh: "加入购物袋" };
             const btnBag = document.getElementById('addToBagBtn');
             if(btnBag) btnBag.textContent = bagButtonTranslations[currentLang] || bagButtonTranslations['en'];
 
-            // Trova e renderizza il prodotto corretto dal master database
-            if (typeof productsMaster !== 'undefined' && productId) {
-                const product = productsMaster.find(p => p.id === productId);
+            const container = document.getElementById('productContentContainer');
+
+            // 2. Controllo di sicurezza: Il file products.js è caricato?
+            if (typeof productsMaster === 'undefined') {
+                container.innerHTML = `<div class="error-message">Database error: 'productsMaster' is missing. Check your products.js file.</div>`;
+                return;
+            }
+
+            // 3. Controllo di sicurezza: L'ID nell'URL è valido?
+            if (!productIdStr || isNaN(productId)) {
+                container.innerHTML = `<div class="error-message">No valid product ID specified in the URL. (e.g., product.html?id=1)</div>`;
+                return;
+            }
+
+            // 4. Ricerca del prodotto
+            const product = productsMaster.find(p => p.id === productId);
+            
+            if (product) {
+                // Estrazione traduzioni flessibile (evita errori se mancano dei campi)
+                const translation = product.translations[currentLang] || product.translations['en'] || {};
                 
-                if (product) {
-                    const translation = product.translations[currentLang] || product.translations['en'];
-                    
-                    // Injection dei dati dinamici
-                    document.getElementById('productTitle').textContent = product.title;
-                    document.getElementById('productPrice').textContent = product.price;
-                    document.getElementById('productDescription').textContent = translation.description || translation.tagline;
-                    document.getElementById('productCategory').textContent = product.category || "Collection";
-                    
-                    const imgEl = document.getElementById('productImage');
-                    if (imgEl) {
-                        imgEl.src = product.image;
-                        imgEl.style.display = 'block';
-                    }
+                // Assegnazione dati con fallback intelligenti (se manca la descrizione usa la tagline)
+                document.getElementById('productTitle').textContent = product.title || "Untitled Product";
+                document.getElementById('productPrice').textContent = product.price || "";
+                document.getElementById('productCategory').textContent = product.category || "Collection";
+                document.getElementById('productDescription').textContent = translation.description || translation.tagline || "";
+                
+                // Caricamento immagine con colore di sfondo se l'immagine fallisce
+                const imgEl = document.getElementById('productImage');
+                const galleryBox = document.getElementById('productGalleryBox');
+                
+                if (product.fallbackColor) {
+                    galleryBox.style.backgroundColor = product.fallbackColor;
                 }
+
+                if (imgEl && product.image) {
+                    imgEl.src = product.image;
+                    imgEl.style.display = 'block';
+                    imgEl.onerror = function() {
+                        this.style.display = 'none'; // Nasconde l'immagine rotta ma lascia il colore di sfondo
+                    };
+                }
+            } else {
+                // Se l'ID cercato non esiste nel database
+                container.innerHTML = `<div class="error-message">Product with ID ${productId} could not be found in our collection.</div>`;
             }
         });
     </script>
 
-    <script src="footer.js?v=3.3"></script>
+    <script src="footer.js?v=3.4"></script>
 
 </body>
 </html>
