@@ -132,7 +132,55 @@
 
         .divider { width: 50px; height: 1px; background: #ffffff60; margin: 1rem auto; }
 
-        .products-container { max-width: 1200px; margin: 4rem auto; padding: 0 2rem; min-height: 400px; }
+        /* NUOVA SEZIONE FILTRI E RICERCA */
+        .search-filter-bar {
+            max-width: 1200px;
+            margin: 3rem auto 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 4px;
+            width: 240px;
+            transition: border-color 0.3s;
+        }
+        .search-wrapper:focus-within { border-color: var(--text-color); }
+        .search-wrapper input {
+            border: none;
+            outline: none;
+            font-size: 0.9rem;
+            width: 100%;
+            padding-left: 5px;
+            color: var(--text-color);
+            letter-spacing: 0.5px;
+        }
+        .search-wrapper i, .search-wrapper svg { color: var(--accent-color); width: 16px; height: 16px; }
+
+        .sort-wrapper { display: flex; align-items: center; gap: 0.5rem; }
+        .sort-wrapper label { font-size: 0.85rem; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; }
+        .sort-select {
+            border: none;
+            border-bottom: 1px solid transparent;
+            font-size: 0.85rem;
+            outline: none;
+            cursor: pointer;
+            padding-bottom: 2px;
+            letter-spacing: 0.5px;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        .sort-select:hover { border-color: #ccc; }
+
+        .products-container { max-width: 1200px; margin: 2rem auto 4rem auto; padding: 0 2rem; min-height: 400px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 3rem; }
         
         .product-card { display: flex; flex-direction: column; text-decoration: none; color: inherit; cursor: pointer; }
@@ -148,6 +196,9 @@
             header { grid-template-columns: 1fr; gap: 1rem; text-align: center; }
             .nav-left, .nav-right { justify-content: center; }
             .logo { order: -1; }
+            .search-filter-bar { flex-direction: column; align-items: stretch; gap: 1rem; }
+            .search-wrapper { width: 100%; }
+            .sort-wrapper { justify-content: space-between; }
         }
 
         .popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--overlay-bg); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s ease; padding: 20px; }
@@ -165,10 +216,10 @@
 
     <header>
         <div class="nav-left">
-            <a href="#" onclick="displayCatalog('all'); return false;">Home</a>
-            <a href="#" onclick="displayCatalog('dresses'); return false;">Dresses</a>
-            <a href="#" onclick="displayCatalog('lingeries'); return false;">Lingeries</a>
-            <a href="#" onclick="displayCatalog('new-arrivals'); return false;">New Arrivals</a>
+            <a href="#" onclick="changeCategory('all'); return false;">Home</a>
+            <a href="#" onclick="changeCategory('dresses'); return false;">Dresses</a>
+            <a href="#" onclick="changeCategory('lingeries'); return false;">Lingeries</a>
+            <a href="#" onclick="changeCategory('new-arrivals'); return false;">New Arrivals</a>
         </div>
         
         <div class="logo" onclick="window.location.href='index.html'">La Libre</div>
@@ -199,15 +250,31 @@
                 Your browser does not support the video tag.
             </video>
         </div>
-        
         <div class="banner-overlay"></div>
-         
         <div class="banner-text">
             <h1>Free Soul, Second Skin</h1>
             <div class="divider"></div>
             <p>Slow Collection crafted in delicate lace</p>
         </div>
     </section>
+
+    <!-- NUOVA MINI BARRA DI RICERCA E ORDINAMENTO -->
+    <div class="search-filter-bar">
+        <div class="search-wrapper">
+            <i data-lucide="search"></i>
+            <input type="text" id="searchInput" placeholder="Search collection...">
+        </div>
+        
+        <div class="sort-wrapper">
+            <label for="sortSelect">Sort by</label>
+            <select id="sortSelect" class="sort-select">
+                <option value="default">Default</option>
+                <option value="name-asc">Name (A-Z)</option>
+                <option value="price-asc">Price (Low to High)</option>
+                <option value="price-desc">Price (High to Low)</option>
+            </select>
+        </div>
+    </div>
 
     <main class="products-container">
         <div class="grid" id="productGrid"></div>
@@ -232,7 +299,22 @@
     <script src="products.js"></script>
 
     <script>
-        function displayCatalog(categoryFilter = "all") {
+        // Stato globale dei filtri attivi
+        let currentCategory = "all";
+        let searchQuery = "";
+        let currentSort = "default";
+
+        // Funzione per pulire la stringa del prezzo e convertirla in numero (es. "£71.00" -> 71)
+        function parsePrice(priceString) {
+            return parseFloat(priceString.replace(/[^0-9.]/g, '')) || 0;
+        }
+
+        function changeCategory(category) {
+            currentCategory = category;
+            displayCatalog();
+        }
+
+        function displayCatalog() {
             const grid = document.getElementById('productGrid');
             if (!grid) return;
             
@@ -243,14 +325,34 @@
                 return;
             }
 
-            const filteredProducts = productsMaster.filter(product => {
+            // 1. Applica Filtro Categoria e Stato "active"
+            let filteredProducts = productsMaster.filter(product => {
                 const isActive = product.status === "active";
-                const matchesCategory = categoryFilter === "all" || product.categories.includes(categoryFilter);
+                const matchesCategory = currentCategory === "all" || product.categories.includes(currentCategory);
                 return isActive && matchesCategory;
             });
 
+            // 2. Applica Filtro di Ricerca (per nome o descrizione)
+            if (searchQuery.trim() !== "") {
+                const query = searchQuery.toLowerCase().trim();
+                filteredProducts = filteredProducts.filter(product => 
+                    product.title.toLowerCase().includes(query) || 
+                    product.tagline.toLowerCase().includes(query)
+                );
+            }
+
+            // 3. Applica Ordinamento
+            if (currentSort === "name-asc") {
+                filteredProducts.sort((a, b) => a.title.localeCompare(b.title));
+            } else if (currentSort === "price-asc") {
+                filteredProducts.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
+            } else if (currentSort === "price-desc") {
+                filteredProducts.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
+            }
+
+            // Render dei prodotti filtrati
             if (filteredProducts.length === 0) {
-                grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:var(--accent-color); margin: 4rem 0; letter-spacing: 1px;'>No items available in this section at the moment.</p>";
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:var(--accent-color); margin: 4rem 0; letter-spacing: 1px;'>No items match your search criteria.</p>";
                 return;
             }
 
@@ -284,15 +386,30 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            } else {
-                console.warn("Lucide icons package could not be fetched.");
-            }
+            if (typeof lucide !== 'undefined') lucide.createIcons();
 
             updateCartBadge();
-            displayCatalog("all");
+            displayCatalog();
 
+            // Ascoltatore per la barra di ricerca (aggiorna in tempo reale mentre digiti)
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    searchQuery = e.target.value;
+                    displayCatalog();
+                });
+            }
+
+            // Ascoltatore per il menu a tendina dell'ordinamento
+            const sortSelect = document.getElementById('sortSelect');
+            if (sortSelect) {
+                sortSelect.addEventListener('change', (e) => {
+                    currentSort = e.target.value;
+                    displayCatalog();
+                });
+            }
+
+            // Gestione Popup Newsletter standard
             const popup = document.getElementById('emailPopup');
             const closeBtn = document.getElementById('closePopup');
             const subscribeForm = document.getElementById('subscribeForm');
@@ -306,7 +423,6 @@
                     popup.classList.remove('active');
                     localStorage.setItem('popupDismissed', 'true');
                 });
-
                 popup.addEventListener('click', (e) => { 
                     if (e.target === popup) {
                         popup.classList.remove('active'); 
