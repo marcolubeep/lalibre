@@ -20,7 +20,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* 📌 STRUTTURA DI NAVIGAZIONE ANCORATA */
+        /* 📌 NAVBAR ANCORATA IN CIMA (Senza striscia nera) */
         .sticky-nav-wrapper {
             position: fixed;
             top: 0;
@@ -31,25 +31,24 @@
             box-shadow: 0 1px 10px rgba(0, 0, 0, 0.02);
         }
 
-        #dynamicBannerContainer, #dynamicNavContainer {
+        #dynamicNavContainer {
             width: 100%;
             margin: 0;
             padding: 0;
             display: block;
         }
 
-        /* Compensazione per il contenuto sotto la nav fissa (evita che il video finisca sotto il menu) */
+        /* Compensazione per il contenuto sotto la nav fissa (ridotta perché non c'è più il banner nero) */
         .main-content-wrapper {
-            margin-top: 110px; /* Altezza stimata di banner + navbar */
+            margin-top: 75px; 
         }
 
-        /* 🎬 VIDEO HERO BANNER ANCORA PIÙ SOTTILE (Ridotto in altezza) */
+        /* 🎬 VIDEO HERO BANNER SOTTILE */
         .hero-banner-container {
             width: 100%;
             position: relative;
             overflow: hidden;
             background-color: #000000;
-            /* Rapporto ultra-panoramico per ridurre l'altezza mantenendo la larghezza */
             aspect-ratio: 38 / 10; 
             display: block;
         }
@@ -66,8 +65,8 @@
         .hero-video-wrapper video {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Taglia le porzioni eccedenti sopra e sotto mantenendo le proporzioni */
-            object-position: center; /* Mantiene il focus visivo sul centro del video */
+            object-fit: cover; 
+            object-position: center; 
             display: block;
         }
 
@@ -237,8 +236,8 @@
         }
 
         @media (max-width: 600px) {
-            .main-content-wrapper { margin-top: 140px; } /* Più spazio su mobile perché il menu va a capo */
-            .hero-banner-container { aspect-ratio: 18 / 10; } /* Ratio preservato su schermi piccoli per leggibilità */
+            .main-content-wrapper { margin-top: 105px; } /* Adattato per mobile */
+            .hero-banner-container { aspect-ratio: 18 / 10; } 
             .hero-claim { font-size: 1.4rem; letter-spacing: 2px; }
             .hero-subtitle { font-size: 0.7rem; }
             .products-grid { grid-template-columns: 1fr; gap: 2rem; }
@@ -248,16 +247,15 @@
 </head>
 <body>
 
-    <!-- 📌 Blocco di Navigazione che rimane in alto allo Scroll -->
+    <!-- 📌 Struttura di Navigazione pulita (Solo Navbar Bianca) -->
     <div class="sticky-nav-wrapper">
-        <div id="dynamicBannerContainer"></div>
         <div id="dynamicNavContainer"></div>
     </div>
 
-    <!-- Contenuto Principale (Spostato verso il basso per fare spazio alla Nav fissa) -->
+    <!-- Contenuto Principale -->
     <div class="main-content-wrapper">
         
-        <!-- 🎬 Sezione Video Sottile + Overlay Testuale Flessibile -->
+        <!-- 🎬 Sezione Video Sottile + Overlay Originale -->
         <section class="hero-banner-container">
             <div class="hero-video-wrapper">
                 <video playsinline autoplay muted loop id="heroVideo">
@@ -281,10 +279,9 @@
 
     </div>
 
-    <!-- Script (v=3.1) -->
-    <script src="products.js?v=3.1"></script>
-    <script src="banner.js?v=3.1"></script>
-    <script src="navbar.js?v=3.1"></script>
+    <!-- Script Caricati (banner.js rimosso per pulizia) -->
+    <script src="products.js?v=3.2"></script>
+    <script src="navbar.js?v=3.2"></script>
     
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -338,7 +335,7 @@
         });
     </script>
 
-    <script src="footer.js?v=3.1"></script>
+    <script src="footer.js?v=3.2"></script>
 
 </body>
 </html>
