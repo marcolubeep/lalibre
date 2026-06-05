@@ -38,12 +38,12 @@
             display: block;
         }
 
-        /* Compensazione per il contenuto sotto la nav fissa (ridotta perché non c'è più il banner nero) */
+        /* Compensazione per lo scroll */
         .main-content-wrapper {
             margin-top: 75px; 
         }
 
-        /* 🎬 VIDEO HERO BANNER SOTTILE */
+        /* 🎬 VIDEO HERO BANNER SOTTILE E PANORAMICO */
         .hero-banner-container {
             width: 100%;
             position: relative;
@@ -76,11 +76,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.45);
+            background: rgba(0, 0, 0, 0.45); /* Filtro scuro perfetto */
             z-index: 2;
         }
 
-        /* TEXT OVERLAY EDITORIALE */
+        /* TEXT OVERLAY "FREE SOUL, SECOND SKIN" */
         .hero-text-container {
             position: absolute;
             top: 0;
@@ -236,7 +236,7 @@
         }
 
         @media (max-width: 600px) {
-            .main-content-wrapper { margin-top: 105px; } /* Adattato per mobile */
+            .main-content-wrapper { margin-top: 105px; } 
             .hero-banner-container { aspect-ratio: 18 / 10; } 
             .hero-claim { font-size: 1.4rem; letter-spacing: 2px; }
             .hero-subtitle { font-size: 0.7rem; }
@@ -247,7 +247,7 @@
 </head>
 <body>
 
-    <!-- 📌 Struttura di Navigazione pulita (Solo Navbar Bianca) -->
+    <!-- Navigazione Sticky -->
     <div class="sticky-nav-wrapper">
         <div id="dynamicNavContainer"></div>
     </div>
@@ -255,10 +255,11 @@
     <!-- Contenuto Principale -->
     <div class="main-content-wrapper">
         
-        <!-- 🎬 Sezione Video Sottile + Overlay Originale -->
+        <!-- 🎬 Il video adesso è qui, dentro l'HTML: non serve più banner.js per iniettarlo! -->
         <section class="hero-banner-container">
             <div class="hero-video-wrapper">
                 <video playsinline autoplay muted loop id="heroVideo">
+                    <!-- Verifica che il percorso del file video sia corretto (es. "videos/banner.mp4" o "images/banner.mp4") -->
                     <source src="images/banner.mp4" type="video/mp4">
                 </video>
             </div>
@@ -279,9 +280,9 @@
 
     </div>
 
-    <!-- Script Caricati (banner.js rimosso per pulizia) -->
-    <script src="products.js?v=3.2"></script>
-    <script src="navbar.js?v=3.2"></script>
+    <!-- Script Caricati (banner.js rimosso del tutto per evitare conflitti con la striscia nera) -->
+    <script src="products.js?v=3.3"></script>
+    <script src="navbar.js?v=3.3"></script>
     
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -335,7 +336,7 @@
         });
     </script>
 
-    <script src="footer.js?v=3.2"></script>
+    <script src="footer.js?v=3.3"></script>
 
 </body>
 </html>
