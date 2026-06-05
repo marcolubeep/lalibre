@@ -30,7 +30,8 @@
         }
         
         .nav-left { display: flex; gap: 1.5rem; }
-        .nav-left a { text-decoration: none; color: var(--text-color); font-size: 0.9rem; font-weight: 400; }
+        .nav-left a { text-decoration: none; color: var(--text-color); font-size: 0.9rem; font-weight: 400; transition: color 0.2s; }
+        .nav-left a:hover { color: var(--accent-color); }
         
         .logo { 
             font-family: serif; 
@@ -132,8 +133,8 @@
 
         .divider { width: 50px; height: 1px; background: #ffffff60; margin: 1rem auto; }
 
-        /* --- GRID CATALOGO PRODOTTI --- */
-        .products-container { max-width: 1200px; margin: 4rem auto; padding: 0 2rem; }
+        /* --- GRID CATALOGO PRODOTTI DINAMICO --- */
+        .products-container { max-width: 1200px; margin: 4rem auto; padding: 0 2rem; min-height: 400px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 3rem; }
         
         .product-card { display: flex; flex-direction: column; text-decoration: none; color: inherit; cursor: pointer; }
@@ -166,10 +167,10 @@
 
     <header>
         <div class="nav-left">
-            <a href="index.html">Home</a>
-            <a href="#">Dresses</a>
-            <a href="#">Lingeries</a>
-            <a href="#">New Arrivals</a>
+            <a href="#" onclick="displayCatalog('all'); return false;">Home</a>
+            <a href="#" onclick="displayCatalog('dresses'); return false;">Dresses</a>
+            <a href="#" onclick="displayCatalog('lingeries'); return false;">Lingeries</a>
+            <a href="#" onclick="displayCatalog('new-arrivals'); return false;">New Arrivals</a>
         </div>
         
         <div class="logo" onclick="window.location.href='index.html'">La Libre</div>
@@ -209,79 +210,7 @@
     </section>
 
     <main class="products-container">
-        <div class="grid">
-            <a href="product.html?id=eliah-maxi" class="product-card">
-                <div class="product-image-box" style="background-image: url('eliah-dress.jpg'); background-color: #e2dedb;"></div>
-                <div class="product-info">
-                    <div>
-                        <h3 class="product-title">Eliah Maxi Dress</h3>
-                        <p class="product-tagline">Slow Collection in Black</p>
-                    </div>
-                    <span class="product-price">£71.00</span>
-                </div>
-            </a>
-
-            <a href="product.html?id=grace-maxi" class="product-card">
-                <div class="product-image-box" style="background-image: url('grace-lace.jpg'); background-color: #f4f1ef;"></div>
-                <div class="product-info">
-                    <div>
-                        <h3 class="product-title">The Grace Lace Maxi</h3>
-                        <p class="product-tagline">Slow Collection in White</p>
-                    </div>
-                    <span class="product-price">£110.00</span>
-                </div>
-            </a>
-
-            <a href="product.html?id=amour-bustier" class="product-card">
-                <div class="product-image-box" style="background-image: url('amour-lace.jpg'); background-color: #eae5e2;"></div>
-                <div class="product-info">
-                    <div>
-                        <h3 class="product-title">Amour Lace Bustier</h3>
-                        <p class="product-tagline">Delicate French Trim</p>
-                    </div>
-                    <span class="product-price">£85.00</span>
-                </div>
-            </a>
-
-            <a href="product.html?id=soul-slip" class="product-card">
-                <div class="product-image-box" style="background-color: #2c2a29; color: #fff;">
-                    [ Free Soul Slip ]
-                </div>
-                <div class="product-info">
-                    <div>
-                        <h3 class="product-title">Free Soul Slip</h3>
-                        <p class="product-tagline">Sheer Silk Accents</p>
-                    </div>
-                    <span class="product-price">£95.00</span>
-                </div>
-            </a>
-
-            <a href="product.html?id=lace-corset" class="product-card">
-                <div class="product-image-box" style="background-color: #fcfbfa; color: #888; border: 1px solid #f0f0f0;">
-                    [ Slow Lace Corset ]
-                </div>
-                <div class="product-info">
-                    <div>
-                        <h3 class="product-title">Slow Lace Corset</h3>
-                        <p class="product-tagline">Structured Delicate Lace</p>
-                    </div>
-                    <span class="product-price">£120.00</span>
-                </div>
-            </a>
-
-            <a href="product.html?id=noir-skin" class="product-card">
-                <div class="product-image-box" style="background-color: #111111; color: #fff;">
-                    [ Noir Second Skin Gown ]
-                </div>
-                <div class="product-info">
-                    <div>
-                        <h3 class="product-title">Noir Second Skin Gown</h3>
-                        <p class="product-tagline">Premium Intricate Floral Pattern</p>
-                    </div>
-                    <span class="product-price">£165.00</span>
-                </div>
-            </a>
-        </div>
+        <div class="grid" id="productGrid"></div>
     </main>
 
     <div class="popup-overlay" id="emailPopup">
@@ -300,7 +229,60 @@
         <p>&copy; 2026 LA LIBRE. ALL RIGHTS RESERVED.</p>
     </footer>
 
+    <script src="products.js"></script>
+
     <script>
+        // Funzione per generare e filtrare il catalogo dei prodotti
+        function displayCatalog(categoryFilter = "all") {
+            const grid = document.getElementById('productGrid');
+            if (!grid) return;
+            
+            // Pulisce il layout attuale
+            grid.innerHTML = "";
+
+            // Verifica di sicurezza se products.js non è presente o ha errori
+            if (typeof productsMaster === 'undefined') {
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:red; margin: 2rem 0;'>Errore di caricamento: File 'products.js' non trovato nella cartella o mal configurato.</p>";
+                return;
+            }
+
+            // Applica il filtro: Stato attivo e appartenenza alla categoria selezionata
+            const filteredProducts = productsMaster.filter(product => {
+                const isActive = product.status === "active";
+                const matchesCategory = categoryFilter === "all" || product.categories.includes(categoryFilter);
+                return isActive && matchesCategory;
+            });
+
+            // Se la categoria selezionata è vuota
+            if (filteredProducts.length === 0) {
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:var(--accent-color); margin: 4rem 0; letter-spacing: 1px;'>No items available in this section at the moment.</p>";
+                return;
+            }
+
+            // Inietta gli elementi estratti dal database all'interno del DOM
+            filteredProducts.forEach(product => {
+                const bgStyle = product.image ? `background-image: url('${product.image}');` : '';
+                const textColor = product.fallbackColor === "#111111" || product.fallbackColor === "#2c2a29" ? "color: #fff;" : "";
+                const placeholderText = !product.image ? `[ ${product.title} ]` : "";
+
+                const cardHTML = `
+                    <a href="product.html?id=${product.id}" class="product-card">
+                        <div class="product-image-box" style="${bgStyle} background-color: ${product.fallbackColor}; ${textColor}">
+                            ${placeholderText}
+                        </div>
+                        <div class="product-info">
+                            <div>
+                                <h3 class="product-title">${product.title}</h3>
+                                <p class="product-tagline">${product.tagline}</p>
+                            </div>
+                            <span class="product-price">${product.price}</span>
+                        </div>
+                    </a>
+                `;
+                grid.innerHTML += cardHTML;
+            });
+        }
+
         function updateCartBadge() {
             const currentCount = localStorage.getItem('cartItemCount') || 0;
             const badge = document.querySelector('.cart-badge');
@@ -315,14 +297,16 @@
             }
 
             updateCartBadge();
+            
+            // Inizializza la visualizzazione della home caricando tutti i prodotti attivi
+            displayCatalog("all");
 
             const popup = document.getElementById('emailPopup');
             const closeBtn = document.getElementById('closePopup');
             const subscribeForm = document.getElementById('subscribeForm');
 
-            // Controllo iscrizione e chiusura precedente
             if (popup && !localStorage.getItem('subscribed') && !localStorage.getItem('popupDismissed')) {
-                // AGGIORNATO: Ritardo impostato esattamente a 6 secondi (6000ms)
+                // Impostato esattamente a 6 secondi (6000ms)
                 setTimeout(() => popup.classList.add('active'), 6000);
             }
 
