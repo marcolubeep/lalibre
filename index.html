@@ -1,3 +1,7 @@
+Claude ha terminato la risposta
+
+ho questo index che non visualizza i prodotti in product.js
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,17 +23,14 @@
     </style>
 </head>
 <body>
-
     <div class="sticky-nav-wrapper"><div id="dynamicNavContainer"></div></div>
-
     <div class="main-content-wrapper">
         <main class="catalog-container">
             <div id="productsDisplay" class="products-grid"></div>
         </main>
     </div>
-
     <script src="products.js"></script>
-    
+
     <script>
         (function() {
             function init() {
@@ -38,12 +39,10 @@
                     setTimeout(init, 100);
                     return;
                 }
-
                 function render() {
                     const display = document.getElementById('productsDisplay');
                     const urlParams = new URLSearchParams(window.location.search);
                     const cat = urlParams.get('cat');
-
                     // Logica di filtro: se cat esiste e non è vuoto, filtra; altrimenti mostra tutto
                     let filtered = window.productsMaster;
                     if (cat && cat !== '' && cat !== 'null') {
@@ -51,8 +50,7 @@
                             p.categories && p.categories.some(c => c.toLowerCase() === cat.toLowerCase())
                         );
                     }
-
-                    display.innerHTML = filtered.map(prod => `
+                    display.innerHTML = filtered.map(prod => 
                         <a href="product.html?id=${prod.id}" class="product-card">
                             <div class="product-image-wrapper"><img src="${prod.image}" alt="${prod.title}"></div>
                             <div class="product-info">
@@ -60,9 +58,8 @@
                                 <p>${prod.price}</p>
                             </div>
                         </a>
-                    `).join('');
+                    ).join('');
                 }
-
                 render();
             }
             document.addEventListener('DOMContentLoaded', init);
@@ -70,3 +67,608 @@
     </script>
 </body>
 </html>
+22:21
+
+Puoi mostrarmi il contenuto di products.js? Così posso vedere esattamente la struttura dei dati e capire perché window.productsMaster non viene riconosciuto.
+
+// products.js - Database Multilingua per La Libre
+window.productsMaster = [
+   {
+       id: "amour-lace",
+       title: "Amour Lace Blouse",
+       price: "€ 135,00",
+       category: "lingerie",
+       categories: ["lingerie", "new arrivals"],
+       image: "images/amour-lace.jpg",
+       fallbackColor: "#f7f5f2",
+       status: "active",
+       translations: {
+           en: { description: "Romantic silhouette crafted in delicate eyelash lace", tagline: "Delicate eyelash lace blouse" },
+           es: { description: "Silueta romántica confeccionada en delicado encaje de pestañas", tagline: "Blusa de encaje delicado" },
+           zh: { description: "精致睫毛蕾丝打造的浪漫廓形", tagline: "精致睫毛蕾丝衬衫" }
+       }
+   },
+   {
+       id: "eliah-dress",
+       title: "Eliah Timeless Dress",
+       price: "€ 195,00",
+       category: "dresses",
+       categories: ["dresses", "new arrivals"],
+       image: "images/eliah-dress.jpg",
+       fallbackColor: "#f2f0eb",
+       status: "active",
+       translations: {
+           en: { description: "Atemporal flowing midi dress in organic washed silk", tagline: "Flowing midi dress" },
+           es: { description: "Vestido midi fluido y atemporal en seda lavada orgánica", tagline: "Vestido midi fluido" },
+           zh: { description: "有机水洗真丝面料打造的永恒飘逸中长连衣裙", tagline: "有机水洗真丝中长连衣裙" }
+       }
+   },
+   {
+       id: "grace-lace",
+       title: "Grace Lace Triangle",
+       price: "€ 75,00",
+       category: "lingerie",
+       categories: ["lingerie"],
+       image: "images/grace-lace.jpg",
+       fallbackColor: "#ebdcd0",
+       status: "active",
+       translations: {
+           en: { description: "Unlined second-skin bralette with raw edge finish", tagline: "Second-skin lace bralette" },
+           es: { description: "Sujetador estilo bralette sin forro efecto segunda piel", tagline: "Bralette encaje" },
+           zh: { description: "无衬垫第二层肌肤质感文胸", tagline: "蕾丝文胸" }
+       }
+   }
+];
+22:21
+
+Il file products.js è corretto — window.productsMaster è definito bene. Il problema è quasi certamente uno di questi:
+
+1. Ordine degli script — products.js viene caricato prima dell'evento DOMContentLoaded, ma il tuo init() ascolta DOMContentLoaded. Se la pagina è già caricata quando lo script inline viene eseguito, l'evento non scatta più. Il polling con setTimeout non risolve questo perché il problema è che render() non viene mai chiamato.
+
+2. Path di products.js — se index.html e products.js non sono nella stessa cartella, il file non viene trovato.
+
+Ecco la correzione sicura — sostituisci il tuo script inline con questo:
+html
+
+<script src="products.js"></script>
+<script>
+    (function() {
+        function render() {
+            const display = document.getElementById('productsDisplay');
+            if (!display) return;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const cat = urlParams.get('cat');
+
+            let filtered = window.productsMaster || [];
+            if (cat && cat !== '' && cat !== 'null') {
+                filtered = filtered.filter(p =>
+                    p.categories && p.categories.some(c => c.toLowerCase() === cat.toLowerCase())
+                );
+            }
+
+            display.innerHTML = filtered.map(prod => `
+                <a href="product.html?id=${prod.id}" class="product-card">
+                    <div class="product-image-wrapper">
+                        <img src="${prod.image}" alt="${prod.title}">
+                    </div>
+                    <div class="product-info">
+                        <h3>${prod.title}</h3>
+                        <p>${prod.price}</p>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        // Funziona sia se il DOM è già pronto sia se non lo è ancora
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', render);
+        } else {
+            render();
+        }
+    })();
+</script>
+
+Cosa cambia:
+
+    document.readyState === 'loading' controlla se il DOM è già pronto o no, evitando il problema dell'evento perso
+    Rimosso il polling con setTimeout che era inutile (i dati sono sincroni, non asincroni)
+    window.productsMaster || [] evita errori se per qualche motivo il file non carica
+
+Se dopo questa modifica i prodotti non appaiono ancora, apri la console del browser (F12 → Console) e dimmi se vedi errori — molto probabilmente sarà un 404 su products.js o sulle immagini.
+
+questo script visualizza solo i prodotti, possiamo integrare anche il resto?
+22:23
+
+Certo! Ma ho bisogno di capire cosa intendi per "il resto". Cosa dovrebbe mostrare la pagina oltre ai prodotti?
+
+Ad esempio:
+
+    Navigazione/header dinamico (vedo che hai già #dynamicNavContainer)
+    Filtri per categoria
+    Footer
+    Banner o hero section
+    Altro?
+
+Hai altri file JS/HTML del progetto che gestiscono queste parti? Se li incolli qui posso integrare tutto insieme.
+
+lo script di prima li visualizza tutti
+22:23
+
+Hai ragione, scusa — il tuo script originale era già completo e funzionante concettualmente. Il problema era solo il timing del DOMContentLoaded.
+
+Puoi incollare qui gli altri file del progetto (nav, footer, ecc.) così integro tutto in un unico index.html pulito?
+
+(function() {
+    const heroContainer = document.getElementById('heroContainer');
+    if (!heroContainer) return;
+    heroContainer.innerHTML = 
+        <style>
+            .hero-section { position: relative; width: 100%; height: 400px; overflow: hidden; background: #000; }
+            .hero-video { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
+            .hero-content { 
+                position: absolute; top: 0; left: 0; width: 100%; height: 80%; 
+                display: flex; flex-direction: column; align-items: center; justify-content: center;
+                color: #fff; text-align: center; pointer-events: none;
+            }
+            .hero-content h1 { font-family: 'Cormorant Garamond', serif; font-size: 3rem; margin: 0; letter-spacing: 4px; }
+            .hero-content p { font-family: 'Montserrat', sans-serif; letter-spacing: 3px; font-size: 0.7rem; margin-top: 15px; text-transform: uppercase; }
+        </style>
+        <section class="hero-section">
+            <video class="hero-video" autoplay muted loop playsinline src="images/banner.mp4"></video>
+            <div class="hero-content">
+                <h1>FREE SOUL, SECOND SKIN</h1>
+                <p>SLOW COLLECTION CRAFTED IN DELICATE LACE</p>
+            </div>
+        </section>
+    ;
+})();
+
+// banner.js - Gestisce unicamente l'Announcement Bar superiore di La Libre
+(function() {
+    const currentLang = localStorage.getItem('selectedLang') || 'en';
+    const bannerTranslations = {
+    en: "Demo website developed by Marco, the best is yet to come!",
+    es: "Sitio web de demostración desarrollado por Marco, ¡lo mejor está por venir!",
+    zh: "由 Marco 开发的演示网站，精彩即将到来！"
+    };
+    const text = bannerTranslations[currentLang] || bannerTranslations['en'];
+    const styles = 
+        <style>
+            .top-announcement-bar {
+                background-color: #1a1a1a;
+                color: #ffffff;
+                text-align: center;
+                padding: 0.55rem 1rem;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                font-size: 0.65rem;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                font-weight: 300;
+                width: 100%;
+                display: block;
+                box-sizing: border-box;
+            }
+            @media (max-width: 600px) {
+                .top-announcement-bar {
+                    font-size: 0.6rem;
+                    line-height: 1.4;
+                }
+            }
+        </style>
+    ;
+    function renderTopBanner() {
+        // Aggancia espressamente il contenitore del Banner superiore
+        const container = document.getElementById('dynamicBannerContainer');
+        if (!container) return;
+        container.innerHTML = <div class="top-announcement-bar">${text}</div>;
+        document.head.insertAdjacentHTML('beforeend', styles);
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', renderTopBanner);
+    } else {
+        renderTopBanner();
+    }
+})();
+22:24
+
+Perfetto, ora ho tutto. Vedo che il tuo index.html ha #dynamicNavContainer ma manca #dynamicBannerContainer e #heroContainer. Integro tutto:
+html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>La Libre Studio &mdash; Official E-Commerce</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #ffffff; color: #1a1a1a; font-family: 'Montserrat', sans-serif; }
+
+        .sticky-nav-wrapper {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1050;
+            background: #ffffff;
+            box-shadow: 0 1px 10px rgba(0,0,0,0.03);
+        }
+
+        /* Il banner è dentro la nav fissa, la nav occupa spazio variabile:
+           usiamo un placeholder invisibile per spingere il contenuto giù */
+        .nav-spacer { height: 120px; }
+
+        .catalog-container { max-width: 1280px; margin: 2rem auto; padding: 0 2rem; }
+        .products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        .product-card { text-decoration: none; color: #1a1a1a; cursor: pointer; }
+        .product-image-wrapper { aspect-ratio: 3 / 4; background: #f5f3ef; overflow: hidden; }
+        .product-image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .product-info { margin-top: 1rem; }
+    </style>
+</head>
+<body>
+
+    <!-- Barra fissa in cima: announcement + nav -->
+    <div class="sticky-nav-wrapper">
+        <div id="dynamicBannerContainer"></div>
+        <div id="dynamicNavContainer"></div>
+    </div>
+
+    <!-- Spacer dinamico per compensare l'altezza della nav fissa -->
+    <div class="nav-spacer" id="navSpacer"></div>
+
+    <!-- Hero video -->
+    <div id="heroContainer"></div>
+
+    <!-- Catalogo prodotti -->
+    <main class="catalog-container">
+        <div id="productsDisplay" class="products-grid"></div>
+    </main>
+
+    <!-- Script -->
+    <script src="banner.js"></script>
+    <script src="nav.js"></script>
+    <script src="hero.js"></script>
+    <script src="products.js"></script>
+
+    <script>
+        (function () {
+            function render() {
+                // Spacer dinamico: si adatta all'altezza reale della nav fissa
+                function adjustSpacer() {
+                    const nav = document.querySelector('.sticky-nav-wrapper');
+                    const spacer = document.getElementById('navSpacer');
+                    if (nav && spacer) spacer.style.height = nav.offsetHeight + 'px';
+                }
+                adjustSpacer();
+                window.addEventListener('resize', adjustSpacer);
+
+                // Prodotti
+                const display = document.getElementById('productsDisplay');
+                if (!display) return;
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const cat = urlParams.get('cat');
+
+                let filtered = window.productsMaster || [];
+                if (cat && cat !== '' && cat !== 'null') {
+                    filtered = filtered.filter(p =>
+                        p.categories && p.categories.some(c => c.toLowerCase() === cat.toLowerCase())
+                    );
+                }
+
+                display.innerHTML = filtered.map(prod => `
+                    <a href="product.html?id=${prod.id}" class="product-card">
+                        <div class="product-image-wrapper">
+                            <img src="${prod.image}" alt="${prod.title}">
+                        </div>
+                        <div class="product-info">
+                            <h3>${prod.title}</h3>
+                            <p>${prod.price}</p>
+                        </div>
+                    </a>
+                `).join('');
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', render);
+            } else {
+                render();
+            }
+        })();
+    </script>
+
+</body>
+</html>
+
+Le modifiche principali:
+
+    #dynamicBannerContainer aggiunto sopra la nav, entrambi dentro .sticky-nav-wrapper
+    #heroContainer posizionato subito sotto la nav, fuori dal catalogo
+    Spacer dinamico — invece del margin-top: 120px fisso, calcola l'altezza reale della nav fissa (banner + nav insieme) e si aggiorna al resize
+    Gli script sono caricati nell'ordine corretto: banner.js → nav.js → hero.js → products.js
+
+Se hai anche nav.js o altri file puoi incollarli e li integro.
+
+manca questo
+22:24
+
+Perfetto, ora ho tutto. Il tuo index.html aggiornato con tutto integrato:
+html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>La Libre Studio &mdash; Official E-Commerce</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #ffffff; color: #1a1a1a; font-family: 'Montserrat', sans-serif; }
+
+        .sticky-nav-wrapper {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1050;
+            background: #ffffff;
+            box-shadow: 0 1px 10px rgba(0,0,0,0.03);
+        }
+
+        .catalog-container { max-width: 1280px; margin: 2rem auto; padding: 0 2rem; }
+        .products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        .product-card { text-decoration: none; color: #1a1a1a; cursor: pointer; }
+        .product-image-wrapper { aspect-ratio: 3 / 4; background: #f5f3ef; overflow: hidden; }
+        .product-image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .product-info { margin-top: 1rem; }
+    </style>
+</head>
+<body>
+
+    <!-- Barra fissa: announcement + nav -->
+    <div class="sticky-nav-wrapper">
+        <div id="dynamicBannerContainer"></div>
+        <div id="dynamicNavContainer"></div>
+    </div>
+
+    <!-- Spacer dinamico: si adatta all'altezza reale della nav fissa -->
+    <div id="navSpacer"></div>
+
+    <!-- Hero video -->
+    <div id="heroContainer"></div>
+
+    <!-- Catalogo prodotti -->
+    <main class="catalog-container">
+        <div id="productsDisplay" class="products-grid"></div>
+    </main>
+
+    <script src="banner.js"></script>
+    <script src="nav.js"></script>
+    <script src="hero.js"></script>
+    <script src="products.js"></script>
+
+    <script>
+        (function () {
+            function adjustSpacer() {
+                const nav = document.querySelector('.sticky-nav-wrapper');
+                const spacer = document.getElementById('navSpacer');
+                if (nav && spacer) spacer.style.height = nav.offsetHeight + 'px';
+            }
+
+            function renderProducts() {
+                const display = document.getElementById('productsDisplay');
+                if (!display || !window.productsMaster) return;
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const cat = urlParams.get('cat');
+
+                let filtered = window.productsMaster;
+                if (cat && cat !== '' && cat !== 'null') {
+                    filtered = filtered.filter(p =>
+                        p.categories && p.categories.some(c => c.toLowerCase() === cat.toLowerCase())
+                    );
+                }
+
+                display.innerHTML = filtered.map(prod => `
+                    <a href="product.html?id=${prod.id}" class="product-card">
+                        <div class="product-image-wrapper">
+                            <img src="${prod.image}" alt="${prod.title}">
+                        </div>
+                        <div class="product-info">
+                            <h3>${prod.title}</h3>
+                            <p>${prod.price}</p>
+                        </div>
+                    </a>
+                `).join('');
+            }
+
+            function init() {
+                adjustSpacer();
+                renderProducts();
+
+                // Ricalcola lo spacer al resize (il mobile drawer può cambiare altezza)
+                window.addEventListener('resize', adjustSpacer);
+
+                // Ricalcola dopo che il mobile drawer si apre/chiude
+                document.addEventListener('click', () => setTimeout(adjustSpacer, 300));
+
+                // Aggiorna prodotti se cambia la lingua (le categorie potrebbero cambiare label)
+                window.addEventListener('languageChanged', renderProducts);
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+    </script>
+
+</body>
+</html>
+
+Le cose rilevanti rispetto a prima:
+
+    languageChanged — quando cambi lingua dalla nav, renderProducts si riaggiorna (utile se in futuro mostri titoli/descrizioni tradotti nella griglia)
+    setTimeout(adjustSpacer, 300) — quando il drawer mobile si apre, la nav cambia altezza; lo spacer si ricalcola dopo l'animazione
+    L'ordine degli script è banner.js → nav.js → hero.js → products.js, che rispetta le dipendenze
+
+non vedo banner, nav, hero e ig
+22:29
+
+Hai ragione — mancano i container per quelli. Puoi incollare anche il codice di hero.js e dell'IG block? Così vedo esattamente come si agganciano ai loro container e integro tutto correttamente.
+
+Inoltre, quando dici "non vedo", intendi:
+
+    Gli elementi non appaiono visivamente sulla pagina, oppure
+    Vedi errori in console (F12)?
+
+(function() {
+    const heroContainer = document.getElementById('heroContainer');
+    if (!heroContainer) return;
+    heroContainer.innerHTML = 
+        <style>
+            .hero-section { position: relative; width: 100%; height: 400px; overflow: hidden; background: #000; }
+            .hero-video { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
+            .hero-content { 
+                position: absolute; top: 0; left: 0; width: 100%; height: 80%; 
+                display: flex; flex-direction: column; align-items: center; justify-content: center;
+                color: #fff; text-align: center; pointer-events: none;
+            }
+            .hero-content h1 { font-family: 'Cormorant Garamond', serif; font-size: 3rem; margin: 0; letter-spacing: 4px; }
+            .hero-content p { font-family: 'Montserrat', sans-serif; letter-spacing: 3px; font-size: 0.7rem; margin-top: 15px; text-transform: uppercase; }
+        </style>
+        <section class="hero-section">
+            <video class="hero-video" autoplay muted loop playsinline src="images/banner.mp4"></video>
+            <div class="hero-content">
+                <h1>FREE SOUL, SECOND SKIN</h1>
+                <p>SLOW COLLECTION CRAFTED IN DELICATE LACE</p>
+            </div>
+        </section>
+    ;
+})();
+22:29
+
+Il problema è che hero.js usa un IIFE che si esegue immediatamente — ma quando viene eseguito, #heroContainer potrebbe non esistere ancora nel DOM. Stesso problema per banner.js e nav.js.
+
+La soluzione è avvolgere tutto in DOMContentLoaded. Ecco l'index.html corretto:
+html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>La Libre Studio &mdash; Official E-Commerce</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #ffffff; color: #1a1a1a; font-family: 'Montserrat', sans-serif; }
+
+        .sticky-nav-wrapper {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1050;
+            background: #ffffff;
+            box-shadow: 0 1px 10px rgba(0,0,0,0.03);
+        }
+
+        .catalog-container { max-width: 1280px; margin: 2rem auto; padding: 0 2rem; }
+        .products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        .product-card { text-decoration: none; color: #1a1a1a; cursor: pointer; }
+        .product-image-wrapper { aspect-ratio: 3 / 4; background: #f5f3ef; overflow: hidden; }
+        .product-image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .product-info { margin-top: 1rem; }
+    </style>
+</head>
+<body>
+
+    <div class="sticky-nav-wrapper">
+        <div id="dynamicBannerContainer"></div>
+        <div id="dynamicNavContainer"></div>
+    </div>
+
+    <div id="navSpacer"></div>
+    <div id="heroContainer"></div>
+
+    <main class="catalog-container">
+        <div id="productsDisplay" class="products-grid"></div>
+    </main>
+
+    <!-- Prima i dati, poi i moduli -->
+    <script src="products.js"></script>
+
+    <script>
+        // Carica tutti gli script DOPO che il DOM è pronto
+        document.addEventListener('DOMContentLoaded', function () {
+
+            function loadScript(src, callback) {
+                const s = document.createElement('script');
+                s.src = src;
+                if (callback) s.onload = callback;
+                document.body.appendChild(s);
+            }
+
+            // Carica in sequenza: banner → nav → hero → poi renderizza prodotti
+            loadScript('banner.js', function () {
+                loadScript('nav.js', function () {
+                    loadScript('hero.js', function () {
+                        renderProducts();
+                        adjustSpacer();
+                    });
+                });
+            });
+
+            function adjustSpacer() {
+                const nav = document.querySelector('.sticky-nav-wrapper');
+                const spacer = document.getElementById('navSpacer');
+                if (nav && spacer) spacer.style.height = nav.offsetHeight + 'px';
+                // Rimisura dopo un tick per catturare il drawer mobile
+                setTimeout(function () {
+                    if (nav && spacer) spacer.style.height = nav.offsetHeight + 'px';
+                }, 300);
+            }
+
+            function renderProducts() {
+                const display = document.getElementById('productsDisplay');
+                if (!display || !window.productsMaster) return;
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const cat = urlParams.get('cat');
+
+                let filtered = window.productsMaster;
+                if (cat && cat !== '' && cat !== 'null') {
+                    filtered = filtered.filter(p =>
+                        p.categories && p.categories.some(c => c.toLowerCase() === cat.toLowerCase())
+                    );
+                }
+
+                display.innerHTML = filtered.map(prod => `
+                    <a href="product.html?id=${prod.id}" class="product-card">
+                        <div class="product-image-wrapper">
+                            <img src="${prod.image}" alt="${prod.title}">
+                        </div>
+                        <div class="product-info">
+                            <h3>${prod.title}</h3>
+                            <p>${prod.price}</p>
+                        </div>
+                    </a>
+                `).join('');
+            }
+
+            window.addEventListener('resize', adjustSpacer);
+            window.addEventListener('languageChanged', renderProducts);
+        });
+    </script>
+
+</body>
+</html>
+
+Il cambiamento chiave è loadScript in sequenza — ogni script viene iniettato solo dopo che il DOM è pronto e solo dopo che il precedente ha finito di caricare. Prima i container esistono, poi gli script li cercano, quindi li trovano sempre. Hai anche un ig.js da integrare?
+
+
+Claude è un'AI e può commettere errori. Verifica le risposte.
+
