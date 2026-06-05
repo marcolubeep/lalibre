@@ -73,10 +73,11 @@
         <div class="controls-bar">
             <input type="text" id="productSearch" placeholder="SEARCH..." oninput="renderFilteredProducts()">
             <select id="sortSelect" onchange="renderFilteredProducts()">
-                <option value="default">SORT BY</option>
-                <option value="price-low">PRICE: LOW TO HIGH</option>
-                <option value="price-high">PRICE: HIGH TO LOW</option>
-            </select>
+    <option value="default">SORT BY</option>
+    <option value="price-low">PRICE: LOW TO HIGH</option>
+    <option value="price-high">PRICE: HIGH TO LOW</option>
+    <option value="newest">NEWEST FIRST</option>
+</select>
         </div>
         
         <main id="productsDisplay" class="catalog"></main>
@@ -88,48 +89,56 @@
     <script>
         function renderFilteredProducts() {
             const display = document.getElementById('productsDisplay');
-            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
-            const sortValue = document.getElementById('sortSelect').value;
-            const currentLang = localStorage.getItem('selectedLang') || 'en';
-            const activeCat = new URLSearchParams(window.location.search).get('cat') || '';
+    const searchTerm = document.getElementById('productSearch').value.toLowerCase();
+    const sortValue = document.getElementById('sortSelect').value;
+    const currentLang = localStorage.getItem('selectedLang') || 'en';
+    const activeCat = new URLSearchParams(window.location.search).get('cat') || '';
 
-            if (typeof productsMaster === 'undefined') {
-                display.innerHTML = '<p style="text-align:center;color:#999;grid-column:1/-1;">Product database unavailable.</p>';
-                return;
-            }
+    if (typeof productsMaster === 'undefined') {
+        display.innerHTML = '<p style="text-align:center;color:#999;grid-column:1/-1;">Product database unavailable.</p>';
+        return;
+    }
 
-            let filtered = activeCat
-                ? productsMaster.filter(p => Array.isArray(p.categories) && p.categories.includes(activeCat))
-                : productsMaster;
+    // 1. Filter by Category
+    let filtered = activeCat
+        ? productsMaster.filter(p => Array.isArray(p.categories) && p.categories.includes(activeCat))
+        : [...productsMaster]; // Clone to avoid mutating original
 
-            filtered = filtered.filter(p => p.title.toLowerCase().includes(searchTerm));
+    // 2. Filter by Search Term
+    filtered = filtered.filter(p => p.title.toLowerCase().includes(searchTerm));
 
-            if (sortValue === 'price-low') {
-                filtered.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
-            } else if (sortValue === 'price-high') {
-                filtered.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
-            }
+    // 3. Sort Logic
+    if (sortValue === 'price-low') {
+        filtered.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+    } else if (sortValue === 'price-high') {
+        filtered.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+    } else if (sortValue === 'newest') {
+        // Assuming your products have an 'id' or 'date' property. 
+        // If they have a date, use new Date(b.date) - new Date(a.date)
+        filtered.sort((a, b) => b.id - a.id); 
+    }
 
-            if (filtered.length === 0) {
-                display.innerHTML = '<p style="text-align:center;color:#999;grid-column:1/-1;font-size:0.8rem;letter-spacing:1px;margin-top:2rem;">NO PRODUCTS MATCH YOUR SEARCH.</p>';
-                return;
-            }
+    // 4. Render
+    if (filtered.length === 0) {
+        display.innerHTML = '<p style="text-align:center;color:#999;grid-column:1/-1;font-size:0.8rem;letter-spacing:1px;margin-top:2rem;">NO PRODUCTS MATCH YOUR SEARCH.</p>';
+        return;
+    }
 
-            const langData = (p) => (p.translations && p.translations[currentLang]) || (p.translations && p.translations['en']) || {};
+    const langData = (p) => (p.translations && p.translations[currentLang]) || (p.translations && p.translations['en']) || {};
 
-            display.innerHTML = filtered.map(p => {
-                const t = langData(p);
-                return `
-                    <a href="product.html?id=${p.id}" class="product-card">
-                        <img src="${p.image}" alt="${p.title}" class="product-card-image" loading="lazy">
-                        <div class="product-card-meta">
-                            <span class="product-card-title">${p.title}</span>
-                            <span class="product-card-price">${p.price}</span>
-                        </div>
-                        ${t.tagline ? `<p style="font-size:0.7rem; color:#888; margin:0.4rem 0 0; font-weight:300; font-style:italic;">${t.tagline}</p>` : ''}
-                    </a>
-                `;
-            }).join('');
+    display.innerHTML = filtered.map(p => {
+        const t = langData(p);
+        return `
+            <a href="product.html?id=${p.id}" class="product-card">
+                <img src="${p.image}" alt="${p.title}" class="product-card-image" loading="lazy">
+                <div class="product-card-meta">
+                    <span class="product-card-title">${p.title}</span>
+                    <span class="product-card-price">${p.price}</span>
+                </div>
+                ${t.tagline ? `<p style="font-size:0.7rem; color:#888; margin:0.4rem 0 0; font-weight:300; font-style:italic;">${t.tagline}</p>` : ''}
+            </a>
+        `;
+    }).join('');
         }
 
         document.addEventListener("DOMContentLoaded", renderFilteredProducts);
