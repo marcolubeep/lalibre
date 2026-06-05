@@ -126,6 +126,7 @@
                             <span class="product-card-title">${p.title}</span>
                             <span class="product-card-price">${p.price}</span>
                         </div>
+                        ${t.tagline ? `<p style="font-size:0.7rem; color:#888; margin:0.4rem 0 0; font-weight:300; font-style:italic;">${t.tagline}</p>` : ''}
                     </a>
                 `;
             }).join('');
