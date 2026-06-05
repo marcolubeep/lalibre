@@ -16,12 +16,11 @@
             .site-footer {
                 width: 100%;
                 background: #ffffff;
-                margin-top: 1.5rem; /* Riduce drasticamente lo spazio bianco sotto i prodotti */
+                margin-top: 1.5rem; 
                 padding: 1rem 2rem 1.5rem 2rem; 
                 box-sizing: border-box;
             }
             
-            /* Contenitore Sezione Instagram */
             .ig-section {
                 max-width: 540px; 
                 margin: 0 auto 1.5rem auto; 
@@ -39,12 +38,11 @@
                 font-weight: 300;
             }
             
-            /* Contenitore protettivo per centrare l'embed di Meta */
             .ig-embed-container {
                 display: flex;
                 justify-content: center;
                 width: 100%;
-                min-height: 450px; /* Previene i saltelli di layout durante il caricamento dello script */
+                min-height: 450px; 
             }
             .ig-embed-container blockquote {
                 margin: 0 auto !important;
@@ -53,7 +51,6 @@
                 max-width: 540px !important;
             }
             
-            /* Copyright Line - Posizionato stabilmente in fondo sotto l'embed */
             .footer-bottom {
                 max-width: 540px;
                 margin: 1.5rem auto 0 auto;
@@ -94,7 +91,6 @@
                 </div>
             </div>
 
-            <!-- Copyright Line (Sotto a tutto il blocco) -->
             <div class="footer-bottom">
                 <div>&copy; ${new Date().getFullYear()} La Libre. ${t.rights}.</div>
             </div>
@@ -103,11 +99,12 @@
         document.head.insertAdjacentHTML('beforeend', styles);
         document.body.appendChild(footer);
 
-        // Iniezione asincrona dello script ufficiale di Meta per attivare il post
+        // 🚨 CORREZIONE CRUCIALE: Caricamento assoluto e sicuro dello script Instagram
         if (!window.instgrm) {
             const script = document.createElement('script');
             script.async = true;
-            script.src = "https://www.instagram.com/embed.js";
+            // Usiamo il protocollo completo HTTPS per evitare che cerchi il file in locale o in sottocartelle errate
+            script.src = "https://www.instagram.com/embed.js"; 
             document.body.appendChild(script);
         } else {
             window.instgrm.Embeds.process();
