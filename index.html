@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Libre Studio &mdash; Official E-Commerce</title>
     
-    <!-- Stili strutturali per Video e Griglia Prodotti (Minimal & Responsive) -->
     <style>
         body {
             margin: 0;
@@ -14,6 +13,14 @@
             background-color: #ffffff;
             color: #1a1a1a;
             -webkit-font-smoothing: antialiased;
+        }
+
+        /* 📌 Contenitori dinamici per Banner e Nav */
+        #dynamicBannerContainer, #dynamicNavContainer {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            display: block;
         }
 
         /* 🎬 CONTENITORE BANNER VIDEO HERO */
@@ -29,9 +36,10 @@
             width: 100%;
             position: relative;
             overflow: hidden;
-            background-color: #f7f5f2;
-            /* Rapporto panoramico ultra-wide per altezza ridotta su Desktop */
+            background-color: #ffffff; /* Sostituito il grigio con il bianco per camuffare se non carica subito */
+            /* Rapporto panoramico ultra-wide per altezza ridotta */
             aspect-ratio: 24 / 10; 
+            display: block;
         }
 
         .hero-video-wrapper video {
@@ -49,7 +57,7 @@
             box-sizing: border-box;
         }
 
-        /* Griglia dei prodotti: 3 colonne su Desktop, collassa fluidamente su Mobile */
+        /* Griglia dei prodotti: 3 colonne su Desktop */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -71,7 +79,7 @@
 
         .product-image-wrapper {
             width: 100%;
-            aspect-ratio: 3 / 4; /* Proporzione classica verticale da luxury retail */
+            aspect-ratio: 3 / 4; 
             overflow: hidden;
             background-color: #f7f5f2;
             position: relative;
@@ -113,7 +121,7 @@
             line-height: 1.4;
         }
 
-        /* Responsive Mobile: Ottimizzazione per schermi piccoli */
+        /* Responsive Mobile */
         @media (max-width: 900px) {
             .hero-banner-container {
                 padding: 0 1rem;
@@ -134,7 +142,6 @@
                 gap: 2rem;
             }
             .hero-video-wrapper {
-                /* Su mobile lo teniamo leggermente più alto (16:10) rispetto al desktop */
                 aspect-ratio: 16 / 10; 
             }
         }
@@ -142,45 +149,35 @@
 </head>
 <body>
 
-    <!-- 📌 SPAZI DETTAGLIATI E SEPARATI PER GLI SCRIPT -->
-    <!-- Qui va la striscia nera di banner.js -->
     <div id="dynamicBannerContainer"></div>
-    
-    <!-- Se in navbar.js hai anche il menu, lasciamo questo contenitore separato per la navbar -->
     <div id="dynamicNavContainer"></div>
 
-    <!-- 🎬 SEZIONE BANNER VIDEO HERO (Altezza Ridotta) -->
-    <section class="hero-banner-container" style="margin-top: 1rem;">
+    <section class="hero-banner-container">
         <div class="hero-video-wrapper">
-            <video playsinline autoplay muted loop preload="auto">
+            <video playsinline autoplay muted loop id="heroVideo">
                 <source src="images/banner.mp4" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
         </div>
     </section>
 
-    <!-- CORPO PRINCIPALE: Catalogo Prodotti -->
     <main class="catalog-container">
-        <div id="productsDisplay" class="products-grid">
-            <!-- I prodotti vengono iniettati qui dinamicamente da JavaScript -->
-        </div>
+        <div id="productsDisplay" class="products-grid"></div>
     </main>
 
-    <!-- ARCHIVIO DATI E LOGICA (v=2.1 per forzare l'aggiornamento totale) -->
-    <script src="products.js?v=2.1"></script>
-    <script src="banner.js?v=2.1"></script>
-    <script src="navbar.js?v=2.1"></script>
+    <script src="products.js?v=2.2"></script>
+    <script src="banner.js?v=2.2"></script>
+    <script src="navbar.js?v=2.2"></script>
     
-    <!-- LOGICA DI RENDERING DEL CATALOGO MULTILINGUA -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // Rendering Prodotti
             const currentLang = localStorage.getItem('selectedLang') || 'en';
             const display = document.getElementById('productsDisplay');
             
             if (typeof productsMaster !== 'undefined' && display) {
                 display.innerHTML = productsMaster.map(prod => {
                     const translation = prod.translations[currentLang] || prod.translations['en'];
-                    
                     return `
                         <a href="product.html?id=${prod.id}" class="product-card">
                             <div class="product-image-wrapper" style="background-color: ${prod.fallbackColor || '#f7f5f2'}">
@@ -195,11 +192,18 @@
                     `;
                 }).join('');
             }
+
+            // Forza l'avvio del video se alcuni browser lo mettono in pausa all'inizio
+            const video = document.getElementById('heroVideo');
+            if (video) {
+                video.play().catch(function(error) {
+                    console.log("Autoplay protetto dal browser, in attesa di interazione.");
+                });
+            }
         });
     </script>
 
-    <!-- FOOTER SCRIPT -->
-    <script src="footer.js?v=2.1"></script>
+    <script src="footer.js?v=2.2"></script>
 
 </body>
 </html>
