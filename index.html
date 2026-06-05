@@ -40,7 +40,7 @@
             margin-top: 96px;
         }
 
-        /* SEARCH BAR - discreta */
+        /* SEARCH BAR - stile originale discreto, testo più visibile */
         .search-section {
             max-width: 1280px;
             margin: 0 auto 1.5rem auto;
@@ -51,67 +51,76 @@
             display: flex;
             align-items: baseline;
             justify-content: flex-end;
-            gap: 1.8rem;
+            gap: 2rem;
             flex-wrap: wrap;
-            border-bottom: 1px solid #f0ece7;
+            border-bottom: 1px solid #e8e4df;
             padding-bottom: 0.8rem;
         }
 
         .search-field input {
             border: none;
             background: transparent;
-            padding: 0.3rem 0;
+            padding: 0.4rem 0;
             font-family: 'Montserrat', sans-serif;
-            font-size: 0.7rem;
-            font-weight: 300;
-            letter-spacing: 0.08em;
-            width: 140px;
+            font-size: 0.8rem;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            width: 160px;
             border-bottom: 1px solid transparent;
             transition: width 0.2s ease;
+            color: #2a2a2a;
         }
 
         .search-field input:focus {
             outline: none;
-            width: 170px;
-            border-bottom-color: #d4cbc1;
+            width: 190px;
+            border-bottom-color: #c8c0b5;
         }
 
         .search-field input::placeholder {
-            color: #ccc6bf;
+            color: #b8b0a5;
+            font-weight: 300;
+            letter-spacing: 0.05em;
         }
 
         .sort-discreet select {
             border: none;
             background: transparent;
             font-family: 'Montserrat', sans-serif;
-            font-size: 0.7rem;
-            font-weight: 300;
-            letter-spacing: 0.08em;
-            padding: 0.3rem 0;
+            font-size: 0.8rem;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            padding: 0.4rem 0;
             cursor: pointer;
-            color: #4a3f36;
+            color: #2a2a2a;
             border-bottom: 1px solid transparent;
         }
 
         .sort-discreet select:focus {
             outline: none;
-            border-bottom-color: #d4cbc1;
+            border-bottom-color: #c8c0b5;
+        }
+
+        .sort-discreet select option {
+            background: #ffffff;
+            color: #2a2a2a;
         }
 
         .clear-link {
             background: none;
             border: none;
             font-family: 'Montserrat', sans-serif;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
+            font-weight: 400;
             letter-spacing: 0.1em;
             text-transform: uppercase;
-            color: #b0a69b;
+            color: #a0988c;
             cursor: pointer;
             transition: color 0.2s;
         }
 
         .clear-link:hover {
-            color: #4a3f36;
+            color: #1a1a1a;
         }
 
         .products-header {
@@ -122,11 +131,12 @@
         }
 
         .product-count {
-            font-size: 0.6rem;
+            font-size: 0.65rem;
             letter-spacing: 0.1em;
             text-transform: uppercase;
-            color: #b0a69b;
+            color: #a8a098;
             font-family: 'Montserrat', sans-serif;
+            font-weight: 400;
         }
 
         .catalog-container {
@@ -186,17 +196,18 @@
         .product-info h3 {
             font-family: 'Montserrat', sans-serif;
             font-size: 0.75rem;
-            font-weight: 400;
+            font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.06em;
             margin: 0;
+            color: #1a1a1a;
         }
 
         .product-info span {
             font-family: 'Montserrat', sans-serif;
-            font-weight: 300;
+            font-weight: 400;
             font-size: 0.75rem;
-            color: #3a3a3a;
+            color: #4a4a4a;
         }
 
         .empty-message {
@@ -352,7 +363,12 @@
                 padding: 1.5rem;
             }
             .modal-title { font-size: 1.5rem; }
-            .search-discreet { justify-content: flex-start; gap: 1.2rem; }
+            .search-discreet { 
+                justify-content: flex-start;
+                gap: 1.5rem;
+            }
+            .search-field input { width: 140px; }
+            .search-field input:focus { width: 160px; }
         }
 
         @media (max-width: 768px) {
@@ -363,6 +379,8 @@
             .products-grid { grid-template-columns: 1fr; gap: 2rem; }
             .catalog-container, .search-section, .products-header { padding: 0 1rem; }
             .search-discreet { flex-direction: column; align-items: stretch; gap: 0.8rem; }
+            .search-field input { width: 100%; }
+            .search-field input:focus { width: 100%; }
         }
 
         .product-card {
@@ -377,7 +395,6 @@
 </head>
 <body>
 
-    <!-- Banner container - come nel product.html, il banner.js caricherà il banner nero qui -->
     <div id="dynamicBannerContainer"></div>
 
     <div class="sticky-nav-wrapper">
@@ -388,7 +405,7 @@
         
         <div id="heroContainer"></div>
 
-        <!-- SEARCH BAR -->
+        <!-- SEARCH BAR - stile originale discreto -->
         <div class="search-section">
             <div class="search-discreet">
                 <div class="search-field">
@@ -428,6 +445,48 @@
     <script src="footer.js"></script>
     
     <script>
+        // TRADUZIONI PER LA SEARCH BAR
+        const searchTranslations = {
+            en: {
+                placeholder: "search",
+                orderDefault: "order",
+                orderAsc: "price ↑",
+                orderDesc: "price ↓",
+                clear: "clear"
+            },
+            es: {
+                placeholder: "buscar",
+                orderDefault: "ordenar",
+                orderAsc: "precio ↑",
+                orderDesc: "precio ↓",
+                clear: "limpiar"
+            },
+            zh: {
+                placeholder: "搜索",
+                orderDefault: "排序",
+                orderAsc: "价格 ↑",
+                orderDesc: "价格 ↓",
+                clear: "清除"
+            }
+        };
+
+        function updateSearchBarLanguage() {
+            const currentLang = localStorage.getItem('selectedLang') || 'en';
+            const t = searchTranslations[currentLang] || searchTranslations.en;
+            
+            const searchInput = document.getElementById('searchInput');
+            const sortSelect = document.getElementById('sortSelect');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            
+            if (searchInput) searchInput.placeholder = t.placeholder;
+            if (clearBtn) clearBtn.textContent = t.clear;
+            if (sortSelect) {
+                sortSelect.options[0].text = t.orderDefault;
+                sortSelect.options[1].text = t.orderAsc;
+                sortSelect.options[2].text = t.orderDesc;
+            }
+        }
+
         // ATTENDE CHE products.js SIA CARICATO
         (function() {
             let isInitialized = false;
@@ -441,6 +500,8 @@
                 isInitialized = true;
                 
                 console.log('✅ Prodotti caricati:', window.productsMaster.length);
+                
+                updateSearchBarLanguage();
                 
                 const modal = document.getElementById('productModal');
                 const modalContent = document.getElementById('modalContent');
@@ -475,7 +536,6 @@
                 document.getElementById('closeModalBtn')?.addEventListener('click', closeModal);
                 modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
                 
-                // Funzione per filtrare i prodotti in base alla categoria dalla URL
                 function getFilteredAndSortedProducts() {
                     const urlParams = new URLSearchParams(window.location.search);
                     let cat = urlParams.get('cat');
@@ -484,7 +544,6 @@
                     
                     let filtered = [...window.productsMaster];
                     
-                    // FILTRO PER CATEGORIA
                     if (cat) {
                         if (cat === 'new-arrivals') {
                             filtered = filtered.filter(p => p.tags?.includes('new') || p.new === true);
@@ -501,12 +560,10 @@
                         }
                     }
                     
-                    // FILTRO PER TESTO
                     if (searchTerm) {
                         filtered = filtered.filter(p => p.title.toLowerCase().includes(searchTerm));
                     }
                     
-                    // ORDINAMENTO
                     if (sortValue === 'price-asc') {
                         filtered.sort((a, b) => (a.priceNum || 0) - (b.priceNum || 0));
                     } else if (sortValue === 'price-desc') {
@@ -548,7 +605,6 @@
                     });
                 }
                 
-                // Event listeners per search e sort
                 const searchInput = document.getElementById('searchInput');
                 const sortSelect = document.getElementById('sortSelect');
                 const clearBtn = document.getElementById('clearSearchBtn');
@@ -563,13 +619,16 @@
                     });
                 }
                 
-                // Ascolta cambi di URL (quando si clicca sui link della navbar)
                 window.addEventListener('popstate', () => {
                     if (typeof renderHero === 'function') renderHero();
                     renderProducts();
                 });
                 
-                // Hook per quando cambia la lingua
+                window.addEventListener('languageChanged', () => {
+                    updateSearchBarLanguage();
+                    renderProducts();
+                });
+                
                 const originalRenderHero = window.renderHero;
                 if (originalRenderHero) {
                     window.renderHero = function() {
@@ -578,7 +637,6 @@
                     };
                 }
                 
-                // RENDER INIZIALE
                 renderProducts();
             }
             
