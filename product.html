@@ -22,13 +22,41 @@
             align-items: center;
             padding: 1.5rem 4%;
             border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 100;
         }
         
         .nav-left { display: flex; gap: 1.5rem; }
-        .nav-left a { text-decoration: none; color: var(--text-color); font-size: 0.9rem; }
-        .logo { font-family: serif; font-size: 1.6rem; letter-spacing: 0.3rem; text-transform: uppercase; cursor: pointer; text-align: center; }
-        .nav-right { display: flex; justify-content: flex-end; align-items: center; gap: 1.2rem; }
+        .nav-left a { text-decoration: none; color: var(--text-color); font-size: 0.9rem; font-weight: 400; transition: color 0.2s; }
+        .nav-left a:hover { color: var(--accent-color); }
         
+        .logo { 
+            font-family: serif; 
+            font-size: 1.6rem; 
+            letter-spacing: 0.3rem; 
+            text-transform: uppercase; 
+            font-weight: 400; 
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .nav-right { display: flex; justify-content: flex-end; align-items: center; gap: 1.5rem; }
+        .social-icons { display: flex; gap: 1rem; color: var(--text-color); align-items: center; }
+        .social-icons i, .social-icons svg { cursor: pointer; width: 17px; height: 17px; }
+        
+        .lang-select {
+            font-size: 0.8rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            outline: none;
+            letter-spacing: 1px;
+            font-weight: 400;
+            color: var(--text-color);
+        }
+
         .cart-icon-wrapper { position: relative; display: flex; align-items: center; }
         .cart-badge {
             position: absolute; top: -8px; right: -8px;
@@ -36,7 +64,6 @@
             font-size: 0.65rem; padding: 2px 5px; border-radius: 50%;
         }
 
-        /* LAYOUT PAGINA PRODOTTO */
         .product-container {
             max-width: 1100px;
             margin: 4rem auto;
@@ -90,8 +117,11 @@
         .error-message h2 { font-family: serif; margin-bottom: 1rem; }
         .error-message a { color: var(--text-color); }
 
-        @media (max-width: 768px) {
-            .product-container { grid-template-columns: 1fr; gap: 2rem; }
+        @media (max-width: 900px) {
+            header { grid-template-columns: 1fr; gap: 1rem; text-align: center; }
+            .nav-left, .nav-right { justify-content: center; }
+            .logo { order: -1; }
+            .product-container { grid-template-columns: 1fr; gap: 2rem; margin: 2rem auto; }
             .product-image-side { height: 450px; }
         }
     </style>
@@ -100,10 +130,28 @@
 
     <header>
         <div class="nav-left">
-            <a href="index.html">Back to Gallery</a>
+            <!-- Collegamenti coerenti alla home con i filtri nativi -->
+            <a href="index.html">Home</a>
+            <a href="index.html">Dresses</a>
+            <a href="index.html">Lingeries</a>
+            <a href="index.html">New Arrivals</a>
         </div>
+        
         <div class="logo" onclick="window.location.href='index.html'">La Libre</div>
+        
         <div class="nav-right">
+            <!-- STRUTTURA DEL COPIATA IDENTICA CON ICONA IG VISIBILE ADIACENTE ALLA LINGUA -->
+            <div class="social-icons">
+                <a href="https://www.instagram.com/lalibreofficial/" target="_blank" rel="noopener noreferrer" style="color: inherit; display: inline-flex; align-items: center;">
+                    <i data-lucide="instagram"></i>
+                </a>
+                <a href="#" style="color: inherit; display: inline-flex; align-items: center;"><i data-lucide="facebook"></i></a>
+                <a href="#" style="color: inherit; display: inline-flex; align-items: center;"><i data-lucide="pinterest"></i></a>
+            </div>
+            <select class="lang-select">
+                <option>EN (UK)</option>
+                <option>FR</option>
+            </select>
             <a href="cart.html" class="cart-icon-wrapper" style="text-decoration: none; color: inherit;">
                 <i data-lucide="shopping-bag" style="width: 20px; height: 20px;"></i>
                 <span class="cart-badge">0</span>
@@ -112,13 +160,11 @@
     </header>
 
     <main class="product-container" id="productContent">
-        <!-- Il contenuto verrà iniettato dinamicamente da JavaScript -->
+        <!-- Caricamento dinamico tramite JS -->
     </main>
 
-    <!-- 1. Carica il file del catalogo comune -->
     <script src="products.js"></script>
 
-    <!-- 2. Logica di estrazione dati prodotto -->
     <script>
         function updateCartBadge() {
             const currentCount = localStorage.getItem('cartItemCount') || 0;
@@ -139,17 +185,13 @@
             updateCartBadge();
 
             const container = document.getElementById('productContent');
-            
-            // 1. Legge l'ID del prodotto dall'URL (es. product.html?id=eliah-maxi)
             const urlParams = new URLSearchParams(window.location.search);
             const productId = urlParams.get('id');
 
-            // 2. Cerca il prodotto corrispondente nel database condiviso products.js
             const product = typeof productsMaster !== 'undefined' 
                 ? productsMaster.find(p => p.id === productId) 
                 : null;
 
-            // Se il prodotto non esiste, è nascosto/archiviato o l'URL è errato
             if (!product || product.status !== 'active') {
                 container.innerHTML = `
                     <div class="error-message">
@@ -160,7 +202,6 @@
                 return;
             }
 
-            // 3. Genera dinamicamente la pagina con i dati corretti
             const bgStyle = product.image ? `background-image: url('${product.image}');` : '';
             const textColor = product.fallbackColor === "#111111" || product.fallbackColor === "#2c2a29" ? "color: #fff;" : "";
             const placeholderText = !product.image ? `[ ${product.title} ]` : "";
@@ -187,10 +228,8 @@
                 </div>
             `;
 
-            // Collega il bottone del carrello appena creato
             document.getElementById('addToCartBtn').addEventListener('click', handleAddToCart);
             
-            // Gestione del click sulle taglie per puro feedback visivo
             const sizeBtns = document.querySelectorAll('.size-btn');
             sizeBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
