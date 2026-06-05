@@ -187,32 +187,31 @@
         document.addEventListener("DOMContentLoaded", function() {
             const currentLang = localStorage.getItem('selectedLang') || 'en';
             
-            // 1. Lettura dei parametri URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const productIdStr = urlParams.get('id');
-            const productId = parseInt(productIdStr, 10);
+// 1. Lettura dei parametri URL (Resta invariata)
+const urlParams = new URLSearchParams(window.location.search);
+const productId = urlParams.get('id'); // Cattura direttamente il testo (es. "amour-lace") senza parseInt!
 
-            // Traduzione del bottone d'acquisto
-            const bagButtonTranslations = { en: "Add To Bag", es: "Añadir al Bolso", zh: "加入购物袋" };
-            const btnBag = document.getElementById('addToBagBtn');
-            if(btnBag) btnBag.textContent = bagButtonTranslations[currentLang] || bagButtonTranslations['en'];
+// Traduzione del bottone d'acquisto (Resta invariata)
+const bagButtonTranslations = { en: "Add To Bag", es: "Añadir al Bolso", zh: "加入购物袋" };
+const btnBag = document.getElementById('addToBagBtn');
+if(btnBag) btnBag.textContent = bagButtonTranslations[currentLang] || bagButtonTranslations['en'];
 
-            const container = document.getElementById('productContentContainer');
+const container = document.getElementById('productContentContainer');
 
-            // 2. Controllo di sicurezza: Il file products.js è caricato?
-            if (typeof productsMaster === 'undefined') {
-                container.innerHTML = `<div class="error-message">Database error: 'productsMaster' is missing. Check your products.js file.</div>`;
-                return;
-            }
+// 2. Controllo di sicurezza: Il file products.js è caricato?
+if (typeof productsMaster === 'undefined') {
+    container.innerHTML = `<div class="error-message">Database error: 'productsMaster' is missing. Check your products.js file.</div>`;
+    return;
+}
 
-            // 3. Controllo di sicurezza: L'ID nell'URL è valido?
-            if (!productIdStr || isNaN(productId)) {
-                container.innerHTML = `<div class="error-message">No valid product ID specified in the URL. (e.g., product.html?id=1)</div>`;
-                return;
-            }
+// 3. Controllo di sicurezza: L'ID testuale esiste nell'URL?
+if (!productId) {
+    container.innerHTML = `<div class="error-message">No product specified in the URL. (e.g., product.html?id=amour-lace)</div>`;
+    return;
+}
 
-            // 4. Ricerca del prodotto
-            const product = productsMaster.find(p => p.id === productId);
+// 4. Ricerca del prodotto (Confronta testo con testo, adesso funzionerà perfettamente!)
+const product = productsMaster.find(p => p.id === productId);
             
             if (product) {
                 // Estrazione traduzioni flessibile (evita errori se mancano dei campi)
