@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Libre | Slow Collection</title>
-    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
             --bg-color: #ffffff;
@@ -43,7 +42,6 @@
             text-align: center;
         }
         
-        /* Box destro con spazio fisso e ottimizzato */
         .nav-right { 
             display: flex; 
             justify-content: flex-end; 
@@ -58,12 +56,13 @@
             align-items: center; 
         }
         
-        /* Garantisce che i tag dei social abbiano dimensioni bloccate per Lucide */
         .social-icons a {
             color: inherit; 
             display: inline-flex; 
             align-items: center;
             text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
         }
         
         .social-icons i, .social-icons svg { 
@@ -72,7 +71,6 @@
             height: 18px; 
         }
         
-        /* Fix selettore lingua: spazio flessibile senza tagli visivi */
         .lang-select {
             font-size: 0.8rem;
             border: none;
@@ -83,14 +81,21 @@
             font-weight: 400;
             color: var(--text-color);
             width: auto;
-            min-width: 75px;
             padding-right: 5px;
             text-transform: uppercase;
         }
 
-        .cart-icon-wrapper { position: relative; display: flex; align-items: center; }
+        .cart-icon-wrapper { 
+            position: relative; 
+            display: flex; 
+            align-items: center; 
+            text-decoration: none; 
+            color: inherit;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
         .cart-badge {
-            position: absolute; top: -8px; right: -8px;
+            position: absolute; top: -8px; right: -12px;
             background: var(--text-color); color: white;
             font-size: 0.65rem; padding: 2px 5px; border-radius: 50%;
         }
@@ -272,17 +277,17 @@
         <div class="nav-right">
             <div class="social-icons">
                 <a href="https://www.instagram.com/lalibreofficial/" target="_blank" rel="noopener noreferrer">
-                    <i data-lucide="instagram"></i>
+                    <i data-lucide="instagram">IG</i>
                 </a>
-                <a href="#"><i data-lucide="facebook"></i></a>
-                <a href="#"><i data-lucide="pinterest"></i></a>
+                <a href="#"><i data-lucide="facebook">FB</i></a>
+                <a href="#"><i data-lucide="pinterest">PIN</i></a>
             </div>
             <select class="lang-select">
                 <option>EN (UK)</option>
                 <option>FR</option>
             </select>
-            <a href="cart.html" class="cart-icon-wrapper" style="text-decoration: none; color: inherit;">
-                <i data-lucide="shopping-bag" style="width: 20px; height: 20px;"></i>
+            <a href="cart.html" class="cart-icon-wrapper">
+                <i data-lucide="shopping-bag">BAG</i>
                 <span class="cart-badge">0</span>
             </a>
         </div>
@@ -292,7 +297,6 @@
         <div class="banner-media-container">
             <video autoplay loop muted playsinline>
                 <source src="images/banner-video.mp4" type="video/mp4">
-                Your browser does not support the video tag.
             </video>
         </div>
         <div class="banner-overlay"></div>
@@ -326,7 +330,7 @@
 
     <div class="popup-overlay" id="emailPopup">
         <div class="popup-modal">
-            <button class="popup-close" id="closePopup"><i data-lucide="x" style="width: 18px; height: 18px;"></i></button>
+            <button class="popup-close" id="closePopup"><i data-lucide="x">X</i></button>
             <h2>La Libre</h2>
             <p>Join the slow movement. Subscribe to receive private collection updates.</p>
             <form class="popup-form" id="subscribeForm">
@@ -340,6 +344,7 @@
         <p>&copy; 2026 LA LIBRE. ALL RIGHTS RESERVED.</p>
     </footer>
 
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="products.js"></script>
 
     <script>
@@ -359,11 +364,10 @@
         function displayCatalog() {
             const grid = document.getElementById('productGrid');
             if (!grid) return;
-            
             grid.innerHTML = "";
 
             if (typeof productsMaster === 'undefined') {
-                grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:red; margin: 2rem 0;'>Errore di caricamento: File 'products.js' non trovato.</p>";
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:var(--accent-color); margin: 2rem 0;'>Loading collection database...</p>";
                 return;
             }
 
@@ -423,9 +427,9 @@
             if(badge) badge.innerText = currentCount;
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            // Chiamata esplicita obbligatoria per far apparire i loghi Lucide
-            if (typeof lucide !== 'undefined') {
+        window.addEventListener('load', () => {
+            // Controllo sicuro per inizializzare Lucide senza provocare crash
+            if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
                 lucide.createIcons();
             }
 
@@ -460,21 +464,6 @@
                 closeBtn.addEventListener('click', () => {
                     popup.classList.remove('active');
                     localStorage.setItem('popupDismissed', 'true');
-                });
-                popup.addEventListener('click', (e) => { 
-                    if (e.target === popup) {
-                        popup.classList.remove('active'); 
-                        localStorage.setItem('popupDismissed', 'true');
-                    }
-                });
-            }
-
-            if(subscribeForm && popup) {
-                subscribeForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    localStorage.setItem('subscribed', 'true');
-                    popup.classList.remove('active');
-                    alert('Thank you for joining our movement.');
                 });
             }
         });
