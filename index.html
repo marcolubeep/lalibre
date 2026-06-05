@@ -4,339 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Libre Studio &mdash; Official E-Commerce</title>
-    
-    <!-- Importazione Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Montserrat', sans-serif;
-            background-color: #ffffff;
-            color: #1a1a1a;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* 📌 NAVBAR ANCORATA IN CIMA (Senza striscia nera) */
-        .sticky-nav-wrapper {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-            background-color: #ffffff;
-            box-shadow: 0 1px 10px rgba(0, 0, 0, 0.02);
-        }
-
-        #dynamicNavContainer {
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            display: block;
-        }
-
-        /* Compensazione per lo scroll */
-        .main-content-wrapper {
-            margin-top: 75px; 
-        }
-
-        /* 🎬 VIDEO HERO BANNER SOTTILE E PANORAMICO */
-        .hero-banner-container {
-            width: 100%;
-            position: relative;
-            overflow: hidden;
-            background-color: #000000;
-            aspect-ratio: 38 / 10; 
-            display: block;
-        }
-
-        .hero-video-wrapper {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-
-        .hero-video-wrapper video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; 
-            object-position: center; 
-            display: block;
-        }
-
-        .hero-video-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.45); /* Filtro scuro perfetto */
-            z-index: 2;
-        }
-
-        /* TEXT OVERLAY "FREE SOUL, SECOND SKIN" */
-        .hero-text-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 3;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: #ffffff;
-            padding: 0 1rem;
-            box-sizing: border-box;
-        }
-
-        .hero-claim {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 3rem;
-            font-weight: 300;
-            text-transform: uppercase;
-            letter-spacing: 6px;
-            margin: 0 0 0.8rem 0;
-            line-height: 1.2;
-        }
-
-        .hero-divider {
-            width: 45px;
-            height: 2px;
-            background-color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 1rem;
-        }
-
-        .hero-subtitle {
-            font-family: 'Cormorant Garamond', serif;
-            font-style: italic;
-            font-size: 1rem;
-            font-weight: 300;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.85);
-            margin: 0;
-        }
-
-        /* Controlli Catalogo */
-        .catalog-controls {
-            max-width: 1200px;
-            margin: 3rem auto 2rem auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-sizing: border-box;
-        }
-
-        .search-placeholder {
-            font-size: 0.7rem;
-            letter-spacing: 1.5px;
-            color: #b3b3b3;
-            text-transform: uppercase;
-            border-bottom: 1px solid #e0e0e0;
-            padding-bottom: 4px;
-            width: 180px;
-        }
-
-        .sort-placeholder {
-            font-size: 0.7rem;
-            letter-spacing: 1px;
-            color: #1a1a1a;
-            text-transform: uppercase;
-        }
-        .sort-placeholder span {
-            color: #707070;
-            font-weight: 300;
-        }
-
-        /* Griglia Catalogo */
-        .catalog-container {
-            max-width: 1200px;
-            margin: 0 auto 4rem auto;
-            padding: 0 2rem;
-            box-sizing: border-box;
-        }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2.5rem 2rem;
-        }
-
-        .product-card {
-            display: flex;
-            flex-direction: column;
-            text-decoration: none;
-            color: #1a1a1a;
-            transition: opacity 0.3s ease;
-        }
-
-        .product-card:hover {
-            opacity: 0.85;
-        }
-
-        .product-image-wrapper {
-            width: 100%;
-            aspect-ratio: 3 / 4; 
-            overflow: hidden;
-            background-color: #f7f5f2;
-        }
-
-        .product-image-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .product-info {
-            margin-top: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            font-size: 0.75rem;
-            letter-spacing: 0.5px;
-        }
-
-        .product-title {
-            font-weight: 400;
-            margin: 0;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-        }
-
-        .product-price {
-            font-weight: 300;
-            color: #707070;
-        }
-
-        .product-tagline {
-            font-size: 0.7rem;
-            color: #8c8c8c;
-            margin-top: 0.4rem;
-            font-weight: 300;
-            line-height: 1.4;
-        }
-
-        /* Responsive Mobile */
-        @media (max-width: 900px) {
-            .hero-claim { font-size: 2rem; letter-spacing: 4px; }
-            .hero-subtitle { font-size: 0.85rem; }
-            .catalog-controls, .catalog-container { padding: 0 1rem; }
-            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
-        }
-
-        @media (max-width: 600px) {
-            .main-content-wrapper { margin-top: 105px; } 
-            .hero-banner-container { aspect-ratio: 18 / 10; } 
-            .hero-claim { font-size: 1.4rem; letter-spacing: 2px; }
-            .hero-subtitle { font-size: 0.7rem; }
-            .products-grid { grid-template-columns: 1fr; gap: 2rem; }
-            .catalog-controls { flex-direction: column; gap: 1rem; align-items: flex-start; }
-        }
+        body { margin: 0; font-family: 'Montserrat', sans-serif; background: #fff; color: #1a1a1a; }
+        .sticky-nav-wrapper { position: fixed; top: 0; width: 100%; z-index: 1000; background: #fff; box-shadow: 0 1px 10px rgba(0,0,0,0.02); }
+        .main-content-wrapper { margin-top: 75px; }
+        
+        /* Hero Banner */
+        .hero-banner-container { width: 100%; aspect-ratio: 38 / 10; position: relative; overflow: hidden; background: #000; }
+        .hero-video-wrapper video { width: 100%; height: 100%; object-fit: cover; }
+        .hero-video-overlay { position: absolute; top:0; left:0; width: 100%; height: 100%; background: rgba(0,0,0,0.45); }
+        
+        /* Griglia Prodotti */
+        .catalog-container { max-width: 1200px; margin: 4rem auto; padding: 0 2rem; }
+        .products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem 2rem; }
+        .product-card { text-decoration: none; color: #1a1a1a; }
+        .product-image-wrapper { aspect-ratio: 3/4; background: #f7f5f2; overflow: hidden; }
+        .product-image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .product-info { margin-top: 1rem; display: flex; justify-content: space-between; font-size: 0.75rem; }
     </style>
 </head>
 <body>
 
-    <!-- Navigazione Sticky -->
-    <div class="sticky-nav-wrapper">
-        <div id="dynamicNavContainer"></div>
-    </div>
+    <div class="sticky-nav-wrapper"><div id="dynamicNavContainer"></div></div>
 
-    <!-- Contenuto Principale -->
     <div class="main-content-wrapper">
-        
-        <!-- 🎬 Il video adesso è qui, dentro l'HTML: non serve più banner.js per iniettarlo! -->
         <section class="hero-banner-container">
-            <div class="hero-video-wrapper">
-                <video playsinline autoplay muted loop id="heroVideo">
-                    <!-- Verifica che il percorso del file video sia corretto (es. "videos/banner.mp4" o "images/banner.mp4") -->
-                    <source src="images/banner.mp4" type="video/mp4">
-                </video>
-            </div>
+            <div class="hero-video-wrapper"><video autoplay muted loop playsinline src="images/banner.mp4"></video></div>
             <div class="hero-video-overlay"></div>
-            <div class="hero-text-container" id="heroTextOverlay"></div>
         </section>
 
-        <!-- Controlli Catalogo -->
-        <div class="catalog-controls">
-            <div class="search-placeholder">Search Collection...</div>
-            <div class="sort-placeholder">Sort By &mdash; <span>Default</span></div>
-        </div>
-
-        <!-- Griglia Prodotti -->
         <main class="catalog-container">
             <div id="productsDisplay" class="products-grid"></div>
         </main>
-
     </div>
 
-    <!-- Script Caricati (banner.js rimosso del tutto per evitare conflitti con la striscia nera) -->
-    <script src="products.js?v=3.3"></script>
-    <script src="navbar.js?v=3.3"></script>
+    <script src="products.js"></script>
+    <script src="navbar.js"></script>
     
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const currentLang = localStorage.getItem('selectedLang') || 'en';
-            
-            // Render Testo in Overlay
-            const overlayTranslations = {
-                en: {
-                    claim: "Free Soul, Second Skin",
-                    subtitle: "Slow collection crafted in delicate lace"
-                },
-                es: {
-                    claim: "Alma Libre, Segunda Piel",
-                    subtitle: "Colección lenta confeccionada en encaje delicado"
-                },
-                zh: {
-                    claim: "自由灵魂，第二层肌肤",
-                    subtitle: "精致蕾丝打造的慢系列作品"
-                }
-            };
+            const urlParams = new URLSearchParams(window.location.search);
+            const cat = urlParams.get('cat'); // Recupera categoria dall'URL
 
-            const textData = overlayTranslations[currentLang] || overlayTranslations['en'];
-            const overlayContainer = document.getElementById('heroTextOverlay');
-            if (overlayContainer) {
-                overlayContainer.innerHTML = `
-                    <h1 class="hero-claim">${textData.claim}</h1>
-                    <div class="hero-divider"></div>
-                    <p class="hero-subtitle">${textData.subtitle}</p>
-                `;
+            let filtered = productsMaster;
+            if (cat) {
+                filtered = productsMaster.filter(p => p.category === cat);
             }
 
-            // Render Griglia Prodotti
             const display = document.getElementById('productsDisplay');
-            if (typeof productsMaster !== 'undefined' && display) {
-                display.innerHTML = productsMaster.map(prod => {
-                    const translation = prod.translations[currentLang] || prod.translations['en'];
-                    return `
-                        <a href="product.html?id=${prod.id}" class="product-card">
-                            <div class="product-image-wrapper" style="background-color: ${prod.fallbackColor || '#f7f5f2'}">
-                                <img src="${prod.image}" alt="${prod.title}" onerror="this.style.display='none';">
-                            </div>
-                            <div class="product-info">
-                                <h3 class="product-title">${prod.title}</h3>
-                                <span class="product-price">${prod.price}</span>
-                            </div>
-                            <p class="product-tagline">${translation.tagline}</p>
-                        </a>
-                    `;
-                }).join('');
-            }
+            display.innerHTML = filtered.map(prod => `
+                <a href="product.html?id=${prod.id}" class="product-card">
+                    <div class="product-image-wrapper"><img src="${prod.image}" alt="${prod.title}"></div>
+                    <div class="product-info">
+                        <h3>${prod.title}</h3>
+                        <span>${prod.price}</span>
+                    </div>
+                </a>
+            `).join('');
         });
     </script>
-
-    <script src="footer.js?v=3.3"></script>
-
 </body>
 </html>
