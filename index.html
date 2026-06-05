@@ -6,7 +6,6 @@
     <title>La Libre Studio &mdash; Official E-Commerce</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* STILI ESISTENTI + AGGIUNTA SEARCH BAR */
         * {
             margin: 0;
             padding: 0;
@@ -33,16 +32,15 @@
             top: 0;
             width: 100%;
             z-index: 1050;
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(2px);
-            border-bottom: 1px solid #eae7e2;
+            background: #ffffff;
+            box-shadow: 0 1px 10px rgba(0,0,0,0.03);
         }
 
         .main-content-wrapper {
             margin-top: 96px;
         }
 
-        /* SEARCH BAR - discreta, nessuna icona */
+        /* SEARCH BAR - discreta */
         .search-section {
             max-width: 1280px;
             margin: 0 auto 1.5rem auto;
@@ -80,8 +78,6 @@
 
         .search-field input::placeholder {
             color: #ccc6bf;
-            font-weight: 300;
-            letter-spacing: 0.05em;
         }
 
         .sort-discreet select {
@@ -212,7 +208,6 @@
             grid-column: 1 / -1;
         }
 
-        /* MODAL */
         .product-modal {
             position: fixed;
             top: 0;
@@ -316,14 +311,12 @@
             font-size: 1.2rem;
             font-weight: 400;
             color: #5a4a3a;
-            font-family: 'Montserrat', sans-serif;
         }
 
         .modal-description {
             font-size: 0.85rem;
             line-height: 1.6;
             color: #444;
-            margin: 0.5rem 0;
         }
 
         .modal-meta {
@@ -333,7 +326,6 @@
             color: #8a7a6a;
             border-top: 1px solid #eae7e2;
             padding-top: 1rem;
-            margin-top: 0.5rem;
         }
 
         .add-to-cart-btn {
@@ -347,7 +339,6 @@
             text-transform: uppercase;
             cursor: pointer;
             transition: background 0.2s;
-            margin-top: 0.5rem;
         }
 
         .add-to-cart-btn:hover {
@@ -360,75 +351,44 @@
                 gap: 1rem;
                 padding: 1.5rem;
             }
-            
-            .modal-container {
-                width: 95%;
-                max-height: 90vh;
-            }
-            
-            .modal-image {
-                max-height: 40vh;
-            }
-            
-            .modal-title {
-                font-size: 1.5rem;
-            }
-            
-            .search-discreet {
-                justify-content: flex-start;
-                gap: 1.2rem;
-            }
+            .modal-title { font-size: 1.5rem; }
+            .search-discreet { justify-content: flex-start; gap: 1.2rem; }
         }
 
         @media (max-width: 768px) {
-            .products-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1.5rem;
-            }
+            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
         }
 
         @media (max-width: 480px) {
-            .products-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            
-            .catalog-container, .search-section, .products-header {
-                padding: 0 1rem;
-            }
-            
-            .search-discreet {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 0.8rem;
-            }
+            .products-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .catalog-container, .search-section, .products-header { padding: 0 1rem; }
+            .search-discreet { flex-direction: column; align-items: stretch; gap: 0.8rem; }
         }
 
         .product-card {
             animation: fadeSlideUp 0.45s ease backwards;
         }
-        
+
         @keyframes fadeSlideUp {
-            from {
-                opacity: 0;
-                transform: translateY(18px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
-    <div class="sticky-nav-wrapper"><div id="dynamicNavContainer"></div></div>
+    <!-- Banner container - come nel product.html, il banner.js caricherà il banner nero qui -->
+    <div id="dynamicBannerContainer"></div>
+
+    <div class="sticky-nav-wrapper">
+        <div id="dynamicNavContainer"></div>
+    </div>
 
     <div class="main-content-wrapper">
         
         <div id="heroContainer"></div>
 
-        <!-- SEARCH BAR - aggiunta discreta -->
+        <!-- SEARCH BAR -->
         <div class="search-section">
             <div class="search-discreet">
                 <div class="search-field">
@@ -454,7 +414,6 @@
         </main>
     </div>
 
-    <!-- MODAL -->
     <div id="productModal" class="product-modal">
         <div class="modal-container">
             <button class="modal-close" id="closeModalBtn">&times;</button>
@@ -462,29 +421,26 @@
         </div>
     </div>
 
-    <!-- LE TUE FONTI GITHUB - rimangono IDENTICHE -->
     <script src="products.js"></script>
+    <script src="banner.js"></script>
     <script src="navbar.js"></script>
     <script src="hero.js"></script>
-    <script src="banner.js"></script>
+    <script src="footer.js"></script>
     
     <script>
-        // QUESTO SCRIPT LAVORA CON I TUOI products.js
-        // Non sovrascrive nulla, usa solo window.productsMaster
-        
+        // ATTENDE CHE products.js SIA CARICATO
         (function() {
-            let productsReady = false;
+            let isInitialized = false;
             
-            function initSearchAndFilter() {
+            function init() {
+                if (isInitialized) return;
                 if (!window.productsMaster || !window.productsMaster.length) {
-                    setTimeout(initSearchAndFilter, 100);
+                    setTimeout(init, 100);
                     return;
                 }
+                isInitialized = true;
                 
-                if (productsReady) return;
-                productsReady = true;
-                
-                console.log('✅ Search bar attivata con', window.productsMaster.length, 'prodotti');
+                console.log('✅ Prodotti caricati:', window.productsMaster.length);
                 
                 const modal = document.getElementById('productModal');
                 const modalContent = document.getElementById('modalContent');
@@ -519,22 +475,38 @@
                 document.getElementById('closeModalBtn')?.addEventListener('click', closeModal);
                 modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
                 
+                // Funzione per filtrare i prodotti in base alla categoria dalla URL
                 function getFilteredAndSortedProducts() {
                     const urlParams = new URLSearchParams(window.location.search);
-                    const cat = urlParams.get('cat');
+                    let cat = urlParams.get('cat');
                     const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
                     const sortValue = document.getElementById('sortSelect')?.value || 'default';
                     
                     let filtered = [...window.productsMaster];
                     
-                    if (cat && cat !== 'new-arrivals' && cat !== 'dresses' && cat !== 'lingeries') {
-                        filtered = filtered.filter(p => p.category === cat);
+                    // FILTRO PER CATEGORIA
+                    if (cat) {
+                        if (cat === 'new-arrivals') {
+                            filtered = filtered.filter(p => p.tags?.includes('new') || p.new === true);
+                        } else if (cat === 'dresses') {
+                            filtered = filtered.filter(p => p.category === 'dresses' || p.tags?.includes('dresses'));
+                        } else if (cat === 'lingeries') {
+                            filtered = filtered.filter(p => p.category === 'lingeries' || p.tags?.includes('lingerie') || p.tags?.includes('lingeries'));
+                        } else if (cat === 'objects') {
+                            filtered = filtered.filter(p => p.category === 'objects');
+                        } else if (cat === 'textiles') {
+                            filtered = filtered.filter(p => p.category === 'textiles');
+                        } else if (cat === 'accessories') {
+                            filtered = filtered.filter(p => p.category === 'accessories');
+                        }
                     }
                     
+                    // FILTRO PER TESTO
                     if (searchTerm) {
                         filtered = filtered.filter(p => p.title.toLowerCase().includes(searchTerm));
                     }
                     
+                    // ORDINAMENTO
                     if (sortValue === 'price-asc') {
                         filtered.sort((a, b) => (a.priceNum || 0) - (b.priceNum || 0));
                     } else if (sortValue === 'price-desc') {
@@ -576,6 +548,7 @@
                     });
                 }
                 
+                // Event listeners per search e sort
                 const searchInput = document.getElementById('searchInput');
                 const sortSelect = document.getElementById('sortSelect');
                 const clearBtn = document.getElementById('clearSearchBtn');
@@ -590,13 +563,13 @@
                     });
                 }
                 
-                // Ascolta cambi URL
+                // Ascolta cambi di URL (quando si clicca sui link della navbar)
                 window.addEventListener('popstate', () => {
                     if (typeof renderHero === 'function') renderHero();
                     renderProducts();
                 });
                 
-                // Hook per quando hero.js fa renderHero()
+                // Hook per quando cambia la lingua
                 const originalRenderHero = window.renderHero;
                 if (originalRenderHero) {
                     window.renderHero = function() {
@@ -605,13 +578,14 @@
                     };
                 }
                 
+                // RENDER INIZIALE
                 renderProducts();
             }
             
             if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initSearchAndFilter);
+                document.addEventListener('DOMContentLoaded', init);
             } else {
-                initSearchAndFilter();
+                init();
             }
         })();
     </script>
