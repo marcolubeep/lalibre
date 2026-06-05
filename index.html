@@ -1,131 +1,167 @@
-// footer.js - Footer Ultra-Compatto e Mobile-Responsive per La Libre
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Libre Studio &mdash; Official E-Commerce</title>
+    
+    <!-- Stili strutturali di base per la griglia prodotti (Minimal & Responsive) -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            color: #1a1a1a;
+            -webkit-font-smoothing: antialiased;
+        }
 
-(function() {
-    const currentLang = localStorage.getItem('selectedLang') || 'en';
+        /* Contenitore principale del catalogo */
+        .catalog-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            box-sizing: border-box;
+        }
 
-    const footerTranslations = {
-        en: { follow: "Follow us on Instagram", rights: "All rights reserved" },
-        es: { follow: "Síguenos en Instagram", rights: "Todos los derechos reservados" },
-        zh: { follow: "关注 La Libre 官方 Instagram", rights: "版权所有" }
-    };
+        /* Griglia dei prodotti: 3 colonne su Desktop, collassa fluidamente su Mobile */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
 
-    const t = footerTranslations[currentLang] || footerTranslations['en'];
+        .product-card {
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: #1a1a1a;
+            transition: opacity 0.3s ease;
+        }
 
-    const styles = `
-        <style>
-            .site-footer {
-                width: 100%;
-                background: #ffffff;
-                margin-top: 2rem; 
-                padding: 1.5rem 1rem 1.5rem 1rem; 
-                box-sizing: border-box;
+        .product-card:hover {
+            opacity: 0.85;
+        }
+
+        .product-image-wrapper {
+            width: 100%;
+            aspect-ratio: 3 / 4; /* Proporzione classica verticale da luxury retail */
+            overflow: hidden;
+            background-color: #f7f5f2;
+            position: relative;
+        }
+
+        .product-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .product-info {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        .product-title {
+            font-weight: 400;
+            margin: 0;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .product-price {
+            font-weight: 300;
+            color: #707070;
+        }
+
+        .product-tagline {
+            font-size: 0.75rem;
+            color: #8c8c8c;
+            margin-top: 0.4rem;
+            font-weight: 300;
+            line-height: 1.4;
+        }
+
+        /* Responsive Mobile: Evita sovrapposizioni e stringe la griglia */
+        @media (max-width: 900px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr); /* 2 prodotti per riga su tablet */
+                gap: 1.5rem;
             }
+        }
+
+        @media (max-width: 600px) {
+            .catalog-container {
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
+            .products-grid {
+                grid-template-columns: 1fr; /* 1 solo prodotto grande per riga su smartphone */
+                gap: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Contenitore opzionale per il Banner Dinamico (gestito da navbar/script) -->
+    <div id="dynamicBannerContainer"></div>
+
+    <!-- 
+        La barra di navigazione (navbar.js) si inietterà automaticamente 
+        qui in cima non appena la pagina viene caricata.
+    -->
+
+    <!-- CORPO PRINCIPALE: Catalogo Prodotti -->
+    <main class="catalog-container">
+        <div id="productsDisplay" class="products-grid">
+            <!-- I prodotti vengono iniettati qui dinamicamente dallo script del catalogo -->
+        </div>
+    </main>
+
+    <!-- ARCHIVIO DATI E LOGICA (Caricati con rinfresco cache v=2.0) -->
+    <script src="products.js?v=2.0"></script>
+    <script src="navbar.js?v=2.0"></script>
+    
+    <!-- LOGICA DI RENDERING DEL CATALOGO MULTILINGUA -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const currentLang = localStorage.getItem('selectedLang') || 'en';
+            const display = document.getElementById('productsDisplay');
             
-            .ig-section {
-                max-width: 900px; 
-                margin: 0 auto 2rem auto; 
-                text-align: center;
+            if (typeof productsMaster !== 'undefined' && display) {
+                display.innerHTML = productsMaster.map(prod => {
+                    // Estrae la traduzione corretta o usa il fallback in inglese
+                    const translation = prod.translations[currentLang] || prod.translations['en'];
+                    
+                    return `
+                        <a href="product.html?id=${prod.id}" class="product-card">
+                            <div class="product-image-wrapper" style="background-color: ${prod.fallbackColor}">
+                                <img src="${prod.image}" alt="${prod.title}" onerror="this.style.display='none';">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">${prod.title}</h3>
+                                <span class="product-price">${prod.price}</span>
+                            </div>
+                            <p class="product-tagline">${translation.tagline}</p>
+                        </a>
+                    `;
+                }).join('');
             }
-            .ig-title {
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-                font-size: 0.7rem; 
-                text-transform: uppercase;
-                letter-spacing: 2.5px;
-                color: #1a1a1a;
-                text-decoration: none;
-                display: inline-block;
-                margin-bottom: 1.2rem;
-                font-weight: 300;
-            }
-            
-            .ig-grid {
-                display: grid;
-                grid-template-columns: repeat(4, 1fr); 
-                gap: 0.75rem; 
-            }
-            .ig-item {
-                position: relative;
-                display: block;
-                aspect-ratio: 1 / 1; 
-                overflow: hidden;
-                background: #f7f5f2;
-                color: transparent;
-                text-decoration: none;
-            }
-            .ig-item img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover; /* Mantiene le immagini proporzionate senza deformarle */
-                display: block;
-            }
-            
-            .footer-bottom {
-                max-width: 900px;
-                margin: 0 auto;
-                border-top: 1px solid #f5f5f5; 
-                padding-top: 1.2rem;
-                text-align: center; 
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-                font-size: 0.6rem; 
-                color: #9c9c9c;
-                letter-spacing: 1px;
-                text-transform: uppercase;
-            }
+        });
+    </script>
 
-            /* Responsive Mobile Rigido */
-            @media (max-width: 768px) {
-                .ig-grid { 
-                    grid-template-columns: repeat(2, 1fr); /* Diventa 2 foto per riga, un quadrato 2x2 pulito */
-                    gap: 0.5rem; 
-                }
-                .site-footer {
-                    margin-top: 1.5rem;
-                }
-            }
-        </style>
-    `;
+    <!-- 
+        FOOTER SCRIPT: Genera la sezione Instagram e inserisce la linea 
+        di copyright "All Rights Reserved" stabilmente in fondo a tutto.
+    -->
+    <script src="footer.js?v=2.0"></script>
 
-    function renderFooter() {
-        const footer = document.createElement('footer');
-        footer.className = 'site-footer';
-
-        const isProductPage = window.location.pathname.includes('product.html') || document.getElementById('product-detail-container');
-        const pathPrefix = (isProductPage && !window.location.pathname.includes('index.html')) ? './' : '';
-        const igProfileUrl = "https://www.instagram.com/lalibreofficial";
-
-        footer.innerHTML = `
-            <div class="ig-section">
-                <a href="${igProfileUrl}" target="_blank" class="ig-title">
-                    @lalibreofficial &mdash; ${t.follow}
-                </a>
-                <div class="ig-grid">
-                    <a href="${igProfileUrl}" target="_blank" class="ig-item">
-                        <img src="${pathPrefix}images/products/ig1.jpg" alt="La Libre">
-                    </a>
-                    <a href="${igProfileUrl}" target="_blank" class="ig-item">
-                        <img src="${pathPrefix}images/products/ig2.jpg" alt="La Libre">
-                    </a>
-                    <a href="${igProfileUrl}" target="_blank" class="ig-item">
-                        <img src="${pathPrefix}images/products/ig3.jpg" alt="La Libre">
-                    </a>
-                    <a href="${igProfileUrl}" target="_blank" class="ig-item">
-                        <img src="${pathPrefix}images/products/ig4.jpg" alt="La Libre">
-                    </a>
-                </div>
-            </div>
-
-            <div class="footer-bottom">
-                <div>&copy; ${new Date().getFullYear()} La Libre. ${t.rights}.</div>
-            </div>
-        `;
-
-        document.head.insertAdjacentHTML('beforeend', styles);
-        document.body.appendChild(footer);
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', renderFooter);
-    } else {
-        renderFooter();
-    }
-})();
+</body>
+</html>
