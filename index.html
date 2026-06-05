@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Libre Studio &mdash; Official E-Commerce</title>
     
-    <!-- Stili strutturali per Video e Griglia Prodotti (Minimal & Responsive) -->
     <style>
         body {
             margin: 0;
@@ -30,8 +29,8 @@
             position: relative;
             overflow: hidden;
             background-color: #f7f5f2;
-            /* Proporzione cinematografica 16:9 di base */
-            aspect-ratio: 16 / 9; 
+            /* MODIFICA: Rapporto panoramico ultra-wide per ridurre l'altezza su Desktop */
+            aspect-ratio: 24 / 10; 
         }
 
         .hero-video-wrapper video {
@@ -119,7 +118,7 @@
                 padding: 0 1rem;
             }
             .products-grid {
-                grid-template-columns: repeat(2, 1fr); /* 2 prodotti per riga su tablet */
+                grid-template-columns: repeat(2, 1fr);
                 gap: 1.5rem;
             }
         }
@@ -130,28 +129,23 @@
                 margin: 1rem auto;
             }
             .products-grid {
-                grid-template-columns: 1fr; /* 1 solo prodotto grande per riga su smartphone */
+                grid-template-columns: 1fr;
                 gap: 2rem;
             }
             .hero-video-wrapper {
-                /* Su smartphone stringiamo la proporzione per renderlo più verticale e visibile */
-                aspect-ratio: 4 / 3; 
+                /* Su mobile lo teniamo leggermente più alto (16:9) rispetto al desktop 
+                   così l'inquadratura non diventa una linea troppo sottile sullo smartphone */
+                aspect-ratio: 16 / 10; 
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- Contenitore per le comunicazioni dinamiche di navbar.js -->
     <div id="dynamicBannerContainer"></div>
 
-    <!-- 🎬 SEZIONE BANNER VIDEO HERO -->
     <section class="hero-banner-container">
         <div class="hero-video-wrapper">
-            <!-- 
-                playsinline, autoplay, muted, loop sono indispensabili 
-                per garantire l'avvio automatico del video su iOS e Android.
-            -->
             <video playsinline autoplay muted loop preload="auto">
                 <source src="images/banner.mp4" type="video/mp4">
                 Your browser does not support the video tag.
@@ -159,18 +153,14 @@
         </div>
     </section>
 
-    <!-- CORPO PRINCIPALE: Catalogo Prodotti -->
     <main class="catalog-container">
         <div id="productsDisplay" class="products-grid">
-            <!-- I prodotti vengono iniettati qui dinamicamente da JavaScript -->
-        </div>
+            </div>
     </main>
 
-    <!-- ARCHIVIO DATI E LOGICA (Caricati con v=2.0 per forzare l'aggiornamento dei browser) -->
     <script src="products.js?v=2.0"></script>
     <script src="navbar.js?v=2.0"></script>
     
-    <!-- LOGICA DI RENDERING DEL CATALOGO MULTILINGUA -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const currentLang = localStorage.getItem('selectedLang') || 'en';
@@ -197,7 +187,6 @@
         });
     </script>
 
-    <!-- FOOTER SCRIPT (Genera l'embed Instagram ufficiale di Meta e il Copyright) -->
     <script src="footer.js?v=2.0"></script>
 
 </body>
