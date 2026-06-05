@@ -28,43 +28,66 @@
         </main>
     </div>
 
+    <script src="banner.js"></script>
+    <script src="nav.js"></script>
+    <script src="hero.js"></script>
     <script src="products.js"></script>
-<script>
-    (function() {
-        function render() {
-            const display = document.getElementById('productsDisplay');
-            if (!display) return;
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const cat = urlParams.get('cat');
-
-            let filtered = window.productsMaster || [];
-            if (cat && cat !== '' && cat !== 'null') {
-                filtered = filtered.filter(p =>
-                    p.categories && p.categories.some(c => c.toLowerCase() === cat.toLowerCase())
-                );
+    <script>
+        (function () {
+            function adjustSpacer() {
+                const nav = document.querySelector('.sticky-nav-wrapper');
+                const spacer = document.getElementById('navSpacer');
+                if (nav && spacer) spacer.style.height = nav.offsetHeight + 'px';
             }
 
-            display.innerHTML = filtered.map(prod => `
-                <a href="product.html?id=${prod.id}" class="product-card">
-                    <div class="product-image-wrapper">
-                        <img src="${prod.image}" alt="${prod.title}">
-                    </div>
-                    <div class="product-info">
-                        <h3>${prod.title}</h3>
-                        <p>${prod.price}</p>
-                    </div>
-                </a>
-            `).join('');
-        }
+            function renderProducts() {
+                const display = document.getElementById('productsDisplay');
+                if (!display || !window.productsMaster) return;
 
-        // Funziona sia se il DOM è già pronto sia se non lo è ancora
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', render);
-        } else {
-            render();
-        }
-    })();
-</script>
+                const urlParams = new URLSearchParams(window.location.search);
+                const cat = urlParams.get('cat');
+
+                let filtered = window.productsMaster;
+                if (cat && cat !== '' && cat !== 'null') {
+                    filtered = filtered.filter(p =>
+                        p.categories && p.categories.some(c => c.toLowerCase() === cat.toLowerCase())
+                    );
+                }
+
+                display.innerHTML = filtered.map(prod => `
+                    <a href="product.html?id=${prod.id}" class="product-card">
+                        <div class="product-image-wrapper">
+                            <img src="${prod.image}" alt="${prod.title}">
+                        </div>
+                        <div class="product-info">
+                            <h3>${prod.title}</h3>
+                            <p>${prod.price}</p>
+                        </div>
+                    </a>
+                `).join('');
+            }
+
+            function init() {
+                adjustSpacer();
+                renderProducts();
+
+                // Ricalcola lo spacer al resize (il mobile drawer può cambiare altezza)
+                window.addEventListener('resize', adjustSpacer);
+
+                // Ricalcola dopo che il mobile drawer si apre/chiude
+                document.addEventListener('click', () => setTimeout(adjustSpacer, 300));
+
+                // Aggiorna prodotti se cambia la lingua (le categorie potrebbero cambiare label)
+                window.addEventListener('languageChanged', renderProducts);
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+    </script>
 </body>
 </html>
