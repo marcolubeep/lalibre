@@ -444,14 +444,6 @@
             return 0;
         }
 
-        // Funzione per ottenere la categoria principale (prima dell'array)
-        function getMainCategory(product) {
-            if (product.categories && product.categories.length > 0) {
-                return product.categories[0];
-            }
-            return null;
-        }
-
         // TRADUZIONI PER LA SEARCH BAR
         const searchTranslations = {
             en: {
@@ -497,17 +489,23 @@
         // ATTENDE CHE products.js SIA CARICATO
         (function() {
             let isInitialized = false;
+            let retryCount = 0;
             
             function init() {
                 if (isInitialized) return;
+                
                 if (!window.productsMaster || !window.productsMaster.length) {
-                    setTimeout(init, 100);
+                    retryCount++;
+                    if (retryCount < 50) {
+                        setTimeout(init, 100);
+                    }
                     return;
                 }
                 isInitialized = true;
                 
                 console.log('✅ Prodotti caricati:', window.productsMaster.length);
                 
+                // Inizializza la lingua della search bar
                 updateSearchBarLanguage();
                 
                 const modal = document.getElementById('productModal');
@@ -530,11 +528,10 @@
                 
                 function openProductModal(product) {
                     const description = getProductDescription(product);
-                    const priceNum = extractPriceNum(product.price);
                     
                     modalContent.innerHTML = `
                         <div class="modal-grid">
-                            <div class="modal-image"><img src="${product.image}" alt="${product.title}"></div>
+                            <div class="modal-image"><img src="${product.image}" alt="${product.title}" onerror="this.src='https://placehold.co/600x800/f5f3ef/aaa?text=No+Image'"></div>
                             <div class="modal-details">
                                 <h2 class="modal-title">${product.title}</h2>
                                 <div class="modal-price">${product.price}</div>
@@ -561,57 +558,50 @@
                 modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
                 
                 function getFilteredAndSortedProducts() {
-    const urlParams = new URLSearchParams(window.location.search);
-    let cat = urlParams.get('cat');
-    const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
-    const sortValue = document.getElementById('sortSelect')?.value || 'default';
-    
-    let filtered = [...window.productsMaster];
-    
-    console.log('Filtro categoria:', cat);
-    console.log('Prodotti totali:', filtered.length);
-    
-    // FILTRO PER CATEGORIA - VERSIONE SEMPLIFICATA
-    if (cat && cat !== 'all') {
-        filtered = filtered.filter(product => {
-            if (!product.categories || !product.categories.length) {
-                console.log('Prodotto senza categorie:', product.title);
-                return false;
-            }
-            
-            const normalizedCat = cat.toLowerCase();
-            
-            // Controlla se una delle categorie del prodotto matcha
-            const matches = product.categories.some(c => {
-                const normalizedProductCat = c.toLowerCase();
-                // Log per debug
-                console.log(`Confronto: ${normalizedProductCat} === ${normalizedCat} ?`);
-                return normalizedProductCat === normalizedCat || 
-                       normalizedProductCat === normalizedCat.replace('-', ' ') ||
-                       normalizedProductCat.replace(' ', '-') === normalizedCat;
-            });
-            
-            if (matches) console.log('✅ Match trovato per:', product.title);
-            return matches;
-        });
-    }
-    
-    console.log('Prodotti dopo filtro categoria:', filtered.length);
-    
-    // FILTRO PER TESTO
-    if (searchTerm) {
-        filtered = filtered.filter(p => p.title.toLowerCase().includes(searchTerm));
-    }
-    
-    // ORDINAMENTO PREZZO
-    if (sortValue === 'price-asc') {
-        filtered.sort((a, b) => extractPriceNum(a.price) - extractPriceNum(b.price));
-    } else if (sortValue === 'price-desc') {
-        filtered.sort((a, b) => extractPriceNum(b.price) - extractPriceNum(a.price));
-    }
-    
-    return filtered;
-}
+                    const urlParams = new URLSearchParams(window.location.search);
+                    let cat = urlParams.get('cat');
+                    const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+                    const sortValue = document.getElementById('sortSelect')?.value || 'default';
+                    
+                    let filtered = [...window.productsMaster];
+                    
+                    // SE NON C'E' CATEGORIA, MOSTRA TUTTI I PRODOTTI
+                    if (!cat || cat === 'all' || cat === 'null') {
+                        // mostra tutti
+                    } else {
+                        // FILTRO PER CATEGORIA
+                        filtered = filtered.filter(product => {
+                            if (!product.categories || !product.categories.length) {
+                                return false;
+                            }
+                            
+                            const normalizedCat = cat.toLowerCase();
+                            
+                            return product.categories.some(c => {
+                                const normalizedProductCat = c.toLowerCase();
+                                return normalizedProductCat === normalizedCat || 
+                                       normalizedProductCat === normalizedCat.replace('-', ' ') ||
+                                       normalizedProductCat.replace(' ', '-') === normalizedCat ||
+                                       (normalizedCat === 'lingeries' && normalizedProductCat === 'lingerie') ||
+                                       (normalizedCat === 'lingerie' && normalizedProductCat === 'lingeries');
+                            });
+                        });
+                    }
+                    
+                    // FILTRO PER TESTO
+                    if (searchTerm) {
+                        filtered = filtered.filter(p => p.title.toLowerCase().includes(searchTerm));
+                    }
+                    
+                    // ORDINAMENTO PREZZO
+                    if (sortValue === 'price-asc') {
+                        filtered.sort((a, b) => extractPriceNum(a.price) - extractPriceNum(b.price));
+                    } else if (sortValue === 'price-desc') {
+                        filtered.sort((a, b) => extractPriceNum(b.price) - extractPriceNum(a.price));
+                    }
+                    
+                    return filtered;
+                }
                 
                 function renderProducts() {
                     const display = document.getElementById('productsDisplay');
@@ -628,7 +618,9 @@
                     
                     display.innerHTML = filtered.map((prod, idx) => `
                         <div class="product-card" data-product-id="${prod.id}" style="animation-delay: ${Math.min(idx * 0.03, 0.3)}s;">
-                            <div class="product-image-wrapper"><img src="${prod.image}" alt="${prod.title}" loading="lazy"></div>
+                            <div class="product-image-wrapper">
+                                <img src="${prod.image}" alt="${prod.title}" loading="lazy" onerror="this.src='https://placehold.co/600x800/f5f3ef/aaa?text=No+Image'">
+                            </div>
                             <div class="product-info">
                                 <h3>${prod.title}</h3>
                                 <span>${prod.price}</span>
@@ -659,13 +651,14 @@
                     });
                 }
                 
-                window.addEventListener('popstate', () => {
-                    if (typeof renderHero === 'function') renderHero();
+                // Ascolta il cambio lingua dalla navbar
+                window.addEventListener('languageChanged', () => {
+                    updateSearchBarLanguage();
                     renderProducts();
                 });
                 
-                window.addEventListener('languageChanged', () => {
-                    updateSearchBarLanguage();
+                window.addEventListener('popstate', () => {
+                    if (typeof renderHero === 'function') renderHero();
                     renderProducts();
                 });
                 
