@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Libre Studio &mdash; Official E-Commerce</title>
     
-    <!-- Stili strutturali di base per la griglia prodotti (Minimal & Responsive) -->
+    <!-- Stili strutturali per Video e Griglia Prodotti (Minimal & Responsive) -->
     <style>
         body {
             margin: 0;
@@ -14,6 +14,31 @@
             background-color: #ffffff;
             color: #1a1a1a;
             -webkit-font-smoothing: antialiased;
+        }
+
+        /* 🎬 CONTENITORE BANNER VIDEO HERO */
+        .hero-banner-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            box-sizing: border-box;
+        }
+
+        .hero-video-wrapper {
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            background-color: #f7f5f2;
+            /* Proporzione cinematografica 16:9 di base */
+            aspect-ratio: 16 / 9; 
+        }
+
+        .hero-video-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         /* Contenitore principale del catalogo */
@@ -88,8 +113,11 @@
             line-height: 1.4;
         }
 
-        /* Responsive Mobile: Evita sovrapposizioni e stringe la griglia */
+        /* Responsive Mobile: Ottimizzazione per schermi piccoli */
         @media (max-width: 900px) {
+            .hero-banner-container {
+                padding: 0 1rem;
+            }
             .products-grid {
                 grid-template-columns: repeat(2, 1fr); /* 2 prodotti per riga su tablet */
                 gap: 1.5rem;
@@ -105,27 +133,40 @@
                 grid-template-columns: 1fr; /* 1 solo prodotto grande per riga su smartphone */
                 gap: 2rem;
             }
+            .hero-video-wrapper {
+                /* Su smartphone stringiamo la proporzione per renderlo più verticale e visibile */
+                aspect-ratio: 4 / 3; 
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Contenitore opzionale per il Banner Dinamico (gestito da navbar/script) -->
+    <!-- Contenitore per le comunicazioni dinamiche di navbar.js -->
     <div id="dynamicBannerContainer"></div>
 
-    <!-- 
-        La barra di navigazione (navbar.js) si inietterà automaticamente 
-        qui in cima non appena la pagina viene caricata.
-    -->
+    <!-- 🎬 SEZIONE BANNER VIDEO HERO -->
+    <section class="hero-banner-container">
+        <div class="hero-video-wrapper">
+            <!-- 
+                playsinline, autoplay, muted, loop sono indispensabili 
+                per garantire l'avvio automatico del video su iOS e Android.
+            -->
+            <video playsinline autoplay muted loop preload="auto">
+                <source src="images/banner.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </section>
 
     <!-- CORPO PRINCIPALE: Catalogo Prodotti -->
     <main class="catalog-container">
         <div id="productsDisplay" class="products-grid">
-            <!-- I prodotti vengono iniettati qui dinamicamente dallo script del catalogo -->
+            <!-- I prodotti vengono iniettati qui dinamicamente da JavaScript -->
         </div>
     </main>
 
-    <!-- ARCHIVIO DATI E LOGICA (Caricati con rinfresco cache v=2.0) -->
+    <!-- ARCHIVIO DATI E LOGICA (Caricati con v=2.0 per forzare l'aggiornamento dei browser) -->
     <script src="products.js?v=2.0"></script>
     <script src="navbar.js?v=2.0"></script>
     
@@ -137,7 +178,6 @@
             
             if (typeof productsMaster !== 'undefined' && display) {
                 display.innerHTML = productsMaster.map(prod => {
-                    // Estrae la traduzione corretta o usa il fallback in inglese
                     const translation = prod.translations[currentLang] || prod.translations['en'];
                     
                     return `
@@ -157,10 +197,7 @@
         });
     </script>
 
-    <!-- 
-        FOOTER SCRIPT: Genera la sezione Instagram e inserisce la linea 
-        di copyright "All Rights Reserved" stabilmente in fondo a tutto.
-    -->
+    <!-- FOOTER SCRIPT (Genera l'embed Instagram ufficiale di Meta e il Copyright) -->
     <script src="footer.js?v=2.0"></script>
 
 </body>
