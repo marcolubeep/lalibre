@@ -15,15 +15,22 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* 📌 Contenitori dinamici per Banner e Nav */
-        #dynamicBannerContainer, #dynamicNavContainer {
+        /* Contenitori dinamici isolati */
+        #dynamicBannerContainer {
             width: 100%;
             margin: 0;
             padding: 0;
             display: block;
         }
 
-        /* 🎬 CONTENITORE BANNER VIDEO HERO */
+        #dynamicNavContainer {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            display: block;
+        }
+
+        /* 🎬 CONTENITORE BANNER VIDEO HERO (Ultra panoramico) */
         .hero-banner-container {
             width: 100%;
             max-width: 1200px;
@@ -36,9 +43,8 @@
             width: 100%;
             position: relative;
             overflow: hidden;
-            background-color: #ffffff; /* Sostituito il grigio con il bianco per camuffare se non carica subito */
-            /* Rapporto panoramico ultra-wide per altezza ridotta */
-            aspect-ratio: 24 / 10; 
+            background-color: #ffffff;
+            aspect-ratio: 32 / 10; 
             display: block;
         }
 
@@ -49,20 +55,44 @@
             display: block;
         }
 
+        /* 🖋️ SEZIONE CLAIM & DESCRIZIONE EDITORIALE */
+        .brand-intro-section {
+            max-width: 600px;
+            margin: 3.5rem auto 2.5rem auto;
+            text-align: center;
+            padding: 0 1rem;
+        }
+
+        .brand-claim {
+            font-size: 1.1rem;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+
+        .brand-description {
+            font-size: 0.8rem;
+            font-weight: 300;
+            line-height: 1.6;
+            color: #707070;
+            letter-spacing: 0.5px;
+        }
+
         /* Contenitore principale del catalogo */
         .catalog-container {
             max-width: 1200px;
-            margin: 2rem auto;
+            margin: 0 auto 3rem auto;
             padding: 0 2rem;
             box-sizing: border-box;
         }
 
-        /* Griglia dei prodotti: 3 colonne su Desktop */
+        /* Griglia dei prodotti */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 2rem;
-            margin-top: 2rem;
         }
 
         .product-card {
@@ -123,7 +153,7 @@
 
         /* Responsive Mobile */
         @media (max-width: 900px) {
-            .hero-banner-container {
+            .hero-banner-container, .catalog-container {
                 padding: 0 1rem;
             }
             .products-grid {
@@ -133,16 +163,12 @@
         }
 
         @media (max-width: 600px) {
-            .catalog-container {
-                padding: 0 1rem;
-                margin: 1rem auto;
-            }
             .products-grid {
                 grid-template-columns: 1fr;
                 gap: 2rem;
             }
             .hero-video-wrapper {
-                aspect-ratio: 16 / 10; 
+                aspect-ratio: 18 / 10; 
             }
         }
     </style>
@@ -152,7 +178,7 @@
     <div id="dynamicBannerContainer"></div>
     <div id="dynamicNavContainer"></div>
 
-    <section class="hero-banner-container">
+    <section class="hero-banner-container" style="margin-top: 1rem;">
         <div class="hero-video-wrapper">
             <video playsinline autoplay muted loop id="heroVideo">
                 <source src="images/banner.mp4" type="video/mp4">
@@ -161,20 +187,47 @@
         </div>
     </section>
 
+    <section class="brand-intro-section" id="brandIntro"></section>
+
     <main class="catalog-container">
         <div id="productsDisplay" class="products-grid"></div>
     </main>
 
-    <script src="products.js?v=2.2"></script>
-    <script src="banner.js?v=2.2"></script>
-    <script src="navbar.js?v=2.2"></script>
+    <script src="products.js?v=2.4"></script>
+    <script src="banner.js?v=2.4"></script>
+    <script src="navbar.js?v=2.4"></script>
     
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Rendering Prodotti
             const currentLang = localStorage.getItem('selectedLang') || 'en';
-            const display = document.getElementById('productsDisplay');
             
+            // Rendering del Testo del Brand
+            const introTranslations = {
+                en: {
+                    claim: "Architectural Underwear",
+                    desc: "A study on pure geometries, structural lace, and timeless essential silhouettes designed to shape the body through deliberate creative design."
+                },
+                es: {
+                    claim: "Ropa Interior Arquitectónica",
+                    desc: "Un estudio sobre geometrías puras, encajes estructurales y siluetas esenciales atemporales diseñadas para moldear el cuerpo a través di un diseño creativo deliberado."
+                },
+                zh: {
+                    claim: "建筑感内衣系列",
+                    desc: "一项关于纯粹几何学、结构感蕾丝与永恒极简轮廓的研究，旨在通过刻意的创意设计重塑身体线条。"
+                }
+            };
+
+            const introText = introTranslations[currentLang] || introTranslations['en'];
+            const introContainer = document.getElementById('brandIntro');
+            if (introContainer) {
+                introContainer.innerHTML = `
+                    <h1 class="brand-claim">${introText.claim}</h1>
+                    <p class="brand-description">${introText.desc}</p>
+                `;
+            }
+
+            // Rendering della Griglia dei Prodotti
+            const display = document.getElementById('productsDisplay');
             if (typeof productsMaster !== 'undefined' && display) {
                 display.innerHTML = productsMaster.map(prod => {
                     const translation = prod.translations[currentLang] || prod.translations['en'];
@@ -192,18 +245,10 @@
                     `;
                 }).join('');
             }
-
-            // Forza l'avvio del video se alcuni browser lo mettono in pausa all'inizio
-            const video = document.getElementById('heroVideo');
-            if (video) {
-                video.play().catch(function(error) {
-                    console.log("Autoplay protetto dal browser, in attesa di interazione.");
-                });
-            }
         });
     </script>
 
-    <script src="footer.js?v=2.2"></script>
+    <script src="footer.js?v=2.4"></script>
 
 </body>
 </html>
