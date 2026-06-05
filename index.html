@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Libre Studio &mdash; Official E-Commerce</title>
     
+    <!-- Stili strutturali per Video e Griglia Prodotti (Minimal & Responsive) -->
     <style>
         body {
             margin: 0;
@@ -29,7 +30,7 @@
             position: relative;
             overflow: hidden;
             background-color: #f7f5f2;
-            /* MODIFICA: Rapporto panoramico ultra-wide per ridurre l'altezza su Desktop */
+            /* Rapporto panoramico ultra-wide per altezza ridotta su Desktop */
             aspect-ratio: 24 / 10; 
         }
 
@@ -133,8 +134,7 @@
                 gap: 2rem;
             }
             .hero-video-wrapper {
-                /* Su mobile lo teniamo leggermente più alto (16:9) rispetto al desktop 
-                   così l'inquadratura non diventa una linea troppo sottile sullo smartphone */
+                /* Su mobile lo teniamo leggermente più alto (16:10) rispetto al desktop */
                 aspect-ratio: 16 / 10; 
             }
         }
@@ -142,9 +142,15 @@
 </head>
 <body>
 
+    <!-- 📌 SPAZI DETTAGLIATI E SEPARATI PER GLI SCRIPT -->
+    <!-- Qui va la striscia nera di banner.js -->
     <div id="dynamicBannerContainer"></div>
+    
+    <!-- Se in navbar.js hai anche il menu, lasciamo questo contenitore separato per la navbar -->
+    <div id="dynamicNavContainer"></div>
 
-    <section class="hero-banner-container">
+    <!-- 🎬 SEZIONE BANNER VIDEO HERO (Altezza Ridotta) -->
+    <section class="hero-banner-container" style="margin-top: 1rem;">
         <div class="hero-video-wrapper">
             <video playsinline autoplay muted loop preload="auto">
                 <source src="images/banner.mp4" type="video/mp4">
@@ -153,14 +159,19 @@
         </div>
     </section>
 
+    <!-- CORPO PRINCIPALE: Catalogo Prodotti -->
     <main class="catalog-container">
         <div id="productsDisplay" class="products-grid">
-            </div>
+            <!-- I prodotti vengono iniettati qui dinamicamente da JavaScript -->
+        </div>
     </main>
 
-    <script src="products.js?v=2.0"></script>
-    <script src="navbar.js?v=2.0"></script>
+    <!-- ARCHIVIO DATI E LOGICA (v=2.1 per forzare l'aggiornamento totale) -->
+    <script src="products.js?v=2.1"></script>
+    <script src="banner.js?v=2.1"></script>
+    <script src="navbar.js?v=2.1"></script>
     
+    <!-- LOGICA DI RENDERING DEL CATALOGO MULTILINGUA -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const currentLang = localStorage.getItem('selectedLang') || 'en';
@@ -172,7 +183,7 @@
                     
                     return `
                         <a href="product.html?id=${prod.id}" class="product-card">
-                            <div class="product-image-wrapper" style="background-color: ${prod.fallbackColor}">
+                            <div class="product-image-wrapper" style="background-color: ${prod.fallbackColor || '#f7f5f2'}">
                                 <img src="${prod.image}" alt="${prod.title}" onerror="this.style.display='none';">
                             </div>
                             <div class="product-info">
@@ -187,7 +198,8 @@
         });
     </script>
 
-    <script src="footer.js?v=2.0"></script>
+    <!-- FOOTER SCRIPT -->
+    <script src="footer.js?v=2.1"></script>
 
 </body>
 </html>
