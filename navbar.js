@@ -178,12 +178,14 @@
         }
 
         // Funzione per cambiare lingua e DISPATCHARE L'EVENTO
-        window.setLang = function(lang) {
-            localStorage.setItem('selectedLang', lang);
-            renderNavbar();
-            // 🔑 QUESTO È FONDAMENTALE - dispatcha l'evento per la search bar
-            window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang } }));
-        };
+        // Dentro la funzione setLang in navbar.js
+window.setLang = function(lang) {
+    localStorage.setItem('selectedLang', lang);
+    renderNavbar(); // Aggiorna la navbar
+    
+    // QUESTO È IL SEGNALE che "avvisa" il resto della pagina
+    window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang } }));
+};
 
         function attachEvents() {
             const langItems = document.querySelectorAll('[data-lang]');
