@@ -132,54 +132,107 @@
 
         .divider { width: 50px; height: 1px; background: #ffffff60; margin: 1rem auto; }
 
-        /* NUOVA SEZIONE FILTRI E RICERCA */
+        /* ==========================================
+           NUOVA BARRA FILTRI HIGH-END E CLASSIER
+           ========================================== */
         .search-filter-bar {
             max-width: 1200px;
-            margin: 3rem auto 0 auto;
+            margin: 4rem auto 0 auto;
             padding: 0 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 1.5rem;
+            gap: 2rem;
             flex-wrap: wrap;
         }
 
+        /* Barra di ricerca ultra-minimal */
         .search-wrapper {
-            position: relative;
             display: flex;
             align-items: center;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 4px;
-            width: 240px;
-            transition: border-color 0.3s;
+            border-bottom: 1px solid #e5e5e5;
+            padding-bottom: 6px;
+            width: 210px;
+            transition: border-color 0.4s ease;
         }
-        .search-wrapper:focus-within { border-color: var(--text-color); }
+        
+        .search-wrapper:focus-within { 
+            border-color: var(--text-color); 
+        }
+        
         .search-wrapper input {
             border: none;
             outline: none;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             width: 100%;
-            padding-left: 5px;
+            padding-left: 8px;
             color: var(--text-color);
-            letter-spacing: 0.5px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            background: transparent;
         }
-        .search-wrapper i, .search-wrapper svg { color: var(--accent-color); width: 16px; height: 16px; }
+        
+        .search-wrapper input::placeholder {
+            color: #b0b0b0;
+            font-weight: 300;
+        }
+        
+        .search-wrapper i, .search-wrapper svg { 
+            color: var(--accent-color); 
+            width: 14px; 
+            height: 14px; 
+            opacity: 0.7;
+        }
 
-        .sort-wrapper { display: flex; align-items: center; gap: 0.5rem; }
-        .sort-wrapper label { font-size: 0.85rem; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; }
+        /* Menu a tendina integrato con lo sfondo */
+        .sort-wrapper { 
+            display: flex; 
+            align-items: center; 
+            gap: 0.3rem; 
+        }
+        
+        .sort-wrapper label { 
+            font-size: 0.8rem; 
+            color: var(--accent-color); 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+            font-weight: 300;
+        }
+        
         .sort-select {
             border: none;
-            border-bottom: 1px solid transparent;
-            font-size: 0.85rem;
+            background: transparent;
+            font-size: 0.8rem;
             outline: none;
             cursor: pointer;
-            padding-bottom: 2px;
-            letter-spacing: 0.5px;
+            padding: 2px 20px 2px 4px;
+            letter-spacing: 1.5px;
             color: var(--text-color);
-            font-weight: 500;
+            text-transform: uppercase;
+            font-weight: 400;
+            appearance: none; /* Rimuove la freccia standard brutta dei browser */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            /* Inserisce una freccia custom minuscola e raffinata usando un SVG pulito */
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%231a1a1a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+            background-repeat: no-repeat;
+            background-position: right center;
+            transition: color 0.2s ease;
         }
-        .sort-select:hover { border-color: #ccc; }
+        
+        .sort-select:hover { 
+            color: var(--accent-color); 
+        }
 
+        /* Stile pulito per le opzioni interne del drop-down */
+        .sort-select option {
+            background-color: #ffffff;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Resto dello stile invariato */
         .products-container { max-width: 1200px; margin: 2rem auto 4rem auto; padding: 0 2rem; min-height: 400px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 3rem; }
         
@@ -196,7 +249,7 @@
             header { grid-template-columns: 1fr; gap: 1rem; text-align: center; }
             .nav-left, .nav-right { justify-content: center; }
             .logo { order: -1; }
-            .search-filter-bar { flex-direction: column; align-items: stretch; gap: 1rem; }
+            .search-filter-bar { flex-direction: column; align-items: stretch; gap: 1.5rem; }
             .search-wrapper { width: 100%; }
             .sort-wrapper { justify-content: space-between; }
         }
@@ -258,20 +311,20 @@
         </div>
     </section>
 
-    <!-- NUOVA MINI BARRA DI RICERCA E ORDINAMENTO -->
+    <!-- BARRA DI FILTRO EDITATA IN CHIAVE LUXURY-MINIMAL -->
     <div class="search-filter-bar">
         <div class="search-wrapper">
             <i data-lucide="search"></i>
-            <input type="text" id="searchInput" placeholder="Search collection...">
+            <input type="text" id="searchInput" placeholder="SEARCH COLLECTION...">
         </div>
         
         <div class="sort-wrapper">
-            <label for="sortSelect">Sort by</label>
+            <label for="sortSelect">SORT BY — </label>
             <select id="sortSelect" class="sort-select">
-                <option value="default">Default</option>
-                <option value="name-asc">Name (A-Z)</option>
-                <option value="price-asc">Price (Low to High)</option>
-                <option value="price-desc">Price (High to Low)</option>
+                <option value="default">DEFAULT</option>
+                <option value="name-asc">NAME (A-Z)</option>
+                <option value="price-asc">PRICE (LOW - HIGH)</option>
+                <option value="price-desc">PRICE (HIGH - LOW)</option>
             </select>
         </div>
     </div>
@@ -299,12 +352,10 @@
     <script src="products.js"></script>
 
     <script>
-        // Stato globale dei filtri attivi
         let currentCategory = "all";
         let searchQuery = "";
         let currentSort = "default";
 
-        // Funzione per pulire la stringa del prezzo e convertirla in numero (es. "£71.00" -> 71)
         function parsePrice(priceString) {
             return parseFloat(priceString.replace(/[^0-9.]/g, '')) || 0;
         }
@@ -325,14 +376,12 @@
                 return;
             }
 
-            // 1. Applica Filtro Categoria e Stato "active"
             let filteredProducts = productsMaster.filter(product => {
                 const isActive = product.status === "active";
                 const matchesCategory = currentCategory === "all" || product.categories.includes(currentCategory);
                 return isActive && matchesCategory;
             });
 
-            // 2. Applica Filtro di Ricerca (per nome o descrizione)
             if (searchQuery.trim() !== "") {
                 const query = searchQuery.toLowerCase().trim();
                 filteredProducts = filteredProducts.filter(product => 
@@ -341,7 +390,6 @@
                 );
             }
 
-            // 3. Applica Ordinamento
             if (currentSort === "name-asc") {
                 filteredProducts.sort((a, b) => a.title.localeCompare(b.title));
             } else if (currentSort === "price-asc") {
@@ -350,9 +398,8 @@
                 filteredProducts.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
             }
 
-            // Render dei prodotti filtrati
             if (filteredProducts.length === 0) {
-                grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:var(--accent-color); margin: 4rem 0; letter-spacing: 1px;'>No items match your search criteria.</p>";
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:var(--accent-color); margin: 4rem 0; letter-spacing: 1px; font-size: 0.85rem; text-transform: uppercase;'>No items match your search criteria.</p>";
                 return;
             }
 
@@ -391,7 +438,6 @@
             updateCartBadge();
             displayCatalog();
 
-            // Ascoltatore per la barra di ricerca (aggiorna in tempo reale mentre digiti)
             const searchInput = document.getElementById('searchInput');
             if (searchInput) {
                 searchInput.addEventListener('input', (e) => {
@@ -400,7 +446,6 @@
                 });
             }
 
-            // Ascoltatore per il menu a tendina dell'ordinamento
             const sortSelect = document.getElementById('sortSelect');
             if (sortSelect) {
                 sortSelect.addEventListener('change', (e) => {
@@ -409,7 +454,6 @@
                 });
             }
 
-            // Gestione Popup Newsletter standard
             const popup = document.getElementById('emailPopup');
             const closeBtn = document.getElementById('closePopup');
             const subscribeForm = document.getElementById('subscribeForm');
