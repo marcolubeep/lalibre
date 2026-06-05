@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>La Libre Studio &mdash; Product Details</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,7 +36,7 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
-            padding-top: 140px; /* will be adjusted by JS */
+            padding-top: 140px;
         }
  
         .product-detail-container {
@@ -84,14 +84,94 @@
             font-size: 1.1rem;
             font-weight: 300;
             color: #707070;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
         .product-description-text {
             font-size: 0.8rem;
             color: #4a4a4a;
             line-height: 1.7;
             font-weight: 300;
-            margin-bottom: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+ 
+        /* SIZE SELECTOR - solo S, M, L */
+        .size-selector {
+            margin-bottom: 1.5rem;
+        }
+        .size-label {
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 0.8rem;
+            display: block;
+            color: #8a7a6a;
+        }
+        .size-options {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .size-btn {
+            min-width: 55px;
+            padding: 0.6rem 1rem;
+            border: 1px solid #e2dbd2;
+            background: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #1a1a1a;
+        }
+        .size-btn:hover {
+            border-color: #b1a08e;
+        }
+        .size-btn.selected {
+            background: #1a1a1a;
+            color: #fff;
+            border-color: #1a1a1a;
+        }
+ 
+        /* QUANTITY SELECTOR */
+        .quantity-selector {
+            margin-bottom: 1.5rem;
+        }
+        .quantity-label {
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 0.8rem;
+            display: block;
+            color: #8a7a6a;
+        }
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .qty-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #e2dbd2;
+            background: #fff;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+        }
+        .qty-btn:hover {
+            border-color: #b1a08e;
+        }
+        .quantity-input {
+            width: 60px;
+            text-align: center;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            border: 1px solid #e2dbd2;
+            padding: 0.5rem;
+        }
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            opacity: 0.3;
         }
  
         /* Add to bag button */
@@ -135,7 +215,7 @@
             color: #707070;
         }
  
-        /* ── Responsive ── */
+        /* Responsive */
         @media (max-width: 900px) {
             .product-page-wrapper { padding: 1.25rem; padding-top: 110px; }
             .product-detail-container { grid-template-columns: 1fr; gap: 2rem; }
@@ -172,6 +252,26 @@
                 <div id="productPrice" class="main-product-price"></div>
                 <p id="productDescription" class="product-description-text"></p>
  
+                <!-- SIZE SELECTOR - solo S, M, L -->
+                <div class="size-selector" id="sizeSelector">
+                    <div class="size-label">SELECT SIZE</div>
+                    <div class="size-options" id="sizeOptions">
+                        <button type="button" class="size-btn" data-size="S">S</button>
+                        <button type="button" class="size-btn" data-size="M">M</button>
+                        <button type="button" class="size-btn" data-size="L">L</button>
+                    </div>
+                </div>
+ 
+                <!-- QUANTITY SELECTOR -->
+                <div class="quantity-selector">
+                    <div class="quantity-label">QUANTITY</div>
+                    <div class="quantity-control">
+                        <button type="button" class="qty-btn" id="qtyMinus">−</button>
+                        <input type="number" id="quantityInput" class="quantity-input" value="1" min="1" max="10">
+                        <button type="button" class="qty-btn" id="qtyPlus">+</button>
+                    </div>
+                </div>
+ 
                 <button class="add-to-bag-btn" id="addToBagBtn">Add To Bag</button>
                 <a href="cart.html" class="view-bag-link" id="viewBagLink">View Bag &rarr;</a>
             </div>
@@ -179,13 +279,13 @@
         </main>
     </div>
  
-   <script src="products.js?v=3.5"></script>
-<script src="banner.js?v=3.5"></script>
-<script src="navbar.js?v=3.5"></script>
-<script src="footer.js?v=3.5"></script>
+    <script src="products.js?v=3.5"></script>
+    <script src="banner.js?v=3.5"></script>
+    <script src="navbar.js?v=3.5"></script>
+    <script src="footer.js?v=3.5"></script>
  
     <script>
-        // Adjust top padding to match actual nav height (handles banner variations)
+        // Adjust top padding to match actual nav height
         function adjustTopPadding() {
             const nav = document.querySelector('.sticky-nav-wrapper');
             const wrapper = document.getElementById('productPageWrapper');
@@ -210,20 +310,84 @@
                 zh: "已加入 ✓"
             };
  
+            // Traduzioni per size selector
+            const sizeLabelTranslations = {
+                en: "SELECT SIZE",
+                es: "SELECCIONAR TALLA",
+                zh: "选择尺码"
+            };
+            const quantityLabelTranslations = {
+                en: "QUANTITY",
+                es: "CANTIDAD",
+                zh: "数量"
+            };
+ 
             const urlParams = new URLSearchParams(window.location.search);
             const productId = urlParams.get('id');
-            const container = document.getElementById('productContentContainer');
             const btnBag = document.getElementById('addToBagBtn');
             const viewBagLink = document.getElementById('viewBagLink');
  
+            // Elementi size selector
+            const sizeLabel = document.querySelector('.size-label');
+            const quantityLabel = document.querySelector('.quantity-label');
+            
+            // Aggiorna testi in base alla lingua
+            if (sizeLabel) sizeLabel.textContent = sizeLabelTranslations[currentLang] || sizeLabelTranslations['en'];
+            if (quantityLabel) quantityLabel.textContent = quantityLabelTranslations[currentLang] || quantityLabelTranslations['en'];
+            
             btnBag.textContent = bagButtonTranslations[currentLang] || bagButtonTranslations['en'];
  
+            // Variabili per size e quantity selezionate
+            let selectedSize = null;
+            let selectedQuantity = 1;
+            
+            // Gestione quantità
+            const quantityInput = document.getElementById('quantityInput');
+            const qtyMinus = document.getElementById('qtyMinus');
+            const qtyPlus = document.getElementById('qtyPlus');
+            
+            function updateQuantity(value) {
+                let newVal = parseInt(value);
+                if (isNaN(newVal)) newVal = 1;
+                newVal = Math.min(10, Math.max(1, newVal));
+                selectedQuantity = newVal;
+                if (quantityInput) quantityInput.value = newVal;
+            }
+            
+            if (qtyMinus) {
+                qtyMinus.addEventListener('click', () => {
+                    updateQuantity(selectedQuantity - 1);
+                });
+            }
+            if (qtyPlus) {
+                qtyPlus.addEventListener('click', () => {
+                    updateQuantity(selectedQuantity + 1);
+                });
+            }
+            if (quantityInput) {
+                quantityInput.addEventListener('change', (e) => {
+                    updateQuantity(e.target.value);
+                });
+            }
+            
+            // Gestione size buttons (S, M, L)
+            const sizeBtns = document.querySelectorAll('.size-btn');
+            sizeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    sizeBtns.forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    selectedSize = btn.getAttribute('data-size');
+                });
+            });
+ 
             if (typeof productsMaster === 'undefined') {
+                const container = document.getElementById('productContentContainer');
                 container.innerHTML = `<div class="error-message">Product database unavailable. Check products.js.</div>`;
                 return;
             }
  
             if (!productId) {
+                const container = document.getElementById('productContentContainer');
                 container.innerHTML = `<div class="error-message">No product specified. (e.g., product.html?id=amour-lace)</div>`;
                 return;
             }
@@ -252,25 +416,40 @@
                     imgEl.style.display = 'block';
                     imgEl.onerror = function() { this.style.display = 'none'; };
                 }
- 
-                // ── Add to bag logic ──
+                
+                // ── Add to bag with size and quantity ──
                 btnBag.addEventListener('click', function() {
+                    // Verifica che la taglia sia selezionata (solo per vestiti/lingerie)
+                    const isApparel = product.category === 'dresses' || product.category === 'lingeries' || 
+                                     (product.categories && (product.categories.includes('dresses') || product.categories.includes('lingeries')));
+                    
+                    if (isApparel && !selectedSize) {
+                        alert(currentLang === 'en' ? 'Please select a size' : 
+                              currentLang === 'es' ? 'Por favor selecciona una talla' : '请选择尺码');
+                        return;
+                    }
+                    
                     try {
                         let cart = JSON.parse(localStorage.getItem('laLibreCart') || '[]');
-                        const existing = cart.find(i => i.id === product.id);
+                        const cartItemId = selectedSize ? `${product.id}_${selectedSize}` : product.id;
+                        const existing = cart.find(i => i.id === cartItemId);
+                        
+                        const itemToAdd = {
+                            id: cartItemId,
+                            originalId: product.id,
+                            title: product.title,
+                            price: product.price,
+                            image: product.image,
+                            qty: selectedQuantity,
+                            size: selectedSize || null
+                        };
+                        
                         if (existing) {
-                            existing.qty = (existing.qty || 1) + 1;
+                            existing.qty = (existing.qty || 1) + selectedQuantity;
                         } else {
-                            cart.push({
-                                id: product.id,
-                                title: product.title,
-                                price: product.price,
-                                image: product.image,
-                                qty: 1
-                            });
+                            cart.push(itemToAdd);
                         }
                         localStorage.setItem('laLibreCart', JSON.stringify(cart));
-                        // Legacy count key for backward compat with cart.html
                         localStorage.setItem('cartItemCount', cart.reduce((s, i) => s + i.qty, 0));
                     } catch(e) {
                         console.warn('Cart write failed', e);
@@ -287,6 +466,7 @@
                 });
  
             } else {
+                const container = document.getElementById('productContentContainer');
                 container.innerHTML = `<div class="error-message">Product "${productId}" could not be found in our collection.</div>`;
             }
         });
