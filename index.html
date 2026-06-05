@@ -90,31 +90,36 @@
                 const modalContent = document.getElementById('modalContent');
                 
                 function getFilteredAndSortedProducts() {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    let cat = urlParams.get('cat');
-                    const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
-                    const sortValue = document.getElementById('sortSelect')?.value || 'default';
-                    
-                    let filtered = [...window.productsMaster];
-                    
-                    // Logica di filtro migliorata
-                    if (cat && cat !== 'null' && cat !== 'undefined' && cat !== '') {
-                        filtered = filtered.filter(product => {
-                            if (!product.categories) return false;
-                            const normalizedCat = cat.toLowerCase();
-                            return product.categories.some(c => c.toLowerCase() === normalizedCat);
-                        });
-                    }
-                    
-                    if (searchTerm) {
-                        filtered = filtered.filter(p => p.title.toLowerCase().includes(searchTerm));
-                    }
-                    
-                    if (sortValue === 'price-asc') filtered.sort((a, b) => extractPriceNum(a.price) - extractPriceNum(b.price));
-                    else if (sortValue === 'price-desc') filtered.sort((a, b) => extractPriceNum(b.price) - extractPriceNum(a.price));
-                    
-                    return filtered;
-                }
+    const urlParams = new URLSearchParams(window.location.search);
+    let cat = urlParams.get('cat');
+    const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+    const sortValue = document.getElementById('sortSelect')?.value || 'default';
+    
+    let filtered = [...window.productsMaster];
+    
+    // CORREZIONE: Applichiamo il filtro SOLO se 'cat' esiste e non è vuoto
+    if (cat && cat !== 'null' && cat !== 'undefined' && cat !== '') {
+        const normalizedCat = cat.toLowerCase();
+        filtered = filtered.filter(product => {
+            // Controlla se la categoria è inclusa nell'array categories del prodotto
+            return product.categories && product.categories.some(c => c.toLowerCase() === normalizedCat);
+        });
+    } else {
+        // Se non c'è categoria, non filtriamo (mostriamo tutto)
+        console.log("Nessuna categoria specificata, visualizzo tutto.");
+    }
+    
+    // Filtro ricerca testo
+    if (searchTerm) {
+        filtered = filtered.filter(p => p.title.toLowerCase().includes(searchTerm));
+    }
+    
+    // Ordinamento
+    if (sortValue === 'price-asc') filtered.sort((a, b) => extractPriceNum(a.price) - extractPriceNum(b.price));
+    else if (sortValue === 'price-desc') filtered.sort((a, b) => extractPriceNum(b.price) - extractPriceNum(a.price));
+    
+    return filtered;
+}
                 
                 function renderProducts() {
                     const display = document.getElementById('productsDisplay');
