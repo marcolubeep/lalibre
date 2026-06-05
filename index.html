@@ -1,168 +1,131 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Libre | Slow Collection</title>
-    <script src="navbar.js"></script>
-    <script src="banner.js"></script>
-    <style>
-        :root { --bg-color: #ffffff; --text-color: #1a1a1a; --accent-color: #707070; --light-gray: #f9f9f9; --overlay-bg: rgba(0, 0, 0, 0.4); }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; }
-        .search-filter-bar { max-width: 1200px; margin: 4rem auto 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; gap: 2rem; flex-wrap: wrap; }
-        .search-wrapper { display: flex; align-items: center; border-bottom: 1px solid #e5e5e5; padding-bottom: 6px; width: 220px; transition: border-color 0.4s ease; }
-        .search-wrapper:focus-within { border-color: var(--text-color); }
-        .search-wrapper input { border: none; outline: none; font-size: 0.8rem; width: 100%; padding-left: 8px; color: var(--text-color); letter-spacing: 1.5px; text-transform: uppercase; background: transparent; }
-        .search-wrapper input::placeholder { color: #b0b0b0; font-weight: 300; }
-        .sort-wrapper { display: flex; align-items: center; gap: 0.3rem; }
-        .sort-wrapper label { font-size: 0.8rem; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 300; }
-        .sort-select { border: none; background: transparent; font-size: 0.8rem; outline: none; cursor: pointer; padding: 2px 20px 2px 4px; letter-spacing: 1.5px; color: var(--text-color); text-transform: uppercase; font-weight: 400; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%231a1a1a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>"); background-repeat: no-repeat; background-position: right center; transition: color 0.2s ease; }
-        .products-container { max-width: 1200px; margin: 2rem auto 4rem auto; padding: 0 2rem; min-height: 400px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 3rem; }
-        .product-card { display: flex; flex-direction: column; text-decoration: none; color: inherit; cursor: pointer; }
-        .product-image-box { height: 420px; display: flex; align-items: center; justify-content: center; transition: opacity 0.3s ease; text-align: center; padding: 1rem; font-weight: 500; background-size: cover; background-position: center; }
-        .product-card:hover .product-image-box { opacity: 0.85; }
-        .product-info { margin-top: 1rem; display: flex; justify-content: space-between; align-items: flex-start; }
-        .product-title { font-size: 1rem; font-weight: 400; letter-spacing: 0.05rem; }
-        .product-tagline { font-size: 0.85rem; color: var(--accent-color); margin-top: 0.2rem; }
-        .product-price { font-weight: 500; }
-        .popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--overlay-bg); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s ease; padding: 20px; }
-        .popup-overlay.active { opacity: 1; visibility: visible; }
-        .popup-modal { background: #ffffff; padding: 3rem 2.5rem; max-width: 450px; width: 100%; position: relative; text-align: center; }
-        .popup-close { position: absolute; top: 15px; right: 15px; background: none; border: none; cursor: pointer; color: var(--accent-color); }
-        .popup-modal h2 { font-family: serif; font-size: 1.8rem; font-weight: 300; letter-spacing: 0.1rem; margin-bottom: 0.5rem; text-transform: uppercase; }
-        .popup-form input[type="email"] { width: 100%; padding: 0.8rem 1rem; border: 1px solid #ccc; margin-bottom: 1rem; text-align: center; outline: none; }
-        .popup-form button { width: 100%; padding: 0.9rem; background-color: var(--text-color); color: #fff; border: none; text-transform: uppercase; letter-spacing: 0.15rem; font-size: 0.85rem; cursor: pointer; }
-        footer { text-align: center; padding: 4rem 1rem; border-top: 1px solid #eee; margin-top: 4rem; font-size: 0.85rem; color: var(--accent-color); letter-spacing: 0.05rem; }
-        @media (max-width: 900px) { .search-filter-bar { flex-direction: column; align-items: stretch; gap: 1.5rem; } .search-wrapper { width: 100%; } .sort-wrapper { justify-content: space-between; } }
-    </style>
-</head>
-<body>
+// footer.js - Footer Ultra-Compatto e Mobile-Responsive per La Libre
 
-    <div id="dynamicBannerContainer"></div>
+(function() {
+    const currentLang = localStorage.getItem('selectedLang') || 'en';
 
-    <div class="search-filter-bar">
-        <div class="search-wrapper">
-            <input type="text" id="searchInput" placeholder="SEARCH...">
-        </div>
-        <div class="sort-wrapper">
-            <label id="sortLabel" for="sortSelect">SORT BY — </label>
-            <select id="sortSelect" class="sort-select"></select>
-        </div>
-    </div>
+    const footerTranslations = {
+        en: { follow: "Follow us on Instagram", rights: "All rights reserved" },
+        es: { follow: "Síguenos en Instagram", rights: "Todos los derechos reservados" },
+        zh: { follow: "关注 La Libre 官方 Instagram", rights: "版权所有" }
+    };
 
-    <main class="products-container">
-        <div class="grid" id="productGrid"></div>
-    </main>
+    const t = footerTranslations[currentLang] || footerTranslations['en'];
 
-    <div class="popup-overlay" id="emailPopup">
-        <div class="popup-modal">
-            <button class="popup-close" id="closePopup">✕</button>
-            <h2>La Libre</h2>
-            <p id="popupDesc"></p>
-            <form class="popup-form" id="subscribeForm">
-                <input type="email" id="popupEmailPlaceholder" required>
-                <button type="submit" id="popupBtn"></button>
-            </form>
-        </div>
-    </div>
-
-    <footer><p>&copy; 2026 LA LIBRE. ALL RIGHTS RESERVED.</p></footer>
-
-    <script src="products.js"></script>
-    <script>
-        let currentCategory = "all";
-        let searchQuery = "";
-        let currentSort = "default";
-        const lang = localStorage.getItem('selectedLang') || 'en';
-
-        const uiText = {
-            en: { search: "SEARCH COLLECTION...", sortLabel: "SORT BY — ", noItems: "No items match your search.", popupDesc: "Join the slow movement. Subscribe to receive private collection updates.", popupMail: "YOUR EMAIL", popupBtn: "Subscribe", sortOpt: { def: "DEFAULT", name: "NAME (A-Z)", low: "PRICE (LOW - HIGH)", high: "PRICE (HIGH - LOW)" }},
-            es: { search: "BUSCAR COLECCIÓN...", sortLabel: "ORDENAR POR — ", noItems: "No hay artículos que coincidan.", popupDesc: "Únete al movimiento slow. Suscríbete para recibir actualizaciones privadas.", popupMail: "TU EMAIL", popupBtn: "Suscribirse", sortOpt: { def: "PREDETERMINADO", name: "NOMBRE (A-Z)", low: "PRECIO (MENOR - MAYOR)", high: "PRECIO (MAYOR - MENOR)" }},
-            zh: { search: "搜索系列产品...", sortLabel: "排序方式 — ", noItems: "没有找到符合条件的产品。", popupDesc: "加入慢生活理念。订阅以获取专属新品资讯。", popupMail: "您的电子邮箱", popupBtn: "立即订阅", sortOpt: { def: "默认排序", name: "名称 (A-Z)", low: "价格 (从低到高)", high: "价格 (从高到低)" }}
-        };
-
-        const ui = uiText[lang] || uiText['en'];
-
-        function parsePrice(p) { return parseFloat(p.replace(/[^0-9.]/g, '')) || 0; }
-        function changeCategory(cat) { currentCategory = cat; displayCatalog(); }
-
-        function displayCatalog() {
-            const grid = document.getElementById('productGrid');
-            if (!grid) return;
-            grid.innerHTML = "";
-
-            let filtered = productsMaster.filter(p => p.status === "active" && (currentCategory === "all" || p.categories.includes(currentCategory)));
-
-            if (searchQuery.trim() !== "") {
-                const q = searchQuery.toLowerCase().trim();
-                filtered = filtered.filter(p => {
-                    let desc = p.translations[lang] || p.translations['en'];
-                    return p.title.toLowerCase().includes(q) || desc.tagline.toLowerCase().includes(q);
-                });
+    const styles = `
+        <style>
+            .site-footer {
+                width: 100%;
+                background: #ffffff;
+                margin-top: 2rem; 
+                padding: 1.5rem 1rem 1.5rem 1rem; 
+                box-sizing: border-box;
+            }
+            
+            .ig-section {
+                max-width: 900px; 
+                margin: 0 auto 2rem auto; 
+                text-align: center;
+            }
+            .ig-title {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                font-size: 0.7rem; 
+                text-transform: uppercase;
+                letter-spacing: 2.5px;
+                color: #1a1a1a;
+                text-decoration: none;
+                display: inline-block;
+                margin-bottom: 1.2rem;
+                font-weight: 300;
+            }
+            
+            .ig-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr); 
+                gap: 0.75rem; 
+            }
+            .ig-item {
+                position: relative;
+                display: block;
+                aspect-ratio: 1 / 1; 
+                overflow: hidden;
+                background: #f7f5f2;
+                color: transparent;
+                text-decoration: none;
+            }
+            .ig-item img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover; /* Mantiene le immagini proporzionate senza deformarle */
+                display: block;
+            }
+            
+            .footer-bottom {
+                max-width: 900px;
+                margin: 0 auto;
+                border-top: 1px solid #f5f5f5; 
+                padding-top: 1.2rem;
+                text-align: center; 
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                font-size: 0.6rem; 
+                color: #9c9c9c;
+                letter-spacing: 1px;
+                text-transform: uppercase;
             }
 
-            if (currentSort === "name-asc") {
-                filtered.sort((a, b) => a.title.localeCompare(b.title));
-            } else if (currentSort === "price-asc") { filtered.sort((a, b) => parsePrice(a.price) - parsePrice(b.price)); } 
-            else if (currentSort === "price-desc") { filtered.sort((a, b) => parsePrice(b.price) - parsePrice(a.price)); }
-
-            if (filtered.length === 0) {
-                grid.innerHTML = `<p style='grid-column: 1/-1; text-align:center; color:var(--accent-color); margin: 4rem 0; text-transform: uppercase;'>${ui.noItems}</p>`;
-                return;
+            /* Responsive Mobile Rigido */
+            @media (max-width: 768px) {
+                .ig-grid { 
+                    grid-template-columns: repeat(2, 1fr); /* Diventa 2 foto per riga, un quadrato 2x2 pulito */
+                    gap: 0.5rem; 
+                }
+                .site-footer {
+                    margin-top: 1.5rem;
+                }
             }
+        </style>
+    `;
 
-            filtered.forEach(p => {
-                const bg = p.image ? `background-image: url('${p.image}');` : '';
-                const textColor = p.fallbackColor === "#111111" ? "color: #fff;" : "";
-                
-                // IL TITOLO RESTA ORIGINALE, SOLO LA TAGLINE FA IL FALLBACK IN INGLESE
-                let desc = p.translations[lang] || p.translations['en'];
+    function renderFooter() {
+        const footer = document.createElement('footer');
+        footer.className = 'site-footer';
 
-                grid.innerHTML += `
-                    <a href="product.html?id=${p.id}" class="product-card">
-                        <div class="product-image-box" style="${bg} background-color: ${p.fallbackColor}; ${textColor}">
-                            ${!p.image ? `[ ${p.title} ]` : ""}
-                        </div>
-                        <div class="product-info">
-                            <div>
-                                <h3 class="product-title">${p.title}</h3>
-                                <p class="product-tagline">${desc.tagline}</p>
-                            </div>
-                            <span class="product-price">${p.price}</span>
-                        </div>
-                    </a>`;
-            });
-        }
+        const isProductPage = window.location.pathname.includes('product.html') || document.getElementById('product-detail-container');
+        const pathPrefix = (isProductPage && !window.location.pathname.includes('index.html')) ? './' : '';
+        const igProfileUrl = "https://www.instagram.com/lalibreofficial";
 
-        window.addEventListener('load', () => {
-            document.getElementById('searchInput').placeholder = ui.search;
-            document.getElementById('sortLabel').innerText = ui.sortLabel;
-            document.getElementById('popupDesc').innerText = ui.popupDesc;
-            document.getElementById('popupEmailPlaceholder').placeholder = ui.popupMail;
-            document.getElementById('popupBtn').innerText = ui.popupBtn;
+        footer.innerHTML = `
+            <div class="ig-section">
+                <a href="${igProfileUrl}" target="_blank" class="ig-title">
+                    @lalibreofficial &mdash; ${t.follow}
+                </a>
+                <div class="ig-grid">
+                    <a href="${igProfileUrl}" target="_blank" class="ig-item">
+                        <img src="${pathPrefix}images/products/ig1.jpg" alt="La Libre">
+                    </a>
+                    <a href="${igProfileUrl}" target="_blank" class="ig-item">
+                        <img src="${pathPrefix}images/products/ig2.jpg" alt="La Libre">
+                    </a>
+                    <a href="${igProfileUrl}" target="_blank" class="ig-item">
+                        <img src="${pathPrefix}images/products/ig3.jpg" alt="La Libre">
+                    </a>
+                    <a href="${igProfileUrl}" target="_blank" class="ig-item">
+                        <img src="${pathPrefix}images/products/ig4.jpg" alt="La Libre">
+                    </a>
+                </div>
+            </div>
 
-            const select = document.getElementById('sortSelect');
-            select.innerHTML = `
-                <option value="default">${ui.sortOpt.def}</option>
-                <option value="name-asc">${ui.sortOpt.name}</option>
-                <option value="price-asc">${ui.sortOpt.low}</option>
-                <option value="price-desc">${ui.sortOpt.high}</option>
-            `;
+            <div class="footer-bottom">
+                <div>&copy; ${new Date().getFullYear()} La Libre. ${t.rights}.</div>
+            </div>
+        `;
 
-            displayCatalog();
+        document.head.insertAdjacentHTML('beforeend', styles);
+        document.body.appendChild(footer);
+    }
 
-            document.getElementById('searchInput').addEventListener('input', (e) => { searchQuery = e.target.value; displayCatalog(); });
-            select.addEventListener('change', (e) => { currentSort = e.target.value; displayCatalog(); });
-
-            const popup = document.getElementById('emailPopup');
-            if (popup && !localStorage.getItem('subscribed') && !localStorage.getItem('popupDismissed')) {
-                setTimeout(() => popup.classList.add('active'), 6000);
-            }
-            document.getElementById('closePopup').addEventListener('click', () => { popup.classList.remove('active'); localStorage.setItem('popupDismissed', 'true'); });
-        });
-    </script>
-<script src="footer.js"></script>
-</body>
-</html>
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', renderFooter);
+    } else {
+        renderFooter();
+    }
+})();
