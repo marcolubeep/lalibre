@@ -561,38 +561,57 @@
                 modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
                 
                 function getFilteredAndSortedProducts() {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    let cat = urlParams.get('cat');
-                    const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
-                    const sortValue = document.getElementById('sortSelect')?.value || 'default';
-                    
-                    let filtered = [...window.productsMaster];
-                    
-                    // FILTRO PER CATEGORIA - usando l'array categories
-                    if (cat) {
-                        filtered = filtered.filter(product => {
-                            if (!product.categories) return false;
-                            // Normalizza i nomi delle categorie per il confronto
-                            const normalizedCat = cat.toLowerCase();
-                            return product.categories.some(c => c.toLowerCase() === normalizedCat || 
-                                                           c.toLowerCase().replace(' ', '-') === normalizedCat);
-                        });
-                    }
-                    
-                    // FILTRO PER TESTO (nel titolo)
-                    if (searchTerm) {
-                        filtered = filtered.filter(p => p.title.toLowerCase().includes(searchTerm));
-                    }
-                    
-                    // ORDINAMENTO PER PREZZO
-                    if (sortValue === 'price-asc') {
-                        filtered.sort((a, b) => extractPriceNum(a.price) - extractPriceNum(b.price));
-                    } else if (sortValue === 'price-desc') {
-                        filtered.sort((a, b) => extractPriceNum(b.price) - extractPriceNum(a.price));
-                    }
-                    
-                    return filtered;
-                }
+    const urlParams = new URLSearchParams(window.location.search);
+    let cat = urlParams.get('cat');
+    const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+    const sortValue = document.getElementById('sortSelect')?.value || 'default';
+    
+    let filtered = [...window.productsMaster];
+    
+    console.log('Filtro categoria:', cat);
+    console.log('Prodotti totali:', filtered.length);
+    
+    // FILTRO PER CATEGORIA - VERSIONE SEMPLIFICATA
+    if (cat && cat !== 'all') {
+        filtered = filtered.filter(product => {
+            if (!product.categories || !product.categories.length) {
+                console.log('Prodotto senza categorie:', product.title);
+                return false;
+            }
+            
+            const normalizedCat = cat.toLowerCase();
+            
+            // Controlla se una delle categorie del prodotto matcha
+            const matches = product.categories.some(c => {
+                const normalizedProductCat = c.toLowerCase();
+                // Log per debug
+                console.log(`Confronto: ${normalizedProductCat} === ${normalizedCat} ?`);
+                return normalizedProductCat === normalizedCat || 
+                       normalizedProductCat === normalizedCat.replace('-', ' ') ||
+                       normalizedProductCat.replace(' ', '-') === normalizedCat;
+            });
+            
+            if (matches) console.log('✅ Match trovato per:', product.title);
+            return matches;
+        });
+    }
+    
+    console.log('Prodotti dopo filtro categoria:', filtered.length);
+    
+    // FILTRO PER TESTO
+    if (searchTerm) {
+        filtered = filtered.filter(p => p.title.toLowerCase().includes(searchTerm));
+    }
+    
+    // ORDINAMENTO PREZZO
+    if (sortValue === 'price-asc') {
+        filtered.sort((a, b) => extractPriceNum(a.price) - extractPriceNum(b.price));
+    } else if (sortValue === 'price-desc') {
+        filtered.sort((a, b) => extractPriceNum(b.price) - extractPriceNum(a.price));
+    }
+    
+    return filtered;
+}
                 
                 function renderProducts() {
                     const display = document.getElementById('productsDisplay');
