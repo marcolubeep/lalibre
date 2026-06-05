@@ -121,14 +121,11 @@
         });
         
         // Questo ascolta il segnale lanciato dalla navbar
-    window.addEventListener('languageChanged', () => {
-        // Se sei su index.html richiama la funzione che rinfresca i testi e i prodotti
-        if (typeof render === 'function') {
-            // Aggiorna placeholder e testi dropdown (come hai fatto finora)
-            updateUIText(); 
-            // Aggiorna la lista prodotti
-            render();
-        }
+    window.addEventListener('languageChanged', (e) => {
+        // Appena la navbar lancia il segnale, la pagina aggiorna i suoi contenuti
+        if (typeof updateUIText === 'function') updateUIText();
+        if (typeof render === 'function') render(); // Per index.html
+        if (typeof updateProductPage === 'function') updateProductPage(); // Per product.html
     });
     </script>
 </body>
