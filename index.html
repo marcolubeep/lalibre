@@ -2,21 +2,422 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>La Libre Studio &mdash; Official E-Commerce</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        body { margin: 0; font-family: 'Montserrat', sans-serif; background: #fff; color: #1a1a1a; }
-        .sticky-nav-wrapper { position: fixed; top: 0; width: 100%; z-index: 1000; background: #fff; box-shadow: 0 1px 10px rgba(0,0,0,0.02); }
-        .main-content-wrapper { margin-top: 100px; } /* Spazio per la navbar */
+        /* STILI ESISTENTI + AGGIUNTA SEARCH BAR */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #ffffff;
+            color: #1a1a1a;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 300;
+            line-height: 1.4;
+            scroll-behavior: smooth;
+        }
+
+        h1, h2, h3, .logo-text, .nav-links a, .hero-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+        }
+
+        .sticky-nav-wrapper {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1050;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(2px);
+            border-bottom: 1px solid #eae7e2;
+        }
+
+        .main-content-wrapper {
+            margin-top: 96px;
+        }
+
+        /* SEARCH BAR - discreta, nessuna icona */
+        .search-section {
+            max-width: 1280px;
+            margin: 0 auto 1.5rem auto;
+            padding: 0 2rem;
+        }
+
+        .search-discreet {
+            display: flex;
+            align-items: baseline;
+            justify-content: flex-end;
+            gap: 1.8rem;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #f0ece7;
+            padding-bottom: 0.8rem;
+        }
+
+        .search-field input {
+            border: none;
+            background: transparent;
+            padding: 0.3rem 0;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 300;
+            letter-spacing: 0.08em;
+            width: 140px;
+            border-bottom: 1px solid transparent;
+            transition: width 0.2s ease;
+        }
+
+        .search-field input:focus {
+            outline: none;
+            width: 170px;
+            border-bottom-color: #d4cbc1;
+        }
+
+        .search-field input::placeholder {
+            color: #ccc6bf;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+        }
+
+        .sort-discreet select {
+            border: none;
+            background: transparent;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 300;
+            letter-spacing: 0.08em;
+            padding: 0.3rem 0;
+            cursor: pointer;
+            color: #4a3f36;
+            border-bottom: 1px solid transparent;
+        }
+
+        .sort-discreet select:focus {
+            outline: none;
+            border-bottom-color: #d4cbc1;
+        }
+
+        .clear-link {
+            background: none;
+            border: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #b0a69b;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .clear-link:hover {
+            color: #4a3f36;
+        }
+
+        .products-header {
+            max-width: 1280px;
+            margin: 0 auto 1rem auto;
+            padding: 0 2rem;
+            text-align: right;
+        }
+
+        .product-count {
+            font-size: 0.6rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #b0a69b;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .catalog-container {
+            max-width: 1280px;
+            margin: 2rem auto 5rem auto;
+            padding: 0 2rem;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2.8rem 1.8rem;
+        }
+
+        .product-card {
+            text-decoration: none;
+            color: #1a1a1a;
+            transition: transform 0.25s ease, opacity 0.25s;
+            display: block;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            opacity: 0.92;
+            transform: translateY(-3px);
+        }
+
+        .product-image-wrapper {
+            aspect-ratio: 3 / 4;
+            background: #f5f3ef;
+            overflow: hidden;
+            border-radius: 2px;
+        }
+
+        .product-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        .product-card:hover .product-image-wrapper img {
+            transform: scale(1.02);
+        }
+
+        .product-info {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 0.75rem;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            padding-top: 0.4rem;
+        }
+
+        .product-info h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin: 0;
+        }
+
+        .product-info span {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 300;
+            font-size: 0.75rem;
+            color: #3a3a3a;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 4rem 1rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            color: #c2b8ae;
+            grid-column: 1 / -1;
+        }
+
+        /* MODAL */
+        .product-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .product-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-container {
+            background: #fff;
+            max-width: 900px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            border-radius: 4px;
+            position: relative;
+            animation: modalSlideUp 0.4s ease;
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #1a1a1a;
+            z-index: 10;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .modal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .modal-image {
+            aspect-ratio: 3/4;
+            background: #f5f3ef;
+            overflow: hidden;
+        }
+
+        .modal-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-details {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .modal-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+        }
+
+        .modal-price {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #5a4a3a;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .modal-description {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #444;
+            margin: 0.5rem 0;
+        }
+
+        .modal-meta {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #8a7a6a;
+            border-top: 1px solid #eae7e2;
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .add-to-cart-btn {
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .add-to-cart-btn:hover {
+            background: #3a2a1a;
+        }
+
+        @media (max-width: 700px) {
+            .modal-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .modal-container {
+                width: 95%;
+                max-height: 90vh;
+            }
+            
+            .modal-image {
+                max-height: 40vh;
+            }
+            
+            .modal-title {
+                font-size: 1.5rem;
+            }
+            
+            .search-discreet {
+                justify-content: flex-start;
+                gap: 1.2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .catalog-container, .search-section, .products-header {
+                padding: 0 1rem;
+            }
+            
+            .search-discreet {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.8rem;
+            }
+        }
+
+        .product-card {
+            animation: fadeSlideUp 0.45s ease backwards;
+        }
         
-        .catalog-container { max-width: 1200px; margin: 4rem auto; padding: 0 2rem; }
-        .products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem 2rem; }
-        .product-card { text-decoration: none; color: #1a1a1a; transition: opacity 0.3s ease; }
-        .product-card:hover { opacity: 0.85; }
-        .product-image-wrapper { aspect-ratio: 3/4; background: #f7f5f2; overflow: hidden; }
-        .product-image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-        .product-info { margin-top: 1rem; display: flex; justify-content: space-between; font-size: 0.75rem; }
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
@@ -27,39 +428,192 @@
         
         <div id="heroContainer"></div>
 
+        <!-- SEARCH BAR - aggiunta discreta -->
+        <div class="search-section">
+            <div class="search-discreet">
+                <div class="search-field">
+                    <input type="text" id="searchInput" placeholder="search">
+                </div>
+                <div class="sort-discreet">
+                    <select id="sortSelect">
+                        <option value="default">order</option>
+                        <option value="price-asc">price ↑</option>
+                        <option value="price-desc">price ↓</option>
+                    </select>
+                </div>
+                <button class="clear-link" id="clearSearchBtn">clear</button>
+            </div>
+        </div>
+
+        <div class="products-header">
+            <div class="product-count" id="productCount"></div>
+        </div>
+
         <main class="catalog-container">
             <div id="productsDisplay" class="products-grid"></div>
         </main>
     </div>
 
+    <!-- MODAL -->
+    <div id="productModal" class="product-modal">
+        <div class="modal-container">
+            <button class="modal-close" id="closeModalBtn">&times;</button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- LE TUE FONTI GITHUB - rimangono IDENTICHE -->
     <script src="products.js"></script>
     <script src="navbar.js"></script>
     <script src="hero.js"></script>
     <script src="banner.js"></script>
     
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const cat = urlParams.get('cat'); 
-
-            let filtered = productsMaster;
-            if (cat) {
-                filtered = productsMaster.filter(p => p.category === cat);
-            }
-
-            const display = document.getElementById('productsDisplay');
-            if (display) {
-                display.innerHTML = filtered.map(prod => `
-                    <a href="product.html?id=${prod.id}" class="product-card">
-                        <div class="product-image-wrapper"><img src="${prod.image}" alt="${prod.title}"></div>
-                        <div class="product-info">
-                            <h3>${prod.title}</h3>
-                            <span>${prod.price}</span>
+        // QUESTO SCRIPT LAVORA CON I TUOI products.js
+        // Non sovrascrive nulla, usa solo window.productsMaster
+        
+        (function() {
+            let productsReady = false;
+            
+            function initSearchAndFilter() {
+                if (!window.productsMaster || !window.productsMaster.length) {
+                    setTimeout(initSearchAndFilter, 100);
+                    return;
+                }
+                
+                if (productsReady) return;
+                productsReady = true;
+                
+                console.log('✅ Search bar attivata con', window.productsMaster.length, 'prodotti');
+                
+                const modal = document.getElementById('productModal');
+                const modalContent = document.getElementById('modalContent');
+                
+                function openProductModal(product) {
+                    modalContent.innerHTML = `
+                        <div class="modal-grid">
+                            <div class="modal-image"><img src="${product.image}" alt="${product.title}"></div>
+                            <div class="modal-details">
+                                <h2 class="modal-title">${product.title}</h2>
+                                <div class="modal-price">${product.price}</div>
+                                <p class="modal-description">${product.description || 'Handcrafted piece from La Libre Studio.'}</p>
+                                <div class="modal-meta">
+                                    <div><strong>Material</strong><br>${product.material || 'Artisanal composition'}</div>
+                                    <div style="margin-top: 0.8rem;"><strong>Dimensions</strong><br>${product.dimensions || 'Varied / one size'}</div>
+                                </div>
+                                <button class="add-to-cart-btn">ADD TO BAG</button>
+                            </div>
                         </div>
-                    </a>
-                `).join('');
+                    `;
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                    const btn = modalContent.querySelector('.add-to-cart-btn');
+                    if (btn) btn.onclick = () => alert(`✨ ${product.title} added to your bag`);
+                }
+                
+                function closeModal() {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+                
+                document.getElementById('closeModalBtn')?.addEventListener('click', closeModal);
+                modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+                
+                function getFilteredAndSortedProducts() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const cat = urlParams.get('cat');
+                    const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+                    const sortValue = document.getElementById('sortSelect')?.value || 'default';
+                    
+                    let filtered = [...window.productsMaster];
+                    
+                    if (cat && cat !== 'new-arrivals' && cat !== 'dresses' && cat !== 'lingeries') {
+                        filtered = filtered.filter(p => p.category === cat);
+                    }
+                    
+                    if (searchTerm) {
+                        filtered = filtered.filter(p => p.title.toLowerCase().includes(searchTerm));
+                    }
+                    
+                    if (sortValue === 'price-asc') {
+                        filtered.sort((a, b) => (a.priceNum || 0) - (b.priceNum || 0));
+                    } else if (sortValue === 'price-desc') {
+                        filtered.sort((a, b) => (b.priceNum || 0) - (a.priceNum || 0));
+                    }
+                    
+                    return filtered;
+                }
+                
+                function renderProducts() {
+                    const display = document.getElementById('productsDisplay');
+                    const countSpan = document.getElementById('productCount');
+                    if (!display) return;
+                    
+                    const filtered = getFilteredAndSortedProducts();
+                    if (countSpan) countSpan.textContent = `${filtered.length} items`;
+                    
+                    if (filtered.length === 0) {
+                        display.innerHTML = `<div class="empty-message">✧ no pieces found ✧</div>`;
+                        return;
+                    }
+                    
+                    display.innerHTML = filtered.map((prod, idx) => `
+                        <div class="product-card" data-product-id="${prod.id}" style="animation-delay: ${Math.min(idx * 0.03, 0.3)}s;">
+                            <div class="product-image-wrapper"><img src="${prod.image}" alt="${prod.title}" loading="lazy"></div>
+                            <div class="product-info">
+                                <h3>${prod.title}</h3>
+                                <span>${prod.price}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    document.querySelectorAll('.product-card').forEach(card => {
+                        card.onclick = () => {
+                            const id = card.getAttribute('data-product-id');
+                            const product = window.productsMaster.find(p => p.id === id);
+                            if (product) openProductModal(product);
+                        };
+                    });
+                }
+                
+                const searchInput = document.getElementById('searchInput');
+                const sortSelect = document.getElementById('sortSelect');
+                const clearBtn = document.getElementById('clearSearchBtn');
+                
+                if (searchInput) searchInput.addEventListener('input', () => renderProducts());
+                if (sortSelect) sortSelect.addEventListener('change', () => renderProducts());
+                if (clearBtn) {
+                    clearBtn.addEventListener('click', () => {
+                        if (searchInput) searchInput.value = '';
+                        if (sortSelect) sortSelect.value = 'default';
+                        renderProducts();
+                    });
+                }
+                
+                // Ascolta cambi URL
+                window.addEventListener('popstate', () => {
+                    if (typeof renderHero === 'function') renderHero();
+                    renderProducts();
+                });
+                
+                // Hook per quando hero.js fa renderHero()
+                const originalRenderHero = window.renderHero;
+                if (originalRenderHero) {
+                    window.renderHero = function() {
+                        originalRenderHero();
+                        setTimeout(renderProducts, 50);
+                    };
+                }
+                
+                renderProducts();
             }
-        });
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initSearchAndFilter);
+            } else {
+                initSearchAndFilter();
+            }
+        })();
     </script>
 </body>
 </html>
