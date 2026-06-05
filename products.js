@@ -6,7 +6,7 @@ window.productsMaster = [
        title: "Amour Lace Blouse",
        price: "€ 135,00",
        category: "lingerie",
-       categories: ["lingerie", "new arrivals"],
+       categories: ["lingerie", "new-arrivals"],
        image: "images/amour-lace.jpg",
        fallbackColor: "#f7f5f2",
        status: "active",
