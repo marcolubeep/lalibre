@@ -1,12 +1,12 @@
-// navbar.js - Gestisce unicamente la Barra di Navigazione principale di La Libre
+// navbar.js - Ripristino fedele del layout originale di La Libre (image_9825e9.jpg)
 
 (function() {
     const currentLang = localStorage.getItem('selectedLang') || 'en';
 
     const navTranslations = {
-        en: { shop: "Collection", studio: "The Studio", cart: "Cart" },
-        es: { shop: "Colección", studio: "El Estudio", cart: "Carrito" },
-        zh: { shop: "系列作品", studio: "工作室", cart: "购物车" }
+        en: { links: ["New Arrivals", "Dresses", "Lingerie"], bag: "Bag" },
+        es: { links: ["Novedades", "Vestidos", "Lencería"], bag: "Bolso" },
+        zh: { links: ["新品上市", "连衣裙", "精品内衣"], bag: "购物袋" }
     };
 
     const t = navTranslations[currentLang] || navTranslations['en'];
@@ -17,23 +17,24 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 1.2rem 2rem;
+                padding: 1.5rem 2rem;
                 background-color: #ffffff;
-                border-bottom: 1px solid #f5f5f5;
                 box-sizing: border-box;
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                font-family: 'Montserrat', sans-serif;
             }
 
+            /* Sezioni di navigazione a sinistra */
             .nav-links {
                 display: flex;
                 gap: 1.5rem;
+                flex: 1;
             }
             .nav-links a {
                 text-decoration: none;
                 color: #1a1a1a;
-                font-size: 0.75rem;
+                font-size: 0.68rem;
                 text-transform: uppercase;
-                letter-spacing: 1px;
+                letter-spacing: 1.5px;
                 font-weight: 300;
                 transition: opacity 0.2s ease;
             }
@@ -41,73 +42,100 @@
                 opacity: 0.6;
             }
 
+            /* Logo centrale Serif originale */
+            .nav-brand {
+                text-align: center;
+                flex: 1;
+            }
             .nav-brand a {
                 text-decoration: none;
                 color: #1a1a1a;
-                font-size: 1.1rem;
-                font-weight: 400;
-                letter-spacing: 4px;
+                font-family: 'Cormorant Garamond', serif;
+                font-size: 1.6rem;
+                font-weight: 300;
+                letter-spacing: 5px;
                 text-transform: uppercase;
             }
 
+            /* Meta a destra: Lingua e Bag */
             .nav-meta {
                 display: flex;
                 align-items: center;
-                gap: 1.5rem;
+                justify-content: flex-end;
+                gap: 1.2rem;
+                flex: 1;
             }
             
-            .lang-selector {
-                border: none;
-                background: transparent;
-                color: #1a1a1a;
-                font-size: 0.7rem;
-                text-transform: uppercase;
+            .lang-container {
+                display: flex;
+                gap: 0.4rem;
+                font-size: 0.65rem;
                 letter-spacing: 1px;
+            }
+            .lang-btn {
+                background: none;
+                border: none;
+                color: #b3b3b3;
                 cursor: pointer;
                 padding: 0;
-                font-weight: 300;
-                outline: none;
+                font-family: 'Montserrat', sans-serif;
+                text-transform: uppercase;
+            }
+            .lang-btn.active {
+                color: #1a1a1a;
+                font-weight: 400;
+                text-decoration: underline;
+                text-underline-offset: 3px;
             }
 
+            /* Bottone Bag originale con cerchio nero */
             .cart-link {
                 text-decoration: none;
                 color: #1a1a1a;
-                font-size: 0.75rem;
+                font-size: 0.65rem;
                 text-transform: uppercase;
-                letter-spacing: 1px;
+                letter-spacing: 1.5px;
                 font-weight: 300;
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+            }
+            .cart-count-badge {
+                background-color: #1a1a1a;
+                color: #ffffff;
+                font-size: 0.6rem;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-weight: 400;
             }
 
-            @media (max-width: 768px) {
+            @media (max-width: 850px) {
                 .main-navbar {
-                    padding: 1rem;
+                    padding: 1.2rem 1rem;
                     flex-direction: column;
-                    gap: 0.8rem;
+                    gap: 1rem;
                 }
-                .nav-links { order: 2; gap: 1.2rem; }
-                .nav-brand { order: 1; }
-                .nav-meta {
-                    order: 3;
-                    width: 100%;
-                    justify-content: center;
-                    gap: 1.5rem;
-                    border-top: 1px solid #f9f9f9;
-                    padding-top: 0.6rem;
-                }
+                .nav-links { justify-content: center; width: 100%; order: 2; }
+                .nav-brand { order: 1; width: 100%; }
+                .nav-meta { justify-content: center; width: 100%; order: 3; border-top: 1px solid #f7f7f7; padding-top: 0.5rem; }
             }
         </style>
     `;
 
     function renderNavbar() {
-        // Aggancia espressamente il contenitore del Menu Navigazione
         const container = document.getElementById('dynamicNavContainer');
         if (!container) return;
 
         container.innerHTML = `
             <header class="main-navbar">
                 <nav class="nav-links">
-                    <a href="index.html">${t.shop}</a>
-                    <a href="#studio">${t.studio}</a>
+                    <a href="index.html?cat=new">${t.links[0]}</a>
+                    <a href="index.html?cat=dresses">${t.links[1]}</a>
+                    <a href="index.html?cat=lingerie">${t.links[2]}</a>
                 </nav>
 
                 <div class="nav-brand">
@@ -115,25 +143,30 @@
                 </div>
 
                 <div class="nav-meta">
-                    <select class="lang-selector" id="siteLanguageSelect">
-                        <option value="en" ${currentLang === 'en' ? 'selected' : ''}>EN</option>
-                        <option value="es" ${currentLang === 'es' ? 'selected' : ''}>ES</option>
-                        <option value="zh" ${currentLang === 'zh' ? 'selected' : ''}>ZH</option>
-                    </select>
-                    <a href="#cart" class="cart-link">${t.cart}</a>
+                    <div class="lang-container">
+                        <button class="lang-btn ${currentLang === 'en' ? 'active' : ''}" data-lang="en">EN</button>
+                        <button class="lang-btn ${currentLang === 'es' ? 'active' : ''}" data-lang="es">ES</button>
+                        <button class="lang-btn ${currentLang === 'zh' ? 'active' : ''}" data-lang="zh">ZH</button>
+                    </div>
+                    <a href="#cart" class="cart-link">
+                        ${t.bag} <span class="cart-count-badge">0</span>
+                    </a>
                 </div>
             </header>
         `;
 
         document.head.insertAdjacentHTML('beforeend', styles);
 
-        const selector = document.getElementById('siteLanguageSelect');
-        if (selector) {
-            selector.addEventListener('change', function(e) {
-                localStorage.setItem('selectedLang', e.target.value);
-                window.location.reload();
+        // Listener per il cambio lingua in linea
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetLang = this.getAttribute('data-lang');
+                if (targetLang !== currentLang) {
+                    localStorage.setItem('selectedLang', targetLang);
+                    window.location.reload();
+                }
             });
-        }
+        });
     }
 
     if (document.readyState === 'loading') {
