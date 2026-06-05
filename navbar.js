@@ -154,7 +154,7 @@
 
     // 4. Generazione dinamica della struttura all'interno del container dedicato
     function renderNavbar() {
-        const container = document.getElementById('dynamicBannerContainer');
+        const container = document.getElementById('dynamicNavContainer');
         if (!container) return;
 
         // Puliamo eventuali residui per evitare duplicazioni
