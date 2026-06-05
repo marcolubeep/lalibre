@@ -1,170 +1,93 @@
-// navbar.js - Menu di navigazione condiviso e globale per La Libre
+// navbar.js - Barra di Navigazione Multilingua Dinamica per La Libre
 
 (function() {
-    // 1. Iniezione degli stili CSS della Nav Bar per garantire consistenza assoluta
-    const navStyles = `
-        header {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            align-items: center;
-            padding: 1.5rem 4%;
-            border-bottom: 1px solid #eee;
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 100;
-        }
-        
-        .nav-left { display: flex; gap: 1.5rem; }
-        .nav-left a { text-decoration: none; color: var(--text-color); font-size: 0.9rem; font-weight: 400; transition: color 0.2s; }
-        .nav-left a:hover { color: var(--accent-color); }
-        
-        .logo { 
-            font-family: serif; 
-            font-size: 1.6rem; 
-            letter-spacing: 0.3rem; 
-            text-transform: uppercase; 
-            font-weight: 400; 
-            cursor: pointer;
-            text-align: center;
-        }
-        
-        .nav-right { 
-            display: flex; 
-            justify-content: flex-end; 
-            align-items: center; 
-            gap: 1.8rem; 
-        }
-        
-        .social-icons { 
-            display: flex; 
-            align-items: center; 
-        }
-        
-        .social-icons a {
-            color: var(--text-color); 
-            display: inline-flex; 
-            align-items: center;
-            text-decoration: none;
-            transition: opacity 0.2s;
-        }
-        .social-icons a:hover { opacity: 0.7; }
-        
-        /* Icona IG SVG nativa in Bianco/Nero */
-        .instagram-icon {
-            width: 18px;
-            height: 18px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-        
-        .lang-select {
-            font-size: 0.8rem;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            outline: none;
-            letter-spacing: 1px;
-            font-weight: 400;
-            color: var(--text-color);
-            width: auto;
-            padding-right: 5px;
-            text-transform: uppercase;
-        }
+    // 1. Rileva la lingua salvata o imposta l'inglese come predefinita
+    const currentLang = localStorage.getItem('selectedLang') || 'en';
 
-        .cart-icon-wrapper { 
-            position: relative; 
-            display: flex; 
-            align-items: center; 
-            text-decoration: none; 
-            color: var(--text-color);
-            transition: opacity 0.2s;
-        }
-        .cart-icon-wrapper:hover { opacity: 0.7; }
-        
-        .cart-icon-svg {
-            width: 20px;
-            height: 20px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-        
-        .cart-badge {
-            position: absolute; top: -8px; right: -12px;
-            background: var(--text-color); color: white;
-            font-size: 0.65rem; padding: 2px 5px; border-radius: 50%;
-        }
+    // 2. Testi tradotti per le voci del menu e l'interfaccia
+    const navTranslations = {
+        en: { NewArrivals: "New Arrivals", Dresses: "Dresses", Lingerie: "Lingerie", Cart: "Bag" },
+        es: { NewArrivals: "Novedades", Dresses: "Vestidos", Lingerie: "Lencería", Cart: "Bolsa" },
+        zh: { NewArrivals: "新品上市", Dresses: "连衣裙", Lingerie: "高端内衣", Cart: "购物袋" }
+    };
 
-        @media (max-width: 900px) {
-            header { grid-template-columns: 1fr; gap: 1rem; text-align: center; }
-            .nav-left, .nav-right { justify-content: center; }
-            .logo { order: -1; }
-        }
+    const t = navTranslations[currentLang] || navTranslations['en'];
+
+    // 3. Stili CSS dedicati alla Navbar (Minimal, Luxury, Clean)
+    const styles = `
+        <style>
+            .site-header { width: 100%; background: #fff; border-bottom: 1px solid #f2f2f2; position: sticky; top: 0; z-index: 999; }
+            .nav-container { max-width: 1200px; margin: 0 auto; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+            .brand-logo { font-family: serif; font-size: 1.8rem; font-weight: 300; letter-spacing: 0.2rem; text-decoration: none; color: #1a1a1a; text-transform: uppercase; }
+            .nav-menu { display: flex; gap: 2.5rem; list-style: none; padding: 0; margin: 0; }
+            .nav-link { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; text-decoration: none; color: #1a1a1a; font-weight: 300; transition: color 0.3s ease; }
+            .nav-link:hover { color: #707070; }
+            .nav-actions { display: flex; align-items: center; gap: 2rem; }
+            .lang-selector { display: flex; gap: 0.5rem; }
+            .lang-btn { background: none; border: none; font-size: 0.75rem; letter-spacing: 1px; color: #b0b0b0; cursor: pointer; padding: 2px 4px; font-weight: 300; transition: color 0.2s; }
+            .lang-btn.active { color: #1a1a1a; font-weight: 500; border-bottom: 1px solid #1a1a1a; }
+            .cart-link { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; text-decoration: none; color: #1a1a1a; display: flex; align-items: center; gap: 4px; font-weight: 400; }
+            .cart-badge { background: #1a1a1a; color: #fff; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; min-width: 18px; text-align: center; font-weight: 300; }
+            @media (max-width: 768px) { 
+                .nav-container { flex-direction: column; gap: 1rem; padding: 1rem; }
+                .nav-menu { gap: 1.2rem; }
+                .nav-actions { width: 100%; justify-content: space-between; margin-top: 0.5rem; }
+            }
+        </style>
     `;
 
-    // Inserisce gli stili nell'head del documento
-    const styleSheet = document.createElement("style");
-    styleSheet.innerText = navStyles;
-    document.head.appendChild(styleSheet);
+    // 4. Funzione per cambiare lingua e aggiornare la pagina
+    window.setLanguage = function(langCode) {
+        localStorage.setItem('selectedLang', langCode);
+        // Ricarica la pagina per applicare i testi e aggiornare i prodotti del catalogo
+        window.location.reload();
+    };
 
-    // 2. Struttura HTML dell'header (Isolando l'azione corretta per la Home o i Filtri)
-    const isProductPage = window.location.pathname.includes('product.html');
-    
-    const homeAction = isProductPage ? "href='index.html'" : "href='#' onclick='changeCategory(\"all\"); return false;'";
-    const dressesAction = isProductPage ? "href='index.html'" : "href='#' onclick='changeCategory(\"dresses\"); return false;'";
-    const lingeriesAction = isProductPage ? "href='index.html'" : "href='#' onclick='changeCategory(\"lingeries\"); return false;'";
-    const newArrivalsAction = isProductPage ? "href='index.html'" : "href='#' onclick='changeCategory(\"new-arrivals\"); return false;'";
+    // 5. Generazione dell'HTML della Navbar
+    function renderNavbar() {
+        const header = document.createElement('header');
+        header.className = 'site-header';
 
-    const headerHTML = `
-        <header>
-            <div class="nav-left">
-                <a ${homeAction}>Home</a>
-                <a ${dressesAction}>Dresses</a>
-                <a ${lingeriesAction}>Lingeries</a>
-                <a ${newArrivalsAction}>New Arrivals</a>
-            </div>
-            
-            <div class="logo" onclick="window.location.href='index.html'">La Libre</div>
-            
-            <div class="nav-right">
-                <div class="social-icons">
-                    <a href="https://www.instagram.com/lalibreofficial/" target="_blank" rel="noopener noreferrer" title="Instagram">
-                        <svg class="instagram-icon" viewBox="0 0 24 24">
-                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                        </svg>
+        const cartCount = localStorage.getItem('cartItemCount') || '0';
+
+        header.innerHTML = `
+            <div class="nav-container">
+                <a href="index.html" class="brand-logo">La Libre</a>
+                
+                <ul class="nav-menu">
+                    <li><a href="index.html" onclick="if(window.changeCategory){event.preventDefault(); changeCategory('new-arrivals');}" class="nav-link">${t.NewArrivals}</a></li>
+                    <li><a href="index.html" onclick="if(window.changeCategory){event.preventDefault(); changeCategory('dresses');}" class="nav-link">${t.Dresses}</a></li>
+                    <li><a href="index.html" onclick="if(window.changeCategory){event.preventDefault(); changeCategory('lingeries');}" class="nav-link">${t.Lingerie}</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <div class="lang-selector">
+                        <button onclick="setLanguage('en')" class="lang-btn ${currentLang === 'en' ? 'active' : ''}">EN</button>
+                        <button onclick="setLanguage('es')" class="lang-btn ${currentLang === 'es' ? 'active' : ''}">ES</button>
+                        <button onclick="setLanguage('zh')" class="lang-btn ${currentLang === 'zh' ? 'active' : ''}">ZH</button>
+                    </div>
+                    <a href="#" class="cart-link" onclick="event.preventDefault();">
+                        <span>${t.Cart}</span>
+                        <span class="cart-badge">${cartCount}</span>
                     </a>
                 </div>
-                <select class="lang-select">
-                    <option>EN (UK)</option>
-                    <option>FR</option>
-                </select>
-                <a href="cart.html" class="cart-icon-wrapper" title="Shopping Bag">
-                    <svg class="cart-icon-svg" viewBox="0 0 24 24">
-                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <path d="M16 10a4 4 0 0 1-8 0"></path>
-                    </svg>
-                    <span class="cart-badge">0</span>
-                </a>
             </div>
-        </header>
-    `;
+        `;
 
-    // Inserisce l'header all'inizio del body appena il DOM è pronto
-    document.addEventListener("DOMContentLoaded", () => {
-        document.body.insertAdjacentHTML("afterbegin", headerHTML);
-        
-        // Sincronizza immediatamente il contatore del carrello globale
-        const currentCount = localStorage.getItem('cartItemCount') || 0;
-        const badge = document.querySelector('.cart-badge');
-        if(badge) badge.innerText = currentCount;
-    });
+        document.head.insertAdjacentHTML('beforeend', styles);
+        // Inserisce la barra come primo elemento del body, subito sotto l'eventuale banner
+        const banner = document.getElementById('dynamicBannerContainer');
+        if (banner) {
+            banner.after(header);
+        } else {
+            document.body.insertBefore(header, document.body.firstChild);
+        }
+    }
+
+    // Inizializza la navbar non appena il DOM è pronto
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', renderNavbar);
+    } else {
+        renderNavbar();
+    }
 })();
