@@ -62,7 +62,6 @@
             font-size: 0.65rem; padding: 2px 5px; border-radius: 50%;
         }
 
-        /* --- STILI CINEMATICI PER IL BANNER VIDEO --- */
         .banner {
             width: 100%;
             height: 45vh;
@@ -133,7 +132,6 @@
 
         .divider { width: 50px; height: 1px; background: #ffffff60; margin: 1rem auto; }
 
-        /* --- GRID CATALOGO PRODOTTI DINAMICO --- */
         .products-container { max-width: 1200px; margin: 4rem auto; padding: 0 2rem; min-height: 400px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 3rem; }
         
@@ -165,7 +163,7 @@
 </head>
 <body>
 
-  <header>
+    <header>
         <div class="nav-left">
             <a href="#" onclick="displayCatalog('all'); return false;">Home</a>
             <a href="#" onclick="displayCatalog('dresses'); return false;">Dresses</a>
@@ -193,12 +191,11 @@
             </a>
         </div>
     </header>
-    
 
     <section class="banner">
         <div class="banner-media-container">
             <video autoplay loop muted playsinline>
-                <source src="banner-video.mp4" type="video/mp4">
+                <source src="images/banner-video.mp4" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
         </div>
@@ -235,34 +232,28 @@
     <script src="products.js"></script>
 
     <script>
-        // Funzione per generare e filtrare il catalogo dei prodotti
         function displayCatalog(categoryFilter = "all") {
             const grid = document.getElementById('productGrid');
             if (!grid) return;
             
-            // Pulisce il layout attuale
             grid.innerHTML = "";
 
-            // Verifica di sicurezza se products.js non è presente o ha errori
             if (typeof productsMaster === 'undefined') {
-                grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:red; margin: 2rem 0;'>Errore di caricamento: File 'products.js' non trovato nella cartella o mal configurato.</p>";
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:red; margin: 2rem 0;'>Errore di caricamento: File 'products.js' non trovato.</p>";
                 return;
             }
 
-            // Applica il filtro: Stato attivo e appartenenza alla categoria selezionata
             const filteredProducts = productsMaster.filter(product => {
                 const isActive = product.status === "active";
                 const matchesCategory = categoryFilter === "all" || product.categories.includes(categoryFilter);
                 return isActive && matchesCategory;
             });
 
-            // Se la categoria selezionata è vuota
             if (filteredProducts.length === 0) {
                 grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:var(--accent-color); margin: 4rem 0; letter-spacing: 1px;'>No items available in this section at the moment.</p>";
                 return;
             }
 
-            // Inietta gli elementi estratti dal database all'interno del DOM
             filteredProducts.forEach(product => {
                 const bgStyle = product.image ? `background-image: url('${product.image}');` : '';
                 const textColor = product.fallbackColor === "#111111" || product.fallbackColor === "#2c2a29" ? "color: #fff;" : "";
@@ -300,8 +291,6 @@
             }
 
             updateCartBadge();
-            
-            // Inizializza la visualizzazione della home caricando tutti i prodotti attivi
             displayCatalog("all");
 
             const popup = document.getElementById('emailPopup');
@@ -309,7 +298,6 @@
             const subscribeForm = document.getElementById('subscribeForm');
 
             if (popup && !localStorage.getItem('subscribed') && !localStorage.getItem('popupDismissed')) {
-                // Impostato esattamente a 6 secondi (6000ms)
                 setTimeout(() => popup.classList.add('active'), 6000);
             }
 
