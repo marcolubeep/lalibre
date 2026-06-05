@@ -1,4 +1,4 @@
-// navbar.js - Ripristino fedele del layout originale di La Libre (image_9825e9.jpg)
+// navbar.js - Layout Originale La Libre + Predisposizione Sticky-Scroll
 
 (function() {
     const currentLang = localStorage.getItem('selectedLang') || 'en';
@@ -17,13 +17,13 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 1.5rem 2rem;
+                padding: 1.4rem 2rem;
                 background-color: #ffffff;
                 box-sizing: border-box;
                 font-family: 'Montserrat', sans-serif;
+                border-bottom: 1px solid #f9f9f9;
             }
 
-            /* Sezioni di navigazione a sinistra */
             .nav-links {
                 display: flex;
                 gap: 1.5rem;
@@ -42,7 +42,6 @@
                 opacity: 0.6;
             }
 
-            /* Logo centrale Serif originale */
             .nav-brand {
                 text-align: center;
                 flex: 1;
@@ -57,7 +56,6 @@
                 text-transform: uppercase;
             }
 
-            /* Meta a destra: Lingua e Bag */
             .nav-meta {
                 display: flex;
                 align-items: center;
@@ -88,7 +86,6 @@
                 text-underline-offset: 3px;
             }
 
-            /* Bottone Bag originale con cerchio nero */
             .cart-link {
                 text-decoration: none;
                 color: #1a1a1a;
@@ -115,13 +112,13 @@
 
             @media (max-width: 850px) {
                 .main-navbar {
-                    padding: 1.2rem 1rem;
+                    padding: 1rem;
                     flex-direction: column;
-                    gap: 1rem;
+                    gap: 0.8rem;
                 }
                 .nav-links { justify-content: center; width: 100%; order: 2; }
                 .nav-brand { order: 1; width: 100%; }
-                .nav-meta { justify-content: center; width: 100%; order: 3; border-top: 1px solid #f7f7f7; padding-top: 0.5rem; }
+                .nav-meta { justify-content: center; width: 100%; order: 3; border-top: 1px solid #f7f7f7; padding-top: 0.4rem; }
             }
         </style>
     `;
@@ -157,7 +154,6 @@
 
         document.head.insertAdjacentHTML('beforeend', styles);
 
-        // Listener per il cambio lingua in linea
         document.querySelectorAll('.lang-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 const targetLang = this.getAttribute('data-lang');
