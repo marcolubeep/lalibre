@@ -1,6 +1,6 @@
 // products.js - Database Multilingua per La Libre
 
-const productsMaster = [
+window.productsMaster = [
    {
        id: "amour-lace",
        title: "Amour Lace Blouse",
