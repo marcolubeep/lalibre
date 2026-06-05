@@ -40,7 +40,7 @@
             margin-top: 96px;
         }
 
-        /* SEARCH BAR - stile originale discreto, testo più visibile */
+        /* SEARCH BAR */
         .search-section {
             max-width: 1280px;
             margin: 0 auto 1.5rem auto;
@@ -80,7 +80,6 @@
         .search-field input::placeholder {
             color: #b8b0a5;
             font-weight: 300;
-            letter-spacing: 0.05em;
         }
 
         .sort-discreet select {
@@ -99,11 +98,6 @@
         .sort-discreet select:focus {
             outline: none;
             border-bottom-color: #c8c0b5;
-        }
-
-        .sort-discreet select option {
-            background: #ffffff;
-            color: #2a2a2a;
         }
 
         .clear-link {
@@ -363,12 +357,8 @@
                 padding: 1.5rem;
             }
             .modal-title { font-size: 1.5rem; }
-            .search-discreet { 
-                justify-content: flex-start;
-                gap: 1.5rem;
-            }
+            .search-discreet { justify-content: flex-start; gap: 1.5rem; }
             .search-field input { width: 140px; }
-            .search-field input:focus { width: 160px; }
         }
 
         @media (max-width: 768px) {
@@ -380,7 +370,6 @@
             .catalog-container, .search-section, .products-header { padding: 0 1rem; }
             .search-discreet { flex-direction: column; align-items: stretch; gap: 0.8rem; }
             .search-field input { width: 100%; }
-            .search-field input:focus { width: 100%; }
         }
 
         .product-card {
@@ -405,7 +394,7 @@
         
         <div id="heroContainer"></div>
 
-        <!-- SEARCH BAR - stile originale discreto -->
+        <!-- SEARCH BAR -->
         <div class="search-section">
             <div class="search-discreet">
                 <div class="search-field">
@@ -445,6 +434,24 @@
     <script src="footer.js"></script>
     
     <script>
+        // Funzione per estrarre il prezzo numerico dalla stringa (es. "€ 135,00" -> 135)
+        function extractPriceNum(priceStr) {
+            if (!priceStr) return 0;
+            const match = priceStr.match(/\d+([,.]\d+)?/);
+            if (match) {
+                return parseFloat(match[0].replace(',', '.'));
+            }
+            return 0;
+        }
+
+        // Funzione per ottenere la categoria principale (prima dell'array)
+        function getMainCategory(product) {
+            if (product.categories && product.categories.length > 0) {
+                return product.categories[0];
+            }
+            return null;
+        }
+
         // TRADUZIONI PER LA SEARCH BAR
         const searchTranslations = {
             en: {
@@ -506,17 +513,34 @@
                 const modal = document.getElementById('productModal');
                 const modalContent = document.getElementById('modalContent');
                 
+                function getCurrentLang() {
+                    return localStorage.getItem('selectedLang') || 'en';
+                }
+                
+                function getProductDescription(product) {
+                    const lang = getCurrentLang();
+                    if (product.translations && product.translations[lang] && product.translations[lang].description) {
+                        return product.translations[lang].description;
+                    }
+                    if (product.translations && product.translations.en) {
+                        return product.translations.en.description;
+                    }
+                    return product.description || 'Handcrafted piece from La Libre Studio.';
+                }
+                
                 function openProductModal(product) {
+                    const description = getProductDescription(product);
+                    const priceNum = extractPriceNum(product.price);
+                    
                     modalContent.innerHTML = `
                         <div class="modal-grid">
                             <div class="modal-image"><img src="${product.image}" alt="${product.title}"></div>
                             <div class="modal-details">
                                 <h2 class="modal-title">${product.title}</h2>
                                 <div class="modal-price">${product.price}</div>
-                                <p class="modal-description">${product.description || 'Handcrafted piece from La Libre Studio.'}</p>
+                                <p class="modal-description">${description}</p>
                                 <div class="modal-meta">
-                                    <div><strong>Material</strong><br>${product.material || 'Artisanal composition'}</div>
-                                    <div style="margin-top: 0.8rem;"><strong>Dimensions</strong><br>${product.dimensions || 'Varied / one size'}</div>
+                                    <div><strong>Category</strong><br>${product.categories ? product.categories.join(', ') : 'Collection'}</div>
                                 </div>
                                 <button class="add-to-cart-btn">ADD TO BAG</button>
                             </div>
@@ -544,30 +568,27 @@
                     
                     let filtered = [...window.productsMaster];
                     
+                    // FILTRO PER CATEGORIA - usando l'array categories
                     if (cat) {
-                        if (cat === 'new-arrivals') {
-                            filtered = filtered.filter(p => p.tags?.includes('new') || p.new === true);
-                        } else if (cat === 'dresses') {
-                            filtered = filtered.filter(p => p.category === 'dresses' || p.tags?.includes('dresses'));
-                        } else if (cat === 'lingeries') {
-                            filtered = filtered.filter(p => p.category === 'lingeries' || p.tags?.includes('lingerie') || p.tags?.includes('lingeries'));
-                        } else if (cat === 'objects') {
-                            filtered = filtered.filter(p => p.category === 'objects');
-                        } else if (cat === 'textiles') {
-                            filtered = filtered.filter(p => p.category === 'textiles');
-                        } else if (cat === 'accessories') {
-                            filtered = filtered.filter(p => p.category === 'accessories');
-                        }
+                        filtered = filtered.filter(product => {
+                            if (!product.categories) return false;
+                            // Normalizza i nomi delle categorie per il confronto
+                            const normalizedCat = cat.toLowerCase();
+                            return product.categories.some(c => c.toLowerCase() === normalizedCat || 
+                                                           c.toLowerCase().replace(' ', '-') === normalizedCat);
+                        });
                     }
                     
+                    // FILTRO PER TESTO (nel titolo)
                     if (searchTerm) {
                         filtered = filtered.filter(p => p.title.toLowerCase().includes(searchTerm));
                     }
                     
+                    // ORDINAMENTO PER PREZZO
                     if (sortValue === 'price-asc') {
-                        filtered.sort((a, b) => (a.priceNum || 0) - (b.priceNum || 0));
+                        filtered.sort((a, b) => extractPriceNum(a.price) - extractPriceNum(b.price));
                     } else if (sortValue === 'price-desc') {
-                        filtered.sort((a, b) => (b.priceNum || 0) - (a.priceNum || 0));
+                        filtered.sort((a, b) => extractPriceNum(b.price) - extractPriceNum(a.price));
                     }
                     
                     return filtered;
