@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Libre | Slow Collection</title>
+    <script src="navbar.js"></script>
     <style>
         :root {
             --bg-color: #ffffff;
@@ -15,90 +16,6 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; }
-        
-        header {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            align-items: center;
-            padding: 1.5rem 4%;
-            border-bottom: 1px solid #eee;
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 100;
-        }
-        
-        .nav-left { display: flex; gap: 1.5rem; }
-        .nav-left a { text-decoration: none; color: var(--text-color); font-size: 0.9rem; font-weight: 400; transition: color 0.2s; }
-        .nav-left a:hover { color: var(--accent-color); }
-        
-        .logo { 
-            font-family: serif; 
-            font-size: 1.6rem; 
-            letter-spacing: 0.3rem; 
-            text-transform: uppercase; 
-            font-weight: 400; 
-            cursor: pointer;
-            text-align: center;
-        }
-        
-        .nav-right { 
-            display: flex; 
-            justify-content: flex-end; 
-            align-items: center; 
-            gap: 1.8rem; 
-        }
-        
-        .social-icons { 
-            display: flex; 
-            gap: 1.2rem; 
-            color: var(--text-color); 
-            align-items: center; 
-        }
-        
-        .social-icons a {
-            color: inherit; 
-            display: inline-flex; 
-            align-items: center;
-            text-decoration: none;
-            font-size: 0.85rem;
-            letter-spacing: 1px;
-        }
-        
-        .social-icons i, .social-icons svg { 
-            display: inline-block;
-            width: 18px; 
-            height: 18px; 
-        }
-        
-        .lang-select {
-            font-size: 0.8rem;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            outline: none;
-            letter-spacing: 1px;
-            font-weight: 400;
-            color: var(--text-color);
-            width: auto;
-            padding-right: 5px;
-            text-transform: uppercase;
-        }
-
-        .cart-icon-wrapper { 
-            position: relative; 
-            display: flex; 
-            align-items: center; 
-            text-decoration: none; 
-            color: inherit;
-            font-size: 0.85rem;
-            letter-spacing: 1px;
-        }
-        .cart-badge {
-            position: absolute; top: -8px; right: -12px;
-            background: var(--text-color); color: white;
-            font-size: 0.65rem; padding: 2px 5px; border-radius: 50%;
-        }
 
         .banner {
             width: 100%;
@@ -203,7 +120,6 @@
             background: transparent;
         }
         .search-wrapper input::placeholder { color: #b0b0b0; font-weight: 300; }
-        .search-wrapper i, .search-wrapper svg { color: var(--accent-color); width: 14px; height: 14px; opacity: 0.7; }
 
         .sort-wrapper { display: flex; align-items: center; gap: 0.3rem; }
         .sort-wrapper label { font-size: 0.8rem; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 300; }
@@ -243,9 +159,6 @@
         .product-price { font-weight: 500; }
 
         @media (max-width: 900px) {
-            header { grid-template-columns: 1fr; gap: 1rem; text-align: center; }
-            .nav-left, .nav-right { justify-content: center; }
-            .logo { order: -1; }
             .search-filter-bar { flex-direction: column; align-items: stretch; gap: 1.5rem; }
             .search-wrapper { width: 100%; }
             .sort-wrapper { justify-content: space-between; }
@@ -264,35 +177,6 @@
 </head>
 <body>
 
-    <header>
-        <div class="nav-left">
-            <a href="#" onclick="changeCategory('all'); return false;">Home</a>
-            <a href="#" onclick="changeCategory('dresses'); return false;">Dresses</a>
-            <a href="#" onclick="changeCategory('lingeries'); return false;">Lingeries</a>
-            <a href="#" onclick="changeCategory('new-arrivals'); return false;">New Arrivals</a>
-        </div>
-        
-        <div class="logo" onclick="window.location.href='index.html'">La Libre</div>
-        
-        <div class="nav-right">
-            <div class="social-icons">
-                <a href="https://www.instagram.com/lalibreofficial/" target="_blank" rel="noopener noreferrer">
-                    <i data-lucide="instagram">IG</i>
-                </a>
-                <a href="#"><i data-lucide="facebook">FB</i></a>
-                <a href="#"><i data-lucide="pinterest">PIN</i></a>
-            </div>
-            <select class="lang-select">
-                <option>EN (UK)</option>
-                <option>FR</option>
-            </select>
-            <a href="cart.html" class="cart-icon-wrapper">
-                <i data-lucide="shopping-bag">BAG</i>
-                <span class="cart-badge">0</span>
-            </a>
-        </div>
-    </header>
-
     <section class="banner">
         <div class="banner-media-container">
             <video autoplay loop muted playsinline>
@@ -309,7 +193,6 @@
 
     <div class="search-filter-bar">
         <div class="search-wrapper">
-            <i data-lucide="search"></i>
             <input type="text" id="searchInput" placeholder="SEARCH COLLECTION...">
         </div>
         
@@ -330,7 +213,7 @@
 
     <div class="popup-overlay" id="emailPopup">
         <div class="popup-modal">
-            <button class="popup-close" id="closePopup"><i data-lucide="x">X</i></button>
+            <button class="popup-close" id="closePopup">✕</button>
             <h2>La Libre</h2>
             <p>Join the slow movement. Subscribe to receive private collection updates.</p>
             <form class="popup-form" id="subscribeForm">
@@ -344,7 +227,6 @@
         <p>&copy; 2026 LA LIBRE. ALL RIGHTS RESERVED.</p>
     </footer>
 
-    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="products.js"></script>
 
     <script>
@@ -428,11 +310,6 @@
         }
 
         window.addEventListener('load', () => {
-            // Controllo sicuro per inizializzare Lucide senza provocare crash
-            if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
-                lucide.createIcons();
-            }
-
             updateCartBadge();
             displayCatalog();
 
@@ -454,7 +331,6 @@
 
             const popup = document.getElementById('emailPopup');
             const closeBtn = document.getElementById('closePopup');
-            const subscribeForm = document.getElementById('subscribeForm');
 
             if (popup && !localStorage.getItem('subscribed') && !localStorage.getItem('popupDismissed')) {
                 setTimeout(() => popup.classList.add('active'), 6000);
