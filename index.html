@@ -6,16 +6,20 @@
     <title>La Libre Studio &mdash; Official E-Commerce</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
     <style>
-        body { margin: 0; font-family: 'Montserrat', sans-serif; background: #fff; color: #1a1a1a; -webkit-font-smoothing: antialiased; }
+        body { margin: 0; font-family: 'Montserrat', sans-serif; background: #fff; color: #1a1a1a; }
         .sticky-nav-wrapper { position: fixed; top: 0; width: 100%; z-index: 1000; background: #fff; box-shadow: 0 1px 10px rgba(0,0,0,0.02); }
-        .main-content-wrapper { margin-top: 75px; }
+        .main-content-wrapper { margin-top: 80px; }
+        
+        /* Video Banner Panoramico */
         .hero-banner-container { width: 100%; aspect-ratio: 38 / 10; position: relative; overflow: hidden; background: #000; }
         .hero-video-wrapper video { width: 100%; height: 100%; object-fit: cover; }
         .hero-video-overlay { position: absolute; top:0; left:0; width: 100%; height: 100%; background: rgba(0,0,0,0.45); }
+        
+        /* Griglia Prodotti */
         .catalog-container { max-width: 1200px; margin: 4rem auto; padding: 0 2rem; }
         .products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem 2rem; }
         .product-card { text-decoration: none; color: #1a1a1a; transition: opacity 0.3s ease; }
-        .product-card:hover { opacity: 0.85; }
+        .product-card:hover { opacity: 0.7; }
         .product-image-wrapper { aspect-ratio: 3/4; background: #f7f5f2; overflow: hidden; }
         .product-image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
         .product-info { margin-top: 1rem; display: flex; justify-content: space-between; font-size: 0.75rem; }
@@ -41,17 +45,20 @@
     
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // Legge il parametro 'cat' dall'URL (es: index.html?cat=dresses)
             const urlParams = new URLSearchParams(window.location.search);
-            const cat = urlParams.get('cat'); 
+            const categoryFilter = urlParams.get('cat'); 
 
-            let filtered = productsMaster;
-            if (cat) {
-                filtered = productsMaster.filter(p => p.category === cat);
+            // Filtra i prodotti: se non c'è categoria, mostra tutto
+            let displayProducts = productsMaster;
+            if (categoryFilter) {
+                displayProducts = productsMaster.filter(p => p.category === categoryFilter);
             }
 
+            // Renderizza la griglia
             const display = document.getElementById('productsDisplay');
             if (display) {
-                display.innerHTML = filtered.map(prod => `
+                display.innerHTML = displayProducts.map(prod => `
                     <a href="product.html?id=${prod.id}" class="product-card">
                         <div class="product-image-wrapper"><img src="${prod.image}" alt="${prod.title}"></div>
                         <div class="product-info">
