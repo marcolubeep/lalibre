@@ -1,106 +1,67 @@
-// banner.js - Componente Banner Dinamico e Stagionale per La Libre
+// banner.js - Top Announcement Banner per La Libre (Allineato al Brand)
 
 (function() {
-    // 1. Iniezione degli stili CSS dedicati al Banner per mantenere pulito il file HTML
-    const bannerStyles = `
-        .banner {
-            width: 100%;
-            height: 45vh;
-            min-height: 300px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #0d0d0d;
-        }
+    // 1. Recupero immediato della lingua selezionata dall'utente
+    const currentLang = localStorage.getItem('selectedLang') || 'en';
 
-        .banner-media-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
+    // 2. Archivio traduzioni della fascia di notifica superiore
+    const bannerTranslations = {
+        en: "Complimentary worldwide shipping on architectural orders",
+        es: "Envío internacional de cortesía en pedidos arquitectónicos",
+        zh: "建筑系列订单享受全球免费配送服务"
+    };
 
-        .banner-media-container video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            pointer-events: none;
-        }
+    const text = bannerTranslations[currentLang] || bannerTranslations['en'];
 
-        .banner-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.35));
-            z-index: 2;
-        }
+    // 3. Stili dedicati per garantire che aderisca perfettamente al millimetro
+    const styles = `
+        <style>
+            #dynamicBannerContainer {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            .top-announcement-bar {
+                background-color: #1a1a1a;
+                color: #ffffff;
+                text-align: center;
+                padding: 0.55rem 1rem;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                font-size: 0.65rem;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                font-weight: 300;
+                width: 100%;
+                display: block;
+            }
 
-        .banner-text { 
-            position: relative; 
-            z-index: 10; 
-            text-align: center; 
-            color: white; 
-            max-width: 900px; 
-            padding: 1rem 2rem; 
-        }
-
-        .banner-text h1 { 
-            font-family: serif; 
-            font-size: clamp(1.8rem, 4.5vw, 3.2rem); 
-            font-weight: 400; 
-            letter-spacing: 0.3rem; 
-            text-transform: uppercase; 
-            margin-bottom: 0.3rem; 
-            color: #ffffff;
-            text-shadow: 0 2px 12px rgba(0,0,0,0.4);
-        }
-
-        .banner-text p { 
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
-            font-size: clamp(0.75rem, 1.8vw, 0.9rem); 
-            font-weight: 300; 
-            letter-spacing: 4px; 
-            color: #e5e5e5; 
-            text-transform: uppercase; 
-            font-style: italic; 
-        }
-
-        .divider { width: 50px; height: 1px; background: #ffffff60; margin: 1rem auto; }
+            @media (max-width: 600px) {
+                .top-announcement-bar {
+                    font-size: 0.6rem;
+                    line-height: 1.4;
+                    padding: 0.6rem 0.8rem;
+                }
+            }
+        </style>
     `;
 
-    // Inserisce gli stili nell'head del documento
-    const styleSheet = document.createElement("style");
-    styleSheet.innerText = bannerStyles;
-    document.head.appendChild(styleSheet);
+    // 4. Iniezione del banner nel suo contenitore nativo
+    function renderTopBanner() {
+        const container = document.getElementById('dynamicBannerContainer');
+        if (!container) return;
 
-    // 2. Struttura HTML del Banner (Modifica qui per cambiare campagna)
-    const bannerHTML = `
-        <section class="banner">
-            <div class="banner-media-container">
-                <video autoplay loop muted playsinline>
-                    <source src="images/banner-video.mp4" type="video/mp4">
-                </video>
-            </div>
-            <div class="banner-overlay"></div>
-            <div class="banner-text">
-                <h1>Free Soul, Second Skin</h1>
-                <div class="divider"></div>
-                <p>Slow Collection crafted in delicate lace</p>
-            </div>
-        </section>
-    `;
+        // Creiamo la striscia di testo dinamica
+        container.innerHTML = `<div class="top-announcement-bar">${text}</div>`;
+        
+        // Iniettiamo gli stili nel documento
+        document.head.insertAdjacentHTML('beforeend', styles);
+    }
 
-    // Inietta il banner nel container dedicato appena il DOM è pronto
-    document.addEventListener("DOMContentLoaded", () => {
-        const bannerContainer = document.getElementById("dynamicBannerContainer");
-        if (bannerContainer) {
-            bannerContainer.innerHTML = bannerHTML;
-        }
-    });
+    // Esecuzione sicura al caricamento del DOM
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', renderTopBanner);
+    } else {
+        renderTopBanner();
+    }
 })();
