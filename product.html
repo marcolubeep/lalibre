@@ -6,83 +6,44 @@
     <title>La Libre | Product Detail</title>
     <script src="navbar.js"></script>
     <style>
-        :root {
-            --bg-color: #ffffff;
-            --text-color: #1a1a1a;
-            --accent-color: #707070;
-            --light-gray: #f9f9f9;
-        }
-
+        :root { --bg-color: #ffffff; --text-color: #1a1a1a; --accent-color: #707070; --light-gray: #f9f9f9; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; }
-
-        .product-container {
-            max-width: 1100px;
-            margin: 4rem auto;
-            padding: 0 2rem;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-        }
-
-        .product-image-side {
-            height: 600px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-size: cover;
-            background-position: center;
-            font-weight: 500;
-        }
-
-        .product-details-side {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
+        .product-container { max-width: 1100px; margin: 4rem auto; padding: 0 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
+        .product-image-side { height: 600px; display: flex; align-items: center; justify-content: center; background-size: cover; background-position: center; font-weight: 500; }
+        .product-details-side { display: flex; flex-direction: column; justify-content: center; }
         .product-title { font-family: serif; font-size: 2.2rem; font-weight: 400; margin-bottom: 0.5rem; }
         .product-tagline { font-size: 1rem; color: var(--accent-color); margin-bottom: 1.5rem; }
         .product-price { font-size: 1.4rem; font-weight: 500; margin-bottom: 2rem; }
-        
         .size-selector { margin-bottom: 2rem; }
         .size-selector p { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; color: var(--accent-color); }
         .size-options { display: flex; gap: 0.5rem; }
         .size-btn { padding: 0.5rem 1rem; border: 1px solid #ccc; background: white; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
         .size-btn:hover, .size-btn.active { border-color: var(--text-color); background: var(--text-color); color: white; }
-
-        .add-to-cart-btn {
-            width: 100%;
-            padding: 1rem;
-            background: var(--text-color);
-            color: white;
-            border: none;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
+        .add-to-cart-btn { width: 100%; padding: 1rem; background: var(--text-color); color: white; border: none; text-transform: uppercase; letter-spacing: 2px; font-size: 0.9rem; cursor: pointer; transition: opacity 0.2s; }
         .add-to-cart-btn:hover { opacity: 0.9; }
-
         .error-message { grid-column: 1/-1; text-align: center; padding: 4rem 0; }
         .error-message h2 { font-family: serif; margin-bottom: 1rem; }
         .error-message a { color: var(--text-color); }
-
-        @media (max-width: 900px) {
-            .product-container { grid-template-columns: 1fr; gap: 2rem; margin: 2rem auto; }
-            .product-image-side { height: 450px; }
-        }
+        @media (max-width: 900px) { .product-container { grid-template-columns: 1fr; gap: 2rem; margin: 2rem auto; } .product-image-side { height: 450px; } }
     </style>
 </head>
 <body>
 
-    <main class="product-container" id="productContent">
-        </main>
+    <main class="product-container" id="productContent"></main>
 
     <script src="products.js"></script>
-
     <script>
+        const lang = localStorage.getItem('selectedLang') || 'en';
+
+        const uiProduct = {
+            en: { sizeTitle: "Select Size (Atemporal Fit)", btn: "Add to Bag", alert: "Item added to your slow-shopping bag.", errorTitle: "Product Not Found", errorDesc: "The piece you are looking for is currently unavailable.", returnHome: "Return to the Collection" },
+            es: { sizeTitle: "Seleccionar Talla (Ajuste Atemporal)", btn: "Añadir a la Bolsa", alert: "Artículo añadido a tu bolsa de compra slow.", errorTitle: "Producto no encontrado", errorDesc: "La prenda que buscas no está disponible.", returnHome: "Volver a la Colección" },
+            zh: { sizeTitle: "选择尺码 (永恒合身剪裁)", btn: "加入购物袋", alert: "商品已成功加入您的慢购物袋。", errorTitle: "未找到该商品", errorDesc: "您寻找的商品目前不可用或已归档。", returnHome: "返回探索系列" }
+        };
+
+        const ui = uiProduct[lang] || uiProduct['en'];
+
         function updateCartBadge() {
             const currentCount = localStorage.getItem('cartItemCount') || 0;
             const badge = document.querySelector('.cart-badge');
@@ -91,63 +52,58 @@
 
         function handleAddToCart() {
             let currentCount = parseInt(localStorage.getItem('cartItemCount') || 0);
-            currentCount += 1;
-            localStorage.setItem('cartItemCount', currentCount);
+            localStorage.setItem('cartItemCount', currentCount + 1);
             updateCartBadge();
-            alert("Item added to your slow-shopping bag.");
+            alert(ui.alert);
         }
 
-        window.addEventListener('load', () => {
-            updateCartBadge();
-
+        window.renderProductDetail = function() {
             const container = document.getElementById('productContent');
             const urlParams = new URLSearchParams(window.location.search);
             const productId = urlParams.get('id');
 
             if (!container) return;
 
-            const product = typeof productsMaster !== 'undefined' 
-                ? productsMaster.find(p => p.id === productId) 
-                : null;
+            const product = typeof productsMaster !== 'undefined' ? productsMaster.find(p => p.id === productId) : null;
 
             if (!product || product.status !== 'active') {
                 container.innerHTML = `
                     <div class="error-message">
-                        <h2>Product Not Found</h2>
-                        <p>The piece you are looking for is currently unavailable or archiving.</p>
-                        <p style="margin-top: 1.5rem;"><a href="index.html">Return to the Collection</a></p>
+                        <h2>${ui.errorTitle}</h2>
+                        <p>${ui.errorDesc}</p>
+                        <p style="margin-top: 1.5rem;"><a href="index.html">${ui.returnHome}</a></p>
                     </div>`;
                 return;
             }
 
+            // TITOLO FISSO IN LINGUA MADRE, COPIA TRADOTTA SOLO PER LA TAGLINE
+            let desc = product.translations[lang] || product.translations['en'];
+
             const bgStyle = product.image ? `background-image: url('${product.image}');` : '';
-            const textColor = product.fallbackColor === "#111111" || product.fallbackColor === "#2c2a29" ? "color: #fff;" : "";
-            const placeholderText = !product.image ? `[ ${product.title} ]` : "";
+            const textColor = product.fallbackColor === "#111111" ? "color: #fff;" : "";
 
             container.innerHTML = `
                 <div class="product-image-side" style="${bgStyle} background-color: ${product.fallbackColor}; ${textColor}">
-                    ${placeholderText}
+                    ${!product.image ? `[ ${product.title} ]` : ""}
                 </div>
                 <div class="product-details-side">
                     <h1 class="product-title">${product.title}</h1>
-                    <p class="product-tagline">${product.tagline}</p>
+                    <p class="product-tagline">${desc.tagline}</p>
                     <div class="product-price">${product.price}</div>
                     
                     <div class="size-selector">
-                        <p>Select Size (Atemporal Fit)</p>
+                        <p>${ui.sizeTitle}</p>
                         <div class="size-options">
                             <button class="size-btn active">S</button>
                             <button class="size-btn">M</button>
                             <button class="size-btn">L</button>
                         </div>
                     </div>
-
-                    <button class="add-to-cart-btn" id="addToCartBtn">Add to Bag</button>
+                    <button class="add-to-cart-btn" id="addToCartBtn">${ui.btn}</button>
                 </div>
             `;
 
             document.getElementById('addToCartBtn').addEventListener('click', handleAddToCart);
-            
             const sizeBtns = document.querySelectorAll('.size-btn');
             sizeBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -155,6 +111,11 @@
                     btn.classList.add('active');
                 });
             });
+        };
+
+        window.addEventListener('load', () => {
+            updateCartBadge();
+            window.renderProductDetail();
         });
     </script>
 </body>
