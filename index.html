@@ -184,6 +184,35 @@
     // Aggiorna anche se l'utente cambia lingua mentre il pop-up è già aperto
     window.addEventListener('languageChanged', updatePopupLanguage);
 </script>
+    <script>
+    const popup = document.getElementById('newsletterPopup');
+    const overlay = document.getElementById('popupOverlay'); // Riferimento all'overlay
+
+    // Funzione per mostrare
+    function showPopup() {
+        popup.style.display = 'block';
+        overlay.style.display = 'block';
+    }
+
+    // Funzione per chiudere
+    function closePopup() {
+        popup.style.display = 'none';
+        overlay.style.display = 'none';
+        localStorage.setItem('newsletterClosed', 'true');
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        updatePopupLanguage();
+        
+        if (!localStorage.getItem('newsletterClosed')) {
+            setTimeout(showPopup, 6000);
+        }
+
+        document.getElementById('closePopup').addEventListener('click', closePopup);
+        // Opzionale: chiudi se clicchi sul velo grigio
+        overlay.addEventListener('click', closePopup); 
+    });
+</script>
     
    <div id="newsletterPopup" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:#fff; padding:4rem; border:1px solid #e2dbd2; z-index:9999; box-shadow:0 10px 50px rgba(0,0,0,0.1); max-width:500px; width:90%; text-align:center;">
     
