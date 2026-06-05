@@ -1,4 +1,4 @@
-// footer.js - Footer Automatico con Instagram Feed Reale per La Libre
+// footer.js - Layout compatto e corretto per La Libre
 
 (function() {
     const currentLang = localStorage.getItem('selectedLang') || 'en';
@@ -16,15 +16,14 @@
             .site-footer {
                 width: 100%;
                 background: #ffffff;
-                border-top: 1px solid #f2f2f2;
-                margin-top: 3rem; 
-                padding: 2rem 2rem 1.5rem 2rem; 
+                margin-top: 1rem; /* Avvicina drasticamente il footer al corpo principale */
+                padding: 1rem 2rem 1.5rem 2rem; 
             }
             
-            /* Sezione Instagram Live */
+            /* 1. Sezione Instagram in cima al footer (vicina ai prodotti) */
             .ig-section {
                 max-width: 900px; 
-                margin: 0 auto 2rem auto; 
+                margin: 0 auto 2.5rem auto; 
                 text-align: center;
             }
             .ig-title {
@@ -41,36 +40,43 @@
             }
             .ig-title:hover { color: #707070; }
             
-            /* Forziamo il widget a mantenere uno stile pulito e minimal, nascondendo i bordi in eccesso */
-            .ig-live-container {
-                width: 100%;
-                overflow: hidden;
+            .ig-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr); 
+                gap: 0.75rem; 
             }
-            .ig-live-container iframe {
-                border: none !important;
-                border-radius: 0 !important;
+            .ig-item {
+                position: relative;
+                display: block;
+                aspect-ratio: 1 / 1; 
+                overflow: hidden;
+                background: #f7f5f2;
+                color: transparent;
+                text-decoration: none;
+            }
+            .ig-item img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            }
+            .ig-item:hover img {
+                transform: scale(1.03); 
             }
             
-            /* Copyright compatto */
+            /* 2. Copyright posizionato stabilmente SOTTO la sezione IG */
             .footer-bottom {
                 max-width: 900px;
                 margin: 0 auto;
-                border-top: 1px solid #f9f9f9;
+                border-top: 1px solid #f5f5f5; /* Linea sottile di chiusura sotto IG */
                 padding-top: 1.5rem;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
+                text-align: center; /* Centra perfettamente il testo finale */
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
                 font-size: 0.6rem; 
                 color: #9c9c9c;
                 letter-spacing: 1px;
                 text-transform: uppercase;
-            }
-            .footer-bottom a { color: #9c9c9c; text-decoration: none; transition: color 0.2s; }
-            .footer-bottom a:hover { color: #1a1a1a; }
-
-            @media (max-width: 768px) {
-                .footer-bottom { flex-direction: column; gap: 0.8rem; text-align: center; }
             }
         </style>
     `;
@@ -84,21 +90,30 @@
         const igProfileUrl = "https://www.instagram.com/lalibreofficial";
 
         footer.innerHTML = `
+            <!-- PRIMA: Sezione Instagram -->
             <div class="ig-section">
                 <a href="${igProfileUrl}" target="_blank" class="ig-title">
                     @lalibreofficial &mdash; ${t.follow}
                 </a>
-                <div class="ig-live-container">
-                    
-                    <!-- 📸 WIDGET INSTAGRAM REALE E LIVE -->
-                    <iframe src="https://besocialwidget.com/v/lalibreofficial" width="100%" height="230" scrolling="no" style="border:none; overflow:hidden; width:100%;"></iframe>
-                    
+                <div class="ig-grid">
+                    <a href="${igProfileUrl}" target="_blank" class="ig-item">
+                        <img src="${pathPrefix}images/products/ig1.jpg" alt="La Libre">
+                    </a>
+                    <a href="${igProfileUrl}" target="_blank" class="ig-item">
+                        <img src="${pathPrefix}images/products/ig2.jpg" alt="La Libre">
+                    </a>
+                    <a href="${igProfileUrl}" target="_blank" class="ig-item">
+                        <img src="${pathPrefix}images/products/ig3.jpg" alt="La Libre">
+                    </a>
+                    <a href="${igProfileUrl}" target="_blank" class="ig-item">
+                        <img src="${pathPrefix}images/products/ig4.jpg" alt="La Libre">
+                    </a>
                 </div>
             </div>
 
+            <!-- DOPO: All Rights Reserved in fondo -->
             <div class="footer-bottom">
                 <div>&copy; ${new Date().getFullYear()} La Libre. ${t.rights}.</div>
-                <div><a href="${pathPrefix}index.html">La Libre Studio</a></div>
             </div>
         `;
 
