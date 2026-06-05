@@ -3,121 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Libre | Product Detail</title>
-    <script src="navbar.js"></script>
+    <title>La Libre Studio &mdash; Product Details</title>
+    
+    <!-- Importazione Font per coerenza di brand -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
+
     <style>
-        :root { --bg-color: #ffffff; --text-color: #1a1a1a; --accent-color: #707070; --light-gray: #f9f9f9; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; }
-        .product-container { max-width: 1100px; margin: 4rem auto; padding: 0 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
-        .product-image-side { height: 600px; display: flex; align-items: center; justify-content: center; background-size: cover; background-position: center; font-weight: 500; }
-        .product-details-side { display: flex; flex-direction: column; justify-content: center; }
-        .product-title { font-family: serif; font-size: 2.2rem; font-weight: 400; margin-bottom: 0.5rem; }
-        .product-tagline { font-size: 1rem; color: var(--accent-color); margin-bottom: 1.5rem; }
-        .product-price { font-size: 1.4rem; font-weight: 500; margin-bottom: 2rem; }
-        .size-selector { margin-bottom: 2rem; }
-        .size-selector p { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; color: var(--accent-color); }
-        .size-options { display: flex; gap: 0.5rem; }
-        .size-btn { padding: 0.5rem 1rem; border: 1px solid #ccc; background: white; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
-        .size-btn:hover, .size-btn.active { border-color: var(--text-color); background: var(--text-color); color: white; }
-        .add-to-cart-btn { width: 100%; padding: 1rem; background: var(--text-color); color: white; border: none; text-transform: uppercase; letter-spacing: 2px; font-size: 0.9rem; cursor: pointer; transition: opacity 0.2s; }
-        .add-to-cart-btn:hover { opacity: 0.9; }
-        .error-message { grid-column: 1/-1; text-align: center; padding: 4rem 0; }
-        .error-message h2 { font-family: serif; margin-bottom: 1rem; }
-        .error-message a { color: var(--text-color); }
-        @media (max-width: 900px) { .product-container { grid-template-columns: 1fr; gap: 2rem; margin: 2rem auto; } .product-image-side { height: 450px; } }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #ffffff;
+            color: #1a1a1a;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 📌 NAVBAR ANCORATA IN CIMA (Identica alla Homepage) */
+        .sticky-nav-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: #ffffff;
+            box-shadow: 0 1px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        #dynamicNavContainer {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            display: block;
+        }
+
+        /* Compensazione per evitare che il prodotto finisca dietro la Navbar fissa */
+        .product-page-wrapper {
+            margin-top: 110px; /* Spazio protettivo per il distanziamento */
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        /* Struttura Dettaglio Prodotto Layout Spaccato */
+        .product-detail-container {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .product-gallery {
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            background-color: #f7f5f2;
+            overflow: hidden;
+        }
+
+        .product-gallery img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Info Editoriali */
+        .product-meta-panel {
+            padding-top: 1rem;
+        }
+
+        .product-breadcrumb {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #b3b3b3;
+            margin-bottom: 1.5rem;
+        }
+        .product-breadcrumb a {
+            color: #b3b3b3;
+            text-decoration: none;
+        }
+
+        .main-product-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.4rem;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0 0 0.5rem 0;
+            line-height: 1.1;
+        }
+
+        .main-product-price {
+            font-size: 1.1rem;
+            font-weight: 300;
+            color: #707070;
+            margin-bottom: 2rem;
+        }
+
+        .product-description-text {
+            font-size: 0.8rem;
+            color: #4a4a4a;
+            line-height: 1.7;
+            font-weight: 300;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Bottone Add To Bag minimale */
+        .add-to-bag-btn {
+            width: 100%;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: none;
+            padding: 1.2rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 300;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-to-bag-btn:hover {
+            background-color: #333333;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .product-page-wrapper { margin-top: 90px; padding: 1rem; }
+            .product-detail-container { grid-template-columns: 1fr; gap: 2rem; }
+            .main-product-title { font-size: 2rem; }
+        }
+        
+        @media (max-width: 600px) {
+            .product-page-wrapper { margin-top: 120px; }
+        }
     </style>
 </head>
 <body>
 
-    <main class="product-container" id="productContent"></main>
+    <!-- 📌 Navbar Sticky Identica all'Index (Senza banner.js) -->
+    <div class="sticky-nav-wrapper">
+        <div id="dynamicNavContainer"></div>
+    </div>
 
-    <script src="products.js"></script>
+    <!-- Contenuto della Pagina Prodotto -->
+    <div class="product-page-wrapper">
+        <main class="product-detail-container">
+            
+            <!-- Galleria Immagine -->
+            <div class="product-gallery">
+                <img id="productImage" src="" alt="Product Image" style="display:none;">
+            </div>
+
+            <!-- Info Dettaglio -->
+            <div class="product-meta-panel">
+                <div class="product-breadcrumb">
+                    <a href="index.html">Home</a> &mdash; <span id="productCategory">Collection</span>
+                </div>
+                
+                <h1 id="productTitle" class="main-product-title">&mdash;</h1>
+                <div id="productPrice" class="main-product-price">&mdash;</div>
+                
+                <p id="productDescription" class="product-description-text">&mdash;</p>
+                
+                <button class="add-to-bag-btn" id="addToBagBtn">Add To Bag</button>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Script Caricati (banner.js rimosso anche qui per pulizia totale) -->
+    <script src="products.js?v=3.3"></script>
+    <script src="navbar.js?v=3.3"></script>
+
     <script>
-        const lang = localStorage.getItem('selectedLang') || 'en';
-
-        const uiProduct = {
-            en: { sizeTitle: "Select Size (Atemporal Fit)", btn: "Add to Bag", alert: "Item added to your slow-shopping bag.", errorTitle: "Product Not Found", errorDesc: "The piece you are looking for is currently unavailable.", returnHome: "Return to the Collection" },
-            es: { sizeTitle: "Seleccionar Talla (Ajuste Atemporal)", btn: "Añadir a la Bolsa", alert: "Artículo añadido a tu bolsa de compra slow.", errorTitle: "Producto no encontrado", errorDesc: "La prenda que buscas no está disponible.", returnHome: "Volver a la Colección" },
-            zh: { sizeTitle: "选择尺码 (永恒合身剪裁)", btn: "加入购物袋", alert: "商品已成功加入您的慢购物袋。", errorTitle: "未找到该商品", errorDesc: "您寻找的商品目前不可用或已归档。", returnHome: "返回探索系列" }
-        };
-
-        const ui = uiProduct[lang] || uiProduct['en'];
-
-        function updateCartBadge() {
-            const currentCount = localStorage.getItem('cartItemCount') || 0;
-            const badge = document.querySelector('.cart-badge');
-            if(badge) badge.innerText = currentCount;
-        }
-
-        function handleAddToCart() {
-            let currentCount = parseInt(localStorage.getItem('cartItemCount') || 0);
-            localStorage.setItem('cartItemCount', currentCount + 1);
-            updateCartBadge();
-            alert(ui.alert);
-        }
-
-        window.renderProductDetail = function() {
-            const container = document.getElementById('productContent');
+        document.addEventListener("DOMContentLoaded", function() {
+            const currentLang = localStorage.getItem('selectedLang') || 'en';
+            
+            // Estrazione ID del prodotto dall'URL
             const urlParams = new URLSearchParams(window.location.search);
-            const productId = urlParams.get('id');
+            const productId = parseInt(urlParams.get('id'));
 
-            if (!container) return;
+            // Bottoni traduzioni veloci per l'azione d'acquisto
+            const bagButtonTranslations = {
+                en: "Add To Bag",
+                es: "Añadir al Bolso",
+                zh: "加入购物袋"
+            };
+            
+            const btnBag = document.getElementById('addToBagBtn');
+            if(btnBag) btnBag.textContent = bagButtonTranslations[currentLang] || bagButtonTranslations['en'];
 
-            const product = typeof productsMaster !== 'undefined' ? productsMaster.find(p => p.id === productId) : null;
-
-            if (!product || product.status !== 'active') {
-                container.innerHTML = `
-                    <div class="error-message">
-                        <h2>${ui.errorTitle}</h2>
-                        <p>${ui.errorDesc}</p>
-                        <p style="margin-top: 1.5rem;"><a href="index.html">${ui.returnHome}</a></p>
-                    </div>`;
-                return;
-            }
-
-            // TITOLO FISSO IN LINGUA MADRE, COPIA TRADOTTA SOLO PER LA TAGLINE
-            let desc = product.translations[lang] || product.translations['en'];
-
-            const bgStyle = product.image ? `background-image: url('${product.image}');` : '';
-            const textColor = product.fallbackColor === "#111111" ? "color: #fff;" : "";
-
-            container.innerHTML = `
-                <div class="product-image-side" style="${bgStyle} background-color: ${product.fallbackColor}; ${textColor}">
-                    ${!product.image ? `[ ${product.title} ]` : ""}
-                </div>
-                <div class="product-details-side">
-                    <h1 class="product-title">${product.title}</h1>
-                    <p class="product-tagline">${desc.tagline}</p>
-                    <div class="product-price">${product.price}</div>
+            // Trova e renderizza il prodotto corretto dal master database
+            if (typeof productsMaster !== 'undefined' && productId) {
+                const product = productsMaster.find(p => p.id === productId);
+                
+                if (product) {
+                    const translation = product.translations[currentLang] || product.translations['en'];
                     
-                    <div class="size-selector">
-                        <p>${ui.sizeTitle}</p>
-                        <div class="size-options">
-                            <button class="size-btn active">S</button>
-                            <button class="size-btn">M</button>
-                            <button class="size-btn">L</button>
-                        </div>
-                    </div>
-                    <button class="add-to-cart-btn" id="addToCartBtn">${ui.btn}</button>
-                </div>
-            `;
-
-            document.getElementById('addToCartBtn').addEventListener('click', handleAddToCart);
-            const sizeBtns = document.querySelectorAll('.size-btn');
-            sizeBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    sizeBtns.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                });
-            });
-        };
-
-        window.addEventListener('load', () => {
-            updateCartBadge();
-            window.renderProductDetail();
+                    // Injection dei dati dinamici
+                    document.getElementById('productTitle').textContent = product.title;
+                    document.getElementById('productPrice').textContent = product.price;
+                    document.getElementById('productDescription').textContent = translation.description || translation.tagline;
+                    document.getElementById('productCategory').textContent = product.category || "Collection";
+                    
+                    const imgEl = document.getElementById('productImage');
+                    if (imgEl) {
+                        imgEl.src = product.image;
+                        imgEl.style.display = 'block';
+                    }
+                }
+            }
         });
     </script>
-    <script src="footer.js"></script>
+
+    <script src="footer.js?v=3.3"></script>
+
 </body>
 </html>
