@@ -160,6 +160,16 @@
                 if (targetLang !== currentLang) {
                     localStorage.setItem('selectedLang', targetLang);
                     window.location.reload();
+        // Aggiungi questo ai link nella tua funzione renderNavbar():
+ container.innerHTML = `
+    <header class="main-navbar">
+        <nav class="nav-links">
+            <a href="index.html?cat=new-arrivals">New Arrivals</a>
+            <a href="index.html?cat=dresses">Dresses</a>
+            <a href="index.html?cat=lingerie">Lingerie</a>
+        </nav>
+        </header>
+`;
                 }
             });
         });
