@@ -6,7 +6,7 @@ const productsMaster = [
         title: "Amour Lace Blouse",
         price: "€ 135,00",
         categories: ["lingeries", "new-arrivals"],
-        image: "images/products/amour-lace.jpg",
+        image: "images/amour-lace.jpg",
         fallbackColor: "#f7f5f2",
         status: "active",
         translations: {
@@ -26,7 +26,7 @@ const productsMaster = [
         title: "Eliah Timeless Dress",
         price: "€ 195,00",
         categories: ["dresses", "new-arrivals"],
-        image: "images/products/eliah-dress.jpg",
+        image: "images/eliah-dress.jpg",
         fallbackColor: "#f2f0eb",
         status: "active",
         translations: {
@@ -46,7 +46,7 @@ const productsMaster = [
         title: "Grace Lace Triangle",
         price: "€ 75,00",
         categories: ["lingeries"],
-        image: "images/products/grace-lace.jpg",
+        image: "images/grace-lace.jpg",
         fallbackColor: "#ebdcd0",
         status: "active",
         translations: {
