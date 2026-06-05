@@ -29,44 +29,42 @@
     </div>
 
     <script src="products.js"></script>
-    
-    <script>
-        (function() {
-            function init() {
-                // Controllo se i dati sono pronti
-                if (typeof window.productsMaster === 'undefined') {
-                    setTimeout(init, 100);
-                    return;
-                }
+<script>
+    (function() {
+        function render() {
+            const display = document.getElementById('productsDisplay');
+            if (!display) return;
 
-                function render() {
-                    const display = document.getElementById('productsDisplay');
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const cat = urlParams.get('cat');
+            const urlParams = new URLSearchParams(window.location.search);
+            const cat = urlParams.get('cat');
 
-                    // Logica di filtro: se cat esiste e non è vuoto, filtra; altrimenti mostra tutto
-                    let filtered = window.productsMaster;
-                    if (cat && cat !== '' && cat !== 'null') {
-                        filtered = window.productsMaster.filter(p => 
-                            p.categories && p.categories.some(c => c.toLowerCase() === cat.toLowerCase())
-                        );
-                    }
-
-                    display.innerHTML = filtered.map(prod => `
-                        <a href="product.html?id=${prod.id}" class="product-card">
-                            <div class="product-image-wrapper"><img src="${prod.image}" alt="${prod.title}"></div>
-                            <div class="product-info">
-                                <h3>${prod.title}</h3>
-                                <p>${prod.price}</p>
-                            </div>
-                        </a>
-                    `).join('');
-                }
-
-                render();
+            let filtered = window.productsMaster || [];
+            if (cat && cat !== '' && cat !== 'null') {
+                filtered = filtered.filter(p =>
+                    p.categories && p.categories.some(c => c.toLowerCase() === cat.toLowerCase())
+                );
             }
-            document.addEventListener('DOMContentLoaded', init);
-        })();
-    </script>
+
+            display.innerHTML = filtered.map(prod => `
+                <a href="product.html?id=${prod.id}" class="product-card">
+                    <div class="product-image-wrapper">
+                        <img src="${prod.image}" alt="${prod.title}">
+                    </div>
+                    <div class="product-info">
+                        <h3>${prod.title}</h3>
+                        <p>${prod.price}</p>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        // Funziona sia se il DOM è già pronto sia se non lo è ancora
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', render);
+        } else {
+            render();
+        }
+    })();
+</script>
 </body>
 </html>
