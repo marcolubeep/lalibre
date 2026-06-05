@@ -1,21 +1,21 @@
-// IL TUO DATABASE PRODOTTI
+// IL TUO DATABASE PRODOTTI (Aggiornato con la cartella images)
 const productsMaster = [
     {
         id: "eliah-maxi",
         title: "Eliah Maxi Dress",
         tagline: "Slow Collection in Black",
         price: "£71.00",
-        image: "eliah-dress.jpg",
+        image: "images/eliah-dress.jpg", // Percorso aggiornato
         fallbackColor: "#e2dedb",
-        categories: ["dresses", "new-arrivals"], // Appare in entrambe le sezioni!
-        status: "active" // active = visibile, hidden o archived = nascosto
+        categories: ["dresses", "new-arrivals"],
+        status: "active"
     },
     {
         id: "grace-maxi",
         title: "The Grace Lace Maxi",
         tagline: "Slow Collection in White",
         price: "£110.00",
-        image: "grace-lace.jpg",
+        image: "images/grace-lace.jpg", // Percorso aggiornato
         fallbackColor: "#f4f1ef",
         categories: ["dresses"],
         status: "active"
@@ -25,9 +25,9 @@ const productsMaster = [
         title: "Amour Lace Bustier",
         tagline: "Delicate French Trim",
         price: "£85.00",
-        image: "amour-lace.jpg",
+        image: "images/amour-lace.jpg", // Percorso aggiornato
         fallbackColor: "#eae5e2",
-        categories: ["lingeries", "new-arrivals"], // Appare in entrambe le sezioni!
+        categories: ["lingeries", "new-arrivals"],
         status: "active"
     },
     {
@@ -38,7 +38,7 @@ const productsMaster = [
         image: "", 
         fallbackColor: "#2c2a29",
         categories: ["lingeries"],
-        status: "hidden" // NASCOSTO: Non apparirà sul sito
+        status: "hidden" 
     },
     {
         id: "lace-corset",
@@ -48,7 +48,7 @@ const productsMaster = [
         image: "",
         fallbackColor: "#fcfbfa",
         categories: ["lingeries"],
-        status: "archived" // ARCHIVIATO: Non apparirà sul sito
+        status: "archived" 
     },
     {
         id: "noir-skin",
