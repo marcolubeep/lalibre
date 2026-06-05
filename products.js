@@ -1,63 +1,48 @@
-// IL TUO DATABASE PRODOTTI (Aggiornato con la cartella images)
+// products.js - Database Multilingua per La Libre (EN, ES, ZH)
+
 const productsMaster = [
     {
-        id: "eliah-maxi",
-        title: "Eliah Maxi Dress",
-        tagline: "Slow Collection in Black",
-        price: "£71.00",
-        image: "images/eliah-dress.jpg", // Percorso aggiornato
-        fallbackColor: "#e2dedb",
+        id: "silk-dress-01",
+        price: "€ 180,00",
         categories: ["dresses", "new-arrivals"],
-        status: "active"
+        image: "images/products/silk-slip-dress.jpg",
+        fallbackColor: "#f5f5f3",
+        status: "active",
+        translations: {
+            en: {
+                title: "Silk Slip Dress",
+                tagline: "Atemporal silhouette in pure organic silk"
+            },
+            es: {
+                title: "Vestido Combinación de Seda",
+                tagline: "Silueta atemporal en pura seda orgánica"
+            },
+            zh: {
+                title: "真丝吊带连衣裙",
+                tagline: "纯天然有机丝打造的永恒廓形"
+            }
+        }
     },
     {
-        id: "grace-maxi",
-        title: "The Grace Lace Maxi",
-        tagline: "Slow Collection in White",
-        price: "£110.00",
-        image: "images/grace-lace.jpg", // Percorso aggiornato
-        fallbackColor: "#f4f1ef",
-        categories: ["dresses"],
-        status: "active"
-    },
-    {
-        id: "amour-bustier",
-        title: "Amour Lace Bustier",
-        tagline: "Delicate French Trim",
-        price: "£85.00",
-        image: "images/amour-lace.jpg", // Percorso aggiornato
-        fallbackColor: "#eae5e2",
-        categories: ["lingeries", "new-arrivals"],
-        status: "active"
-    },
-    {
-        id: "soul-slip",
-        title: "Free Soul Slip",
-        tagline: "Sheer Silk Accents",
-        price: "£95.00",
-        image: "", 
-        fallbackColor: "#2c2a29",
+        id: "lace-bra-02",
+        price: "€ 85,00",
         categories: ["lingeries"],
-        status: "hidden" 
-    },
-    {
-        id: "lace-corset",
-        title: "Slow Lace Corset",
-        tagline: "Structured Delicate Lace",
-        price: "£120.00",
-        image: "",
-        fallbackColor: "#fcfbfa",
-        categories: ["lingeries"],
-        status: "archived" 
-    },
-    {
-        id: "noir-skin",
-        title: "Noir Second Skin Gown",
-        tagline: "Premium Intricate Floral Pattern",
-        price: "£165.00",
-        image: "",
-        fallbackColor: "#111111",
-        categories: ["dresses", "new-arrivals"],
-        status: "active"
+        image: "images/products/lace-bra.jpg",
+        fallbackColor: "#ebdcd0",
+        status: "active",
+        translations: {
+            en: {
+                title: "Delicate Lace Bra",
+                tagline: "Second skin feeling, crafted in Italy"
+            },
+            es: {
+                title: "Sujetador de Encaje Delicado",
+                tagline: "Sensación de segunda piel, confeccionado en Italia"
+            },
+            zh: {
+                title: "精致蕾丝文胸",
+                tagline: "宛如第二层肌肤，意大利工艺制造"
+            }
+        }
     }
 ];
