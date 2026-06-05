@@ -5,7 +5,6 @@
         if (container) {
             initNavbar(container);
         } else {
-            // Se il container non esiste ancora, riprova tra poco
             setTimeout(waitForContainer, 50);
         }
     }
@@ -138,7 +137,7 @@
                         <nav class="nav-links">
                             <a href="index.html?cat=new-arrivals" data-nav-link>${t('new')}</a>
                             <a href="index.html?cat=dresses" data-nav-link>${t('dresses')}</a>
-                            <a href="index.html?cat=lingeries" data-nav-link>${t('lingerie')}</a>
+                            <a href="index.html?cat=lingerie" data-nav-link>${t('lingerie')}</a>
                         </nav>
 
                         <div class="nav-brand"><a href="index.html">LA LIBRE</a></div>
@@ -162,7 +161,7 @@
                     <nav class="nav-mobile-drawer" id="navMobileDrawer">
                         <a href="index.html?cat=new-arrivals" data-nav-link>${t('new')}</a>
                         <a href="index.html?cat=dresses" data-nav-link>${t('dresses')}</a>
-                        <a href="index.html?cat=lingeries" data-nav-link>${t('lingerie')}</a>
+                        <a href="index.html?cat=lingerie" data-nav-link>${t('lingerie')}</a>
                         <a href="cart.html" class="mobile-cart">${t('bag')} (${cartCount})</a>
                         <div class="mobile-lang" id="mobileLangSelector">
                             ${Object.keys(flags).map(l => `
@@ -178,9 +177,11 @@
             attachEvents();
         }
 
+        // Funzione per cambiare lingua e DISPATCHARE L'EVENTO
         window.setLang = function(lang) {
             localStorage.setItem('selectedLang', lang);
             renderNavbar();
+            // 🔑 QUESTO È FONDAMENTALE - dispatcha l'evento per la search bar
             window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang } }));
         };
 
@@ -216,10 +217,8 @@
             }
         });
 
-        // Render iniziale
         renderNavbar();
     }
 
-    // Avvia l'attesa per il container
     waitForContainer();
 })();
