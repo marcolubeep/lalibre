@@ -42,10 +42,35 @@
             text-align: center;
         }
         
-        .nav-right { display: flex; justify-content: flex-end; align-items: center; gap: 1.5rem; }
-        .social-icons { display: flex; gap: 1rem; color: var(--text-color); align-items: center; }
-        .social-icons i, .social-icons svg { cursor: pointer; width: 17px; height: 17px; }
+        /* Box destro identico e spazioso */
+        .nav-right { 
+            display: flex; 
+            justify-content: flex-end; 
+            align-items: center; 
+            gap: 1.8rem; 
+        }
         
+        .social-icons { 
+            display: flex; 
+            gap: 1.2rem; 
+            color: var(--text-color); 
+            align-items: center; 
+        }
+        
+        .social-icons a {
+            color: inherit; 
+            display: inline-flex; 
+            align-items: center;
+            text-decoration: none;
+        }
+        
+        .social-icons i, .social-icons svg { 
+            display: inline-block;
+            width: 18px; 
+            height: 18px; 
+        }
+        
+        /* Fix selettore lingua: spazio flessibile senza tagli visivi */
         .lang-select {
             font-size: 0.8rem;
             border: none;
@@ -55,6 +80,10 @@
             letter-spacing: 1px;
             font-weight: 400;
             color: var(--text-color);
+            width: auto;
+            min-width: 75px;
+            padding-right: 5px;
+            text-transform: uppercase;
         }
 
         .cart-icon-wrapper { position: relative; display: flex; align-items: center; }
@@ -130,7 +159,6 @@
 
     <header>
         <div class="nav-left">
-            <!-- Collegamenti coerenti alla home con i filtri nativi -->
             <a href="index.html">Home</a>
             <a href="index.html">Dresses</a>
             <a href="index.html">Lingeries</a>
@@ -140,13 +168,12 @@
         <div class="logo" onclick="window.location.href='index.html'">La Libre</div>
         
         <div class="nav-right">
-            <!-- STRUTTURA DEL COPIATA IDENTICA CON ICONA IG VISIBILE ADIACENTE ALLA LINGUA -->
             <div class="social-icons">
-                <a href="https://www.instagram.com/lalibreofficial/" target="_blank" rel="noopener noreferrer" style="color: inherit; display: inline-flex; align-items: center;">
+                <a href="https://www.instagram.com/lalibreofficial/" target="_blank" rel="noopener noreferrer">
                     <i data-lucide="instagram"></i>
                 </a>
-                <a href="#" style="color: inherit; display: inline-flex; align-items: center;"><i data-lucide="facebook"></i></a>
-                <a href="#" style="color: inherit; display: inline-flex; align-items: center;"><i data-lucide="pinterest"></i></a>
+                <a href="#"><i data-lucide="facebook"></i></a>
+                <a href="#"><i data-lucide="pinterest"></i></a>
             </div>
             <select class="lang-select">
                 <option>EN (UK)</option>
@@ -160,8 +187,7 @@
     </header>
 
     <main class="product-container" id="productContent">
-        <!-- Caricamento dinamico tramite JS -->
-    </main>
+        </main>
 
     <script src="products.js"></script>
 
@@ -181,7 +207,11 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            // Chiamata esplicita obbligatoria per far apparire i loghi Lucide
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            
             updateCartBadge();
 
             const container = document.getElementById('productContent');
