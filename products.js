@@ -37,7 +37,7 @@ window.productsMaster = [
        price: "€ 75,00",
        category: "lingerie",
        categories: ["lingerie"],
-       image: "images/grace-lace.jpg",
+       image: "images/grace-lace1.jpg",
        fallbackColor: "#ebdcd0",
        status: "active",
        translations: {
