@@ -7,7 +7,7 @@ window.productsMaster = [
        price: "€ 135,00",
        category: "lingerie",
        categories: ["lingerie", "new-arrivals"],
-       image: "images/amour-lace.jpg",
+       image: "images/amour-lace1.jpg",
        fallbackColor: "#f7f5f2",
        status: "active",
        translations: {
