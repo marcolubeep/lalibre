@@ -22,7 +22,7 @@ window.productsMaster = [
        price: "€ 195,00",
        category: "dresses",
        categories: ["dresses", "new arrivals"],
-       image: "images/eliah-dress.jpg",
+       image: "images/eliah-dress1.jpg",
        fallbackColor: "#f2f0eb",
        status: "active",
        translations: {
